@@ -69,6 +69,10 @@
     .blur-bg { filter: blur(8px) brightness(0.95); transition: filter 0.3s ease; pointer-events: none; }
     @keyframes shake { 10%, 90% { transform: translateX(-1px); } 20%, 80% { transform: translateX(2px); } 30%, 50%, 70% { transform: translateX(-4px); } 40%, 60% { transform: translateX(4px); } }
     .animate-shake { animation: shake 0.5s ease; }
+    @keyframes msg-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+    .msg-in { animation: msg-in 0.25s ease-out both; }
+    @keyframes drop-in { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: none; } }
+    .animate-drop-in { animation: drop-in 0.16s ease-out; }
   </style>
 </head>
 <body class="h-screen flex overflow-hidden bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 relative transition-colors duration-300">
@@ -207,6 +211,9 @@
               <button class="prompt-pill px-3.5 py-2 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800 rounded-full text-xs text-zinc-700 dark:text-zinc-300 transition shadow-sm">
                 <i class="fa-solid fa-atom text-purple-500 mr-1.5"></i> Explain quantum computing
               </button>
+              <button class="prompt-pill px-3.5 py-2 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800 rounded-full text-xs text-zinc-700 dark:text-zinc-300 transition shadow-sm">
+                <i class="fa-solid fa-palette text-pink-500 mr-1.5"></i> Create an image of a mountain lake
+              </button>
             </div>
           </div>
           <div id="messagesList" class="space-y-6 hidden pb-10"></div>
@@ -223,7 +230,7 @@
       </div>
 
       <div class="px-4 pb-6 pt-2 bg-white dark:bg-zinc-950 w-full max-w-3xl mx-auto relative">
-        <div id="inputWrapper" class="bg-zinc-50 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 rounded-3xl shadow-sm focus-within:border-zinc-500 transition-all flex flex-col overflow-hidden">
+        <div id="inputWrapper" class="bg-zinc-50 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 rounded-3xl shadow-sm focus-within:border-zinc-500 transition-all flex flex-col">
           <div id="attachmentPreviews" class="flex flex-wrap gap-2 px-4 pt-3 hidden"></div>
           <div class="flex items-center p-2 px-3 relative">
             <label class="cursor-pointer text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200 w-9 h-9 rounded-full flex items-center justify-center hover:bg-zinc-200 dark:hover:bg-zinc-800 transition mr-1 flex-shrink-0" title="Attach file">
@@ -233,7 +240,7 @@
             <button id="micBtn" type="button" class="text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200 w-9 h-9 rounded-full flex items-center justify-center hover:bg-zinc-200 dark:hover:bg-zinc-800 transition mr-2 flex-shrink-0" title="Voice dictation">
               <i class="fa-solid fa-microphone text-sm"></i>
             </button>
-            <textarea id="userInput" rows="1" placeholder="Ask anything (try 'code', 'write', math, or health)" class="flex-1 bg-transparent resize-none focus:outline-none text-base text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 custom-scrollbar py-2.5 max-h-48 min-h-[40px]"></textarea>
+            <textarea id="userInput" rows="1" placeholder="Ask anything (try 'code', 'write', math, health, or 'draw')" class="flex-1 bg-transparent resize-none focus:outline-none text-base text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 custom-scrollbar py-2.5 max-h-48 min-h-[40px]"></textarea>
             <div class="flex items-center space-x-2 ml-2 flex-shrink-0">
               <div class="relative">
                 <button id="personaBtn" type="button" class="flex items-center space-x-1.5 px-3 py-1.5 rounded-full border border-zinc-200 dark:border-zinc-700 text-xs font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition" title="Change response tone">
@@ -287,7 +294,7 @@
           </div>
         </div>
         <div class="text-center text-xs text-zinc-400 mt-3">
-          Omni can make mistakes. Consider verifying important information.
+          Omni is an AI and can make mistakes. Consider verifying important information.
         </div>
       </div>
     </main>
@@ -381,10 +388,9 @@
     </div>
   </div>
 
-  <!-- PRICING / UPGRADE MODAL (REDESIGNED) -->
+  <!-- PRICING / UPGRADE MODAL -->
   <div id="pricingModal" class="fixed inset-0 z-50 flex items-center justify-center bg-zinc-900/60 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300 p-4">
     <div class="bg-white dark:bg-zinc-900 rounded-3xl shadow-2xl w-full max-w-5xl max-h-[90vh] overflow-hidden transform scale-95 transition-transform duration-300 border border-zinc-200 dark:border-zinc-800 flex flex-col" id="pricingModalInner">
-
       <div class="relative bg-white dark:bg-zinc-900 px-8 pt-6 pb-5 text-center border-b border-zinc-100 dark:border-zinc-800 flex-shrink-0">
         <button onclick="closePricingModal()" class="absolute right-6 top-6 text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 transition text-lg w-8 h-8 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center">
           <i class="fa-solid fa-xmark"></i>
@@ -396,10 +402,7 @@
           <button type="button" data-cycle="yearly" class="cycle-btn px-4 py-1.5 rounded-full text-xs font-semibold transition text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200 flex items-center gap-1.5">Yearly <span class="text-[10px] font-bold bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-400 px-1.5 py-0.5 rounded-full">SAVE 20%</span></button>
         </div>
       </div>
-
       <div class="p-8 bg-zinc-50 dark:bg-zinc-950 flex-1 overflow-y-auto custom-scrollbar">
-
-        <!-- PLAN CARDS -->
         <div id="pricingCardsView" class="grid grid-cols-1 md:grid-cols-3 gap-5 items-stretch">
           <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-6 shadow-sm flex flex-col">
             <div class="text-sm font-bold text-zinc-900 dark:text-zinc-100">Free</div>
@@ -408,13 +411,12 @@
             <ul class="mt-5 space-y-2 text-xs text-zinc-600 dark:text-zinc-300 flex-1">
               <li class="flex items-start"><i class="fa-solid fa-check text-zinc-400 mt-0.5 mr-2.5"></i>Omni 4.5 model</li>
               <li class="flex items-start"><i class="fa-solid fa-check text-zinc-400 mt-0.5 mr-2.5"></i>Local math solver &amp; KaTeX</li>
-              <li class="flex items-start"><i class="fa-solid fa-check text-zinc-400 mt-0.5 mr-2.5"></i>Web image search</li>
+              <li class="flex items-start"><i class="fa-solid fa-check text-zinc-400 mt-0.5 mr-2.5"></i>Image creation</li>
               <li class="flex items-start"><i class="fa-solid fa-check text-zinc-400 mt-0.5 mr-2.5"></i>Voice input &amp; read-aloud</li>
               <li class="flex items-start"><i class="fa-solid fa-check text-zinc-400 mt-0.5 mr-2.5"></i>Chat export &amp; history</li>
             </ul>
             <button class="mt-6 w-full py-2.5 bg-zinc-100 dark:bg-zinc-800 text-zinc-500 font-semibold text-sm rounded-xl cursor-default border border-zinc-200 dark:border-zinc-700">Your current plan</button>
           </div>
-
           <div class="bg-white dark:bg-zinc-900 border-2 border-zinc-900 dark:border-zinc-100 rounded-2xl p-6 shadow-md relative flex flex-col">
             <span class="absolute -top-2.5 left-1/2 -translate-x-1/2 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-[10px] font-bold px-2.5 py-0.5 rounded-full tracking-wide whitespace-nowrap">MOST POPULAR</span>
             <div class="text-sm font-bold text-zinc-900 dark:text-zinc-100">Omni Pro</div>
@@ -434,7 +436,6 @@
               <span>Upgrade to Pro</span>
             </button>
           </div>
-
           <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-6 shadow-sm flex flex-col">
             <div class="text-sm font-bold text-zinc-900 dark:text-zinc-100">Omni Max</div>
             <div class="text-xs text-zinc-500 mt-0.5">Maximum capability</div>
@@ -450,8 +451,6 @@
             <button onclick="startCheckout('max')" class="mt-6 w-full py-2.5 border-2 border-zinc-900 dark:border-zinc-100 text-zinc-900 dark:text-zinc-100 font-semibold text-sm rounded-xl transition hover:bg-zinc-900 hover:text-white dark:hover:bg-zinc-100 dark:hover:text-zinc-900">Upgrade to Max</button>
           </div>
         </div>
-
-        <!-- CHECKOUT -->
         <div id="checkoutFormView" class="hidden max-w-3xl mx-auto">
           <button onclick="backToPlans()" class="text-xs text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 mb-4 flex items-center space-x-1 font-medium transition">
             <i class="fa-solid fa-arrow-left"></i><span>Back to plan options</span>
@@ -462,7 +461,6 @@
                 <h3 class="text-base font-bold text-zinc-900 dark:text-zinc-100">Secure checkout</h3>
                 <p class="text-xs text-zinc-500 mt-0.5">Complete your upgrade to <span id="checkoutPlanName" class="font-semibold text-zinc-700 dark:text-zinc-300">Omni Pro</span>.</p>
               </div>
-
               <div id="declineBanner" class="hidden rounded-xl border border-rose-200 dark:border-rose-900/50 bg-rose-50 dark:bg-rose-950/30 p-3.5">
                 <div class="flex items-start gap-2.5">
                   <i class="fa-solid fa-circle-exclamation text-rose-500 mt-0.5"></i>
@@ -475,7 +473,6 @@
                   </div>
                 </div>
               </div>
-
               <div>
                 <div class="flex items-center justify-between mb-1.5">
                   <label class="text-xs font-semibold text-zinc-600 dark:text-zinc-400">Cardholder name</label>
@@ -516,7 +513,6 @@
               </button>
               <p class="text-[10px] text-zinc-400 text-center flex items-center justify-center gap-1.5"><i class="fa-solid fa-shield-halved"></i>Payments are encrypted and processed securely</p>
             </form>
-
             <div class="md:col-span-2 bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 p-6 shadow-sm">
               <div class="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">Order summary</div>
               <div class="mt-3 space-y-2.5 text-sm">
@@ -581,6 +577,9 @@
   <script>
     const UNSPLASH_ACCESS_KEY = 'VXLXaULpzheiX2lmfF4NK6cc2n0F5-AAuPudKA-FBfQ';
     const AI_AVATAR_SVG = '<svg class="w-4 h-4" viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="14" stroke="currentColor" stroke-width="2.5"/><path d="M16 6C10.4772 6 6 10.4772 6 16C6 21.5228 10.4772 26 16 26" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><circle cx="16" cy="16" r="5" fill="currentColor"/></svg>';
+    // Image generation duration (ms) — tweak these if it feels too slow or too fast
+    const IMAGE_GEN_MIN_MS = 10000;
+    const IMAGE_GEN_MAX_MS = 20000;
 
     // --- HELPERS ---
     const sleep = (ms) => new Promise(r => setTimeout(r, ms));
@@ -705,7 +704,7 @@
     });
     document.querySelectorAll('.style-btn').forEach(b => b.addEventListener('click', () => selectStyle(b.dataset.style)));
 
-    // --- MIC (speech recognition) ---
+    // --- MIC ---
     (function () {
       const micBtn = document.getElementById('micBtn');
       if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) { micBtn.style.display = 'none'; return; }
@@ -778,7 +777,12 @@
     }
     (function () {
       const btn = document.getElementById('personaBtn'), dd = document.getElementById('personaDropdown');
-      btn.addEventListener('click', (e) => { e.stopPropagation(); dd.classList.toggle('hidden'); });
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const willOpen = dd.classList.contains('hidden');
+        dd.classList.toggle('hidden');
+        if (willOpen) { dd.classList.remove('animate-drop-in'); void dd.offsetWidth; dd.classList.add('animate-drop-in'); }
+      });
       document.addEventListener('click', () => dd.classList.add('hidden'));
       document.querySelectorAll('.persona-option').forEach(o => {
         o.addEventListener('click', () => {
@@ -1204,15 +1208,19 @@
       for (let k = chat.messages.length - 1; k >= 0; k--) {
         if (chat.messages[k].sender === 'ai') { lastAiId = chat.messages[k].id; break; }
       }
+      let lastEl = null;
       chat.messages.forEach(msg => {
         if (msg.sender === 'user') {
-          messagesList.appendChild(buildUserMessage(msg));
+          const u = buildUserMessage(msg);
+          messagesList.appendChild(u); lastEl = u;
         } else {
-          const el = buildAiMessage(msg);
-          messagesList.appendChild(el);
-          if (msg.text) finalizeAiMessage(el, msg, msg.id === lastAiId);
+          const a = buildAiMessage(msg);
+          messagesList.appendChild(a);
+          if (msg.text) finalizeAiMessage(a, msg, msg.id === lastAiId);
+          lastEl = a;
         }
       });
+      if (lastEl) lastEl.classList.add('msg-in');
       chatMessages.scrollTop = chatMessages.scrollHeight;
     }
     function buildUserMessage(msg) {
@@ -1285,11 +1293,13 @@
       footer.classList.remove('hidden'); footer.classList.add('flex');
       const words = text.split(/\s+/).length;
       const mins = Math.max(1, Math.ceil(words / 200));
-      el.querySelector('.msg-pills').innerHTML =
-        '<span class="meta-pill"><i class="fa-solid fa-align-left"></i>' + words + ' words</span>' +
-        '<span class="meta-pill"><i class="fa-solid fa-i-cursor"></i>' + text.length + ' chars</span>' +
-        '<span class="meta-pill"><i class="fa-regular fa-clock"></i>~' + mins + ' min read</span>' +
-        (msg.time ? '<span class="meta-pill">' + formatTime(msg.time) + '</span>' : '');
+      // Only show stats on substantial replies — one-liners stay clean
+      el.querySelector('.msg-pills').innerHTML = words >= 20
+        ? '<span class="meta-pill"><i class="fa-solid fa-align-left"></i>' + words + ' words</span>' +
+          '<span class="meta-pill"><i class="fa-solid fa-i-cursor"></i>' + text.length + ' chars</span>' +
+          '<span class="meta-pill"><i class="fa-regular fa-clock"></i>~' + mins + ' min read</span>' +
+          (msg.time ? '<span class="meta-pill">' + formatTime(msg.time) + '</span>' : '')
+        : (msg.time ? '<span class="meta-pill">' + formatTime(msg.time) + '</span>' : '');
       const actions = el.querySelector('.msg-actions');
       actions.innerHTML = '';
       const mkBtn = (icon, title) => {
@@ -1314,8 +1324,11 @@
     function renderImageBlock(container, img) {
       const box = document.createElement('div');
       box.className = 'mt-3';
-      box.innerHTML = '<a href="' + img.link + '" target="_blank" rel="noopener"><img src="' + img.url + '" alt="' + escapeHtml(img.alt) + '" class="rounded-2xl border border-zinc-200 dark:border-zinc-800 max-w-md w-full shadow-sm"></a>' +
-        '<div class="text-[11px] text-zinc-400 mt-1.5 flex items-center gap-1.5"><i class="fa-solid fa-camera text-[9px]"></i>Photo by <a class="underline hover:text-zinc-600" href="' + img.profile + '" target="_blank" rel="noopener">' + escapeHtml(img.author) + '</a> on Unsplash</div>';
+      const im = document.createElement('img');
+      im.src = img.url;
+      im.alt = img.alt || 'Created image';
+      im.className = 'rounded-2xl border border-zinc-200 dark:border-zinc-800 max-w-md w-full shadow-sm';
+      box.appendChild(im);
       container.appendChild(box);
     }
     function renderSources(container, sources) {
@@ -1428,7 +1441,7 @@
       else { icon.className = 'fa-solid fa-arrow-up'; updateSendState(); }
     }
 
-    // --- SEND / STREAM / REGENERATE ---
+    // --- SEND / GENERATE / REGENERATE ---
     function handleSendOrStop() {
       if (state.isGenerating) { state.stopRequested = true; return; }
       const text = userInput.value.trim();
@@ -1456,6 +1469,62 @@
     }
     function hideTyping() { const t = document.getElementById('typingIndicator'); if (t) t.remove(); }
 
+    // --- IMAGE GENERATION UI (dot-matrix canvas + progress) ---
+    function buildGenBox() {
+      const box = document.createElement('div');
+      box.className = 'mt-3 relative rounded-2xl overflow-hidden bg-zinc-950 border border-zinc-800 max-w-md w-full shadow-sm';
+      box.style.aspectRatio = '16 / 10';
+      const canvas = document.createElement('canvas');
+      canvas.className = 'absolute inset-0 w-full h-full';
+      const label = document.createElement('div');
+      label.className = 'absolute top-3 left-3.5 text-white/90 text-xs font-medium z-10 select-none';
+      label.innerText = 'Creating image';
+      const pill = document.createElement('div');
+      pill.className = 'absolute bottom-3 right-3 z-10 select-none bg-zinc-900/90 border border-zinc-700/70 rounded-full px-2.5 py-1 text-xs font-semibold text-blue-400 font-mono';
+      pill.innerText = '0%';
+      box.appendChild(canvas); box.appendChild(label); box.appendChild(pill);
+      let stopFn = function () {};
+      function startDots() {
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        const rect = canvas.getBoundingClientRect();
+        const W = rect.width, H = rect.height;
+        canvas.width = Math.max(1, Math.round(W * dpr));
+        canvas.height = Math.max(1, Math.round(H * dpr));
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        const dots = [];
+        const gap = 15;
+        for (let y = gap / 2; y < H; y += gap) {
+          for (let x = gap / 2; x < W; x += gap) {
+            dots.push({ x: x, y: y, b: 0.18 + Math.random() * 0.5, p: Math.random() * Math.PI * 2, s: 0.5 + Math.random() * 1.6 });
+          }
+        }
+        let raf = null;
+        function frame(ts) {
+          ctx.clearRect(0, 0, W, H);
+          const t = ts / 1000;
+          for (let i = 0; i < dots.length; i++) {
+            const d = dots[i];
+            const a = d.b * (0.4 + 0.6 * (0.5 + 0.5 * Math.sin(t * d.s + d.p)));
+            ctx.fillStyle = 'rgba(80, 118, 255, ' + a.toFixed(3) + ')';
+            ctx.beginPath();
+            ctx.arc(d.x, d.y, 1.6, 0, 6.2832);
+            ctx.fill();
+          }
+          raf = requestAnimationFrame(frame);
+        }
+        raf = requestAnimationFrame(frame);
+        stopFn = function () { if (raf) cancelAnimationFrame(raf); };
+      }
+      return {
+        box: box,
+        startDots: startDots,
+        stopDots: function () { stopFn(); },
+        setProgress: function (p) { pill.innerText = p + '%'; }
+      };
+    }
+
     async function generateAiReply(chat, userText, atts) {
       state.isGenerating = true; state.stopRequested = false;
       updateSendIcon();
@@ -1464,8 +1533,65 @@
       let result;
       try { result = await computeResponse(userText, atts); }
       catch (e) { console.error('Response engine error:', e); result = { text: 'Something glitched on my end while thinking that through — mind trying again?' }; }
-      if (!result || !result.text) result = { text: 'Hmm, I came up empty on that one. Try rephrasing?' };
+      if (!result || (!result.text && !result.generate)) result = { text: 'Hmm, I came up empty on that one. Try rephrasing?' };
       hideTyping();
+
+      // ============ IMAGE GENERATION PATH ============
+      if (result.generate) {
+        const msg = { id: 'msg-' + Date.now() + '-' + Math.random().toString(36).slice(2, 6), sender: 'ai', text: '', attachments: [], image: null, time: Date.now() };
+        chat.messages.push(msg);
+        renderCurrentChat();
+        let el = document.getElementById(msg.id);
+        const extras = el ? el.querySelector('.msg-extras') : null;
+        let gen = null;
+        if (extras) {
+          gen = buildGenBox();
+          extras.appendChild(gen.box);
+          gen.startDots();
+          if (isNearBottom()) chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+        // Fetch the image in parallel with the generation animation
+        const fetchPromise = tryFetchImage(result.generate).catch(() => null);
+        const totalMs = IMAGE_GEN_MIN_MS + Math.random() * (IMAGE_GEN_MAX_MS - IMAGE_GEN_MIN_MS);
+        const t0 = Date.now();
+        let canceled = false;
+        await new Promise(resolve => {
+          const iv = setInterval(() => {
+            if (state.stopRequested) { clearInterval(iv); canceled = true; resolve(); return; }
+            const elapsed = Date.now() - t0;
+            if (elapsed >= totalMs) { clearInterval(iv); resolve(); return; }
+            if (gen) gen.setProgress(Math.min(97, Math.floor(100 * elapsed / totalMs)));
+          }, 160);
+        });
+        const image = canceled ? null : await fetchPromise;
+        if (gen) gen.stopDots();
+        if (canceled) {
+          if (gen) gen.box.remove();
+          msg.text = 'Generation stopped.';
+        } else if (image) {
+          if (gen) { gen.setProgress(100); await sleep(500); gen.box.remove(); }
+          msg.image = image;
+          msg.text = pick(GEN_DONE);
+        } else {
+          if (gen) gen.box.remove();
+          msg.text = "I couldn't create that image — something went wrong on my end. Want to try again?";
+        }
+        state.isGenerating = false; state.stopRequested = false;
+        updateSendIcon();
+        el = document.getElementById(msg.id);
+        if (el) {
+          finalizeAiMessage(el, msg, true);
+          const renderedImg = el.querySelector('.msg-extras img');
+          if (renderedImg) {
+            renderedImg.classList.add('opacity-0', 'transition-opacity', 'duration-700');
+            requestAnimationFrame(() => requestAnimationFrame(() => renderedImg.classList.remove('opacity-0')));
+          }
+        }
+        saveState();
+        return;
+      }
+
+      // ============ TEXT STREAMING PATH ============
       const msg = { id: 'msg-' + Date.now() + '-' + Math.random().toString(36).slice(2, 6), sender: 'ai', text: '', attachments: [], sources: result.sources || null, image: result.image || null, time: Date.now() };
       chat.messages.push(msg);
       renderCurrentChat();
@@ -1479,7 +1605,9 @@
         if (isNearBottom()) chatMessages.scrollTop = chatMessages.scrollHeight;
         await sleep(12);
       }
-      msg.text = result.text.slice(0, i) || result.text;
+      let finalText = result.text.slice(0, i);
+      if (!finalText) finalText = 'Response stopped.';
+      msg.text = finalText;
       state.isGenerating = false; state.stopRequested = false;
       updateSendIcon();
       finalizeAiMessage(el, msg, true);
@@ -1509,7 +1637,6 @@
       heart: { t: 'American Heart Association', d: 'heart.org', u: 'https://www.heart.org' },
       aapcc: { t: 'Poison Control', d: 'aapcc.org', u: 'https://www.poisonhelp.org' },
       sleepfoundation: { t: 'Sleep Foundation', d: 'sleepfoundation.org', u: 'https://www.sleepfoundation.org' },
-      unsplash: { t: 'Unsplash', d: 'unsplash.com', u: 'https://unsplash.com' },
       wiki: { t: 'Wikipedia', d: 'wikipedia.org', u: 'https://www.wikipedia.org' }
     };
 
@@ -1801,16 +1928,104 @@ You took a real step by saying it here. Can I ask — is tonight a particularly 
       ],
       greeting: [
 'Hey{NAME}! Good to see you. What are we digging into today — code, math, a health question, or just something on your mind?',
-'Hi{NAME}! Ready when you are. You can ask me to write, calculate, explain, or find images — or just talk it out.',
+'Hi{NAME}! Ready when you are. You can ask me to write, calculate, explain, or create images — or just talk it out.',
 'Welcome back{NAME}. What is on the docket?'
-      ],
-      imageIntro: [
-'Here is what I found for that:',
-'On it — here is a match from the search:',
-'Searched for it — best result below:'
       ],
       attachmentsOnly: (atts) => 'I can see you have attached **' + atts.length + (atts.length > 1 ? ' files' : ' file') + '**: ' + atts.map(a => '`' + a.name + '`').join(', ') + '.\n\nTell me what you would like me to do with ' + (atts.length > 1 ? 'them' : 'it') + ' — summarize, explain, answer questions about the content, or something else?'
     };
+
+    const GEN_DONE = [
+      'Here is your image.',
+      'Done — here is the image I created for you.',
+      'Finished. Here it is:',
+      'Your image is ready.'
+    ];
+
+    // --- SMALL TALK (short conversational replies, with context-aware warmth) ---
+    function wasLastSensitive() {
+      const chat = getCurrentChat();
+      if (!chat) return false;
+      for (let i = chat.messages.length - 1; i >= 0; i--) {
+        const m = chat.messages[i];
+        if (m.sender === 'ai') {
+          return !!(m.sources && m.sources.some(s => s.d === 'nimh.nih.gov' || s.d === '988lifeline.org'));
+        }
+      }
+      return false;
+    }
+
+    const SMALL_TALK = [
+      { test: function (q) { return /\b(thanks?|thank you|thank u|thx|ty|appreciate it|much appreciated)\b/.test(q) && !/\bthanks? to\b/.test(q) && q.length <= 45 && q.indexOf('?') === -1; },
+        resp: [
+          "Anytime! Anything else I can help with?",
+          "You're welcome — I'm here whenever you need me.",
+          "Happy to help! Let me know if anything else comes up."
+        ],
+        warm: [
+          "Of course. I'm really glad you said all of that out loud instead of carrying it alone. Take care of yourself tonight — and remember those resources are there whenever things feel heavy again.",
+          "Anytime, truly. Be gentle with yourself, okay? And if it gets heavier, 988 is there around the clock — no threshold too small."
+        ] },
+      { test: function (q) { return /\b(never ?mind|nvm|forget it|ignore (that|this)|disregard)\b/.test(q) && q.length <= 35; },
+        resp: [
+          "No problem at all — I'm here whenever you need me.",
+          "All good. Just say the word if something else comes up.",
+          "Got it, consider it dropped. What's next?"
+        ],
+        warm: [
+          "Of course — no pressure at all. I'm here if you want to come back to it, or if you just want to talk about nothing in particular.",
+          "That's completely okay. You don't have to explain anything. I'm around either way."
+        ] },
+      { test: function (q) { return /^(ok(ay)?|k|got it|sounds good|alright|roger|will do|understood|makes sense|i see|fair enough|cool|nice|awesome|great|amazing|perfect|love it|dope|sick|lol|lmao|haha+|hehe+)[.! ]*$/.test(q); },
+        resp: [
+          "Great — anything else on your mind?",
+          "Got it. I'm around if you need anything else.",
+          "Cool. What's next?"
+        ] },
+      { test: function (q) { return /^(bye+|goodbye|see (you|ya)|later|cya|good ?night|gn|gtg|got to go|take care|farewell)[.! ]*$/.test(q); },
+        resp: [
+          "See you around! Come back anytime.",
+          "Take care! I'll be here when you need me.",
+          "Goodbye for now — and be well."
+        ],
+        warm: [
+          "Goodnight. Be kind to yourself tonight — you did a good thing by talking about it. I'm here whenever you want to chat again.",
+          "Take care of yourself. And remember, if things ever feel like too much, 988 is a call or text away, any hour."
+        ] },
+      { test: function (q) { return /^(sorry|my bad|apologies|oops|my apologies)[.! ]*$/.test(q); },
+        resp: [
+          "No worries at all!",
+          "All good — nothing to apologize for."
+        ] },
+      { test: function (q) { return /^(yes|yeah|yep|ye|yup|sure|definitely|of course)[.! ]*$/.test(q); },
+        resp: [
+          "Got it — want me to go ahead with something specific?",
+          "Okay! Tell me what you'd like to do next."
+        ] },
+      { test: function (q) { return /^(no|nope|nah|nahh|not really)[.! ]*$/.test(q); },
+        resp: [
+          "Understood. I'm here if anything else comes up.",
+          "No problem. Anything else on your mind?"
+        ] },
+      { test: function (q) { return /\b(i love you|you'?re (the )?(best|awesome|great|amazing|cool)|good (bot|job|assistant)|ur (the )?best|you rock)\b/.test(q) && q.length <= 40; },
+        resp: [
+          "That's kind of you to say — I'm just glad I can help!",
+          "Appreciate that! I'll keep doing my best.",
+          "You're pretty great yourself. What else can I do for you?"
+        ] }
+    ];
+
+    const HOW_ARE_YOU = [
+      "I'm doing well — all systems steady and ready to help. More importantly, how are you doing?",
+      "Running smoothly! What can I help you with today?",
+      "Pretty good for a bunch of math and good intentions. How about you — what's on your mind?"
+    ];
+
+    function aboutResponse() {
+      return "I'm **Omni** — an AI assistant built to help you think, create, and get things done.\n\nA quick map of what I can do:\n\n- **Writing** — emails, letters, templates, and drafts\n- **Code** — working scripts in Python and JavaScript\n- **Math** — algebra, quadratics, statistics, geometry, and percentages, with full worked steps\n- **Explanations** — anything from quantum computing to photosynthesis, at whatever depth you want\n- **Images** — describe anything and I'll create it for you\n- **Health & first aid** — practical, sourced guidance (I'm not a doctor, and I'll always say so)\n- **Listening** — if something's on your mind, I'm happy to just be here\n\nWhat would you like to start with?";
+    }
+    function capabilitiesResponse() {
+      return "Here's a quick tour of what I can do:\n\n**Try asking things like:**\n- \"Write a professional email\"\n- \"Write a Python script\"\n- \"Solve x^2 - 5x + 6 = 0\" or \"Mean median mode of 12, 15, 22, 25, 30\"\n- \"Explain quantum computing\"\n- \"Create an image of a mountain lake\"\n- \"First aid for burns\"\n\nYou can also attach files, pin chats, switch my tone with the Tone button, and set up your profile (gear icon in the sidebar) so I remember your name and what you do.\n\nWhat sounds good?";
+    }
 
     const CODE_PY = `Sure! Here's a clean, practical Python script — a file organizer that sorts a messy folder by file type:
 
@@ -2011,7 +2226,7 @@ And the open frontier: gravity is the one force that refuses to play nice with q
       return pick(arr);
     }
 
-    // --- IMAGE SEARCH (fixed) ---
+    // --- IMAGE SEARCH / GENERATION ---
     const IMG_STOPWORDS = new Set(['a','an','the','of','me','my','i','show','please','can','could','you','get','find','give','some','that','this','is','are','do','doing','did','does','for','with','and','to','on','in','it','want','need','would','like','display','search','looking','look','up','picture','pictures','image','images','photo','photos','pic','pics','photograph','photographs','really','very','nice','good','cute','beautiful','now','then','her','his','their']);
     const IMG_MAP = { girl: 'woman', girls: 'women', boy: 'man', boys: 'men', guy: 'man', lady: 'woman', kid: 'child', kids: 'children', pushup: 'push-up', pushups: 'push-ups', situp: 'sit-up', situps: 'sit-ups', workout: 'fitness', jogging: 'running', cellphone: 'phone', pc: 'computer' };
     function cleanImageQuery(raw) {
@@ -2022,13 +2237,20 @@ And the open frontier: gravity is the one force that refuses to play nice with q
     }
     function extractImageQuery(q) {
       let rest = '';
-      const m = q.match(/(?:picture|pic|image|photo|photograph)s?\s*(?:of|for|showing|about)?\s+(.*)/);
+      let m = q.match(/(?:picture|pic|image|photo|photograph|drawing)s?\s+(?:of|for|showing|about|with)\s+(.+)/);
       if (m) rest = m[1];
-      else {
-        const m2 = q.match(/(?:show|find|get|see|search(?: for)?)\s+(?:me\s+)?(?:a\s+|an\s+|some\s+)?(.+)/);
-        if (m2) rest = m2[1];
-      }
+      if (!rest) { m = q.match(/\b(?:draw|generate|create|paint|sketch|illustrate)\s+(?:me\s+)?(?:a\s+|an\s+|the\s+|some\s+)?(.+)/); if (m) rest = m[1]; }
+      if (!rest) { m = q.match(/(?:show|find|get|see|search(?: for)?)\s+(?:me\s+)?(?:a\s+|an\s+|some\s+)?(.+)/); if (m) rest = m[1]; }
       return cleanImageQuery(rest || q);
+    }
+    function isImageRequest(q) {
+      // Don't hijack geometry/math phrasing like "draw a circle with radius 7"
+      if (/\b(circle|triangle|square|rectangle|radius|diameter|hypotenuse|pythag|area|perimeter|equation|solve|mean|median|mode|graph|plot)\b/.test(q)) return false;
+      if (/\b(picture|pic|image|photo|photograph|drawing)s?\b/.test(q)) return true;
+      if (/\b(draw|paint|sketch|illustrate)\b/.test(q)) return true;
+      if (/\b(generate|create|make)\b/.test(q) && /\b(art|drawing|illustration|wallpaper|logo|scene|portrait|picture|image|photo)\b/.test(q)) return true;
+      if (/\b(show|find|get)\s+me\s+(a|an|some)?\s*\S+/.test(q)) return true;
+      return false;
     }
     async function tryFetchImage(query) {
       if (!query) return null;
@@ -2166,32 +2388,46 @@ And the open frontier: gravity is the one force that refuses to play nice with q
         return { text: suicidal ? pick(RESP.crisis) : pick(RESP.selfharm), sources: [SRC.lifeline, SRC.nimh] };
       }
 
-      // 2. Image search
-      if (/\b(picture|pic|image|photo|photograph)s?\b/.test(q) || /\b(show|find|get)\s+me\s+(a|an|some)?\s*\S+/.test(q)) {
-        const query = extractImageQuery(q);
-        if (query) {
-          const image = await tryFetchImage(query);
-          if (image) return { text: pick(RESP.imageIntro) + ' *(searched: "' + query + '")*', image: image, sources: [SRC.unsplash] };
+      // 2. Small talk — short conversational inputs get short conversational replies
+      for (let i = 0; i < SMALL_TALK.length; i++) {
+        if (SMALL_TALK[i].test(q)) {
+          if (SMALL_TALK[i].warm && wasLastSensitive()) return { text: pick(SMALL_TALK[i].warm) };
+          return { text: pick(SMALL_TALK[i].resp) };
         }
       }
+      if (/^(how are you( doing)?|how('s| is) it going|how are things|you good|what'?s up|whats up|wyd)\b/.test(q) && q.length < 35) {
+        return { text: pick(HOW_ARE_YOU) };
+      }
+      if (/(who are you|what are you(?! doing)|what'?s your name|who made you|who created you|are you (an? )?(ai|robot|human|real)|what model are you)/.test(q)) {
+        return { text: aboutResponse() };
+      }
+      if (/^(what can you do|what do you do|what can i (ask|say|do)|your (skills|capabilities)|commands|help)[?!. ]*$/.test(q)) {
+        return { text: capabilitiesResponse() };
+      }
 
-      // 3. Math
+      // 3. Image generation
+      if (isImageRequest(q)) {
+        const query = extractImageQuery(q);
+        if (query) return { generate: query };
+      }
+
+      // 4. Math
       const math = tryMath(q);
       if (math) return { text: math };
 
-      // 4. Health (sensitive — no persona)
+      // 5. Health (sensitive — no persona)
       for (let i = 0; i < HEALTH_TOPICS.length; i++) {
         if (HEALTH_TOPICS[i].kw.some(rx => rx.test(q))) return { text: HEALTH_TOPICS[i].text, sources: HEALTH_TOPICS[i].src };
       }
 
-      // 5. Mental health (sensitive — no persona)
+      // 6. Mental health (sensitive — no persona)
       for (let i = 0; i < MENTAL_TOPICS.length; i++) {
         if (MENTAL_TOPICS[i].kw.some(rx => rx.test(q))) return { text: MENTAL_TOPICS[i].text, sources: MENTAL_TOPICS[i].src };
       }
 
       const p = getProfile();
 
-      // 6. Code
+      // 7. Code
       if (/(write|create|make|give)\b.*\b(script|code|program|function)|\bpython\b|\bjavascript\b/.test(q)) {
         let base = /javascript|\bjs\b/.test(q) ? CODE_JS : CODE_PY;
         if (p.role && /engineer|developer|programmer|analyst|student/i.test(p.role)) base = base.replace('{ROLE_CODE}', '\n\n*Since you work as a ' + p.role + ', I kept it dependency-free and added the pattern notes you would actually care about.*');
@@ -2199,13 +2435,13 @@ And the open frontier: gravity is the one force that refuses to play nice with q
         return { text: base };
       }
 
-      // 7. Email / writing
+      // 8. Email / writing
       if (/(write|draft|help with).*(email|letter|message)/.test(q)) {
         let base = EMAIL_RESP.replace('{ROLE_CODE}', p.role ? '\n\n*Want me to tailor the tone for your role as a ' + p.role + '? Just say the word.*' : '');
         return { text: base };
       }
 
-      // 8. Explainers (persona applies)
+      // 9. Explainers (persona applies)
       for (let i = 0; i < EXPLAIN_TOPICS.length; i++) {
         if (EXPLAIN_TOPICS[i].kw.some(rx => rx.test(q))) {
           return { text: applyPersona(EXPLAIN_TOPICS[i].text), sources: EXPLAIN_TOPICS[i].src };
@@ -2217,13 +2453,13 @@ And the open frontier: gravity is the one force that refuses to play nice with q
         return { text: applyPersona(genericExplain(title)), sources: [SRC.wiki] };
       }
 
-      // 9. Greeting
+      // 10. Greeting
       if (/^(hi|hey|hello|yo|sup|good (morning|afternoon|evening)|hola)\b/.test(q) && q.length < 25) {
         const name = p.name ? ' ' + p.name.split(' ')[0] : '';
         return { text: pick(RESP.greeting).replace('{NAME}', name) };
       }
 
-      // 10. Fallback (persona + profile style)
+      // 11. Fallback (persona + profile style)
       let base = fallbackResponses(rawText);
       if (p.style === 'concise') base = base.split('\n\n').slice(0, 2).join('\n\n');
       else if (p.style === 'detailed') base += '\n\n**If you want, I can also:**\n- Break this into a step-by-step plan\n- Compare the main options side by side\n- Give you a concrete example\n\nJust name it.';
