@@ -44,12 +44,20 @@
     .prose blockquote { border-left: 3px solid #d4d4d8; padding: 0.1em 0 0.1em 1em; margin: 0.75em 0; color: #52525b; }
     .dark .prose blockquote { border-color: #3f3f46; color: #a1a1aa; }
     .prose a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
-    .code-block pre { margin: 0 !important; border-radius: 0 !important; border: none !important; }
+    .code-block { display: flex; align-items: center; margin: 0.65em 0; background: #f6f6f7; border: 1px solid #e4e4e7; border-radius: 0.75rem; padding: 0.7rem 0.9rem; overflow-x: auto; }
+    .dark .code-block { background: #18181b; border-color: #27272a; }
+    .code-block pre { flex: 1 1 auto; min-width: 0; margin: 0 !important; background: transparent !important; border: none !important; padding: 0 !important; border-radius: 0 !important; }
+    .code-act-btn { display: inline-flex; align-items: center; gap: 0.4rem; font-size: 11px; font-weight: 600; color: #71717a; background: #ffffff; border: 1px solid #e4e4e7; border-radius: 0.5rem; padding: 0.3rem 0.65rem; cursor: pointer; transition: all .15s ease; white-space: nowrap; }
+    .code-act-btn:hover { color: #18181b; border-color: #d4d4d8; }
+    .dark .code-act-btn { background: #27272a; border-color: #3f3f46; color: #a1a1aa; }
+    .dark .code-act-btn:hover { color: #f4f4f5; border-color: #52525b; }
+    .code-act-btn.copied { color: #059669 !important; border-color: #a7f3d0 !important; }
+    .dark .code-act-btn.copied { color: #34d399 !important; border-color: #065f46 !important; }
+    .code-act-btn.run { color: #059669; border-color: #a7f3d0; }
+    .dark .code-act-btn.run { color: #34d399; border-color: #065f46; }
     .katex-display { overflow-x: auto; overflow-y: hidden; padding: 0.35rem 0; }
     .meta-pill { display: inline-flex; align-items: center; gap: 0.375rem; font-size: 11px; color: #a1a1aa; background: #fafafa; border: 1px solid #f4f4f5; border-radius: 9999px; padding: 0.2rem 0.6rem; }
     .dark .meta-pill { background: #18181b; border-color: #27272a; }
-    .pill-wait { color: #b45309; background: #fffbeb; border-color: #fde68a; }
-    .dark .pill-wait { color: #fbbf24; background: rgba(120,53,15,.25); border-color: rgba(251,191,36,.25); }
     .pills:empty { display: none; }
     .source-card { display: flex; align-items: center; gap: 0.5rem; background: #fafafa; border: 1px solid #f0f0f1; border-radius: 0.75rem; padding: 0.45rem 0.7rem; transition: all .15s ease; }
     .source-card:hover { border-color: #d4d4d8; background: #fff; transform: translateY(-1px); }
@@ -59,16 +67,14 @@
     .dark .style-active { border-color: #f4f4f5 !important; background: #f4f4f5 !important; color: #18181b !important; }
     .field-err { font-size: 11px; color: #f43f5e; margin-top: 4px; }
     textarea { resize: none; overflow-y: hidden; }
-    @keyframes pulse-dot { 0%, 100% { opacity: 0.2; transform: scale(0.8); } 50% { opacity: 1; transform: scale(1.2); } }
-    .animate-pulse-dot { animation: pulse-dot 1.5s infinite ease-in-out; }
-    .dot-flashing { position: relative; width: 6px; height: 6px; border-radius: 5px; background-color: #a1a1aa; color: #a1a1aa; animation: dot-flashing 1s infinite linear alternate; animation-delay: 0.5s; }
-    .dot-flashing::before, .dot-flashing::after { content: ''; display: inline-block; position: absolute; top: 0; }
-    .dot-flashing::before { left: -12px; width: 6px; height: 6px; border-radius: 5px; background-color: #a1a1aa; animation: dot-flashing 1s infinite alternate; animation-delay: 0s; }
-    .dot-flashing::after { left: 12px; width: 6px; height: 6px; border-radius: 5px; background-color: #a1a1aa; animation: dot-flashing 1s infinite alternate; animation-delay: 1s; }
-    @keyframes dot-flashing { 0% { background-color: #a1a1aa; } 50%, 100% { background-color: #e4e4e7; } }
+    .thinking-pill { position: relative; overflow: hidden; display: inline-flex; align-items: center; gap: 0.5rem; background: #f4f4f5; border: 1px solid #e4e4e7; border-radius: 9999px; padding: 0.45rem 1rem; font-size: 0.8125rem; font-weight: 500; color: #3f3f46; }
+    .dark .thinking-pill { background: #18181b; border-color: #27272a; color: #d4d4d8; }
+    .thinking-pill > *:not(.sweep) { position: relative; z-index: 1; }
+    .thinking-pill .sweep { position: absolute; top: -10%; bottom: -10%; left: 0; width: 45%; pointer-events: none; background: linear-gradient(90deg, transparent, rgba(99,102,241,0.16), rgba(255,255,255,0.7), transparent); transform: translateX(-140%); animation: think-sweep 2.6s ease-in-out infinite; }
+    .dark .thinking-pill .sweep { background: linear-gradient(90deg, transparent, rgba(99,102,241,0.22), rgba(255,255,255,0.14), transparent); }
+    @keyframes think-sweep { 0% { transform: translateX(-140%); opacity: 0; } 12% { opacity: 1; } 55% { transform: translateX(280%); opacity: 0; } 100% { transform: translateX(280%); opacity: 0; } }
     @keyframes slide-in { from { transform: translateX(100%); } to { transform: translateX(0); } }
     .animate-slide-in { animation: slide-in 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-    .blur-bg { filter: blur(8px) brightness(0.95); transition: filter 0.3s ease; pointer-events: none; }
     @keyframes shake { 10%, 90% { transform: translateX(-1px); } 20%, 80% { transform: translateX(2px); } 30%, 50%, 70% { transform: translateX(-4px); } 40%, 60% { transform: translateX(4px); } }
     .animate-shake { animation: shake 0.5s ease; }
     @keyframes msg-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
@@ -81,7 +87,6 @@
 
   <div id="appContainer" class="flex w-full h-full transition-all duration-300">
 
-    <!-- LEFT SIDEBAR -->
     <aside id="sidebar" class="w-64 bg-zinc-50 dark:bg-zinc-900 border-r border-zinc-200 dark:border-zinc-800 flex flex-col justify-between transition-all duration-300 z-20 flex-shrink-0">
       <div class="p-3 flex flex-col h-full">
         <div class="flex items-center justify-between mb-3">
@@ -124,7 +129,6 @@
       </div>
     </aside>
 
-    <!-- MAIN CHAT AREA -->
     <main class="flex-1 flex flex-col h-full relative overflow-hidden bg-white dark:bg-zinc-950">
       <header class="h-14 px-4 flex items-center justify-between bg-white dark:bg-zinc-950 z-10 sticky top-0 border-b border-zinc-100 dark:border-zinc-800">
         <div class="flex items-center space-x-3 relative">
@@ -202,6 +206,9 @@
                 <i class="fa-solid fa-file-pen text-zinc-700 dark:text-zinc-300 mr-1.5"></i> Write a professional email
               </button>
               <button class="prompt-pill px-3.5 py-2 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800 rounded-full text-xs text-zinc-700 dark:text-zinc-300 transition shadow-sm">
+                <i class="fa-solid fa-palette text-pink-500 mr-1.5"></i> Create an image of a mountain lake
+              </button>
+              <button class="prompt-pill px-3.5 py-2 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800 rounded-full text-xs text-zinc-700 dark:text-zinc-300 transition shadow-sm">
                 <i class="fa-solid fa-heart-pulse text-rose-500 mr-1.5"></i> First aid for bleeding & cuts
               </button>
               <button class="prompt-pill px-3.5 py-2 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800 rounded-full text-xs text-zinc-700 dark:text-zinc-300 transition shadow-sm">
@@ -233,6 +240,14 @@
 
       <div class="px-4 pb-6 pt-2 bg-white dark:bg-zinc-950 w-full max-w-3xl mx-auto relative">
         <div id="inputWrapper" class="bg-zinc-50 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 rounded-3xl shadow-sm focus-within:border-zinc-500 transition-all flex flex-col">
+          <div id="replyBar" class="hidden items-center gap-2.5 px-4 py-2 border-b border-zinc-200 dark:border-zinc-700">
+            <i class="fa-solid fa-reply text-zinc-400 text-xs flex-shrink-0"></i>
+            <div class="flex-1 min-w-0 text-left">
+              <div class="text-[10px] font-semibold text-zinc-500 uppercase tracking-wide">Replying to <span id="replyTargetName">Omni</span></div>
+              <div id="replyTargetText" class="text-xs text-zinc-400 truncate"></div>
+            </div>
+            <button id="cancelReplyBtn" type="button" title="Cancel reply" class="text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 w-7 h-7 rounded-full hover:bg-zinc-200 dark:hover:bg-zinc-800 flex items-center justify-center flex-shrink-0 transition"><i class="fa-solid fa-xmark text-xs"></i></button>
+          </div>
           <div id="attachmentPreviews" class="flex flex-wrap gap-2 px-4 pt-3 hidden"></div>
           <div class="flex items-center p-2 px-3 relative">
             <label class="cursor-pointer text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200 w-9 h-9 rounded-full flex items-center justify-center hover:bg-zinc-200 dark:hover:bg-zinc-800 transition mr-1 flex-shrink-0" title="Attach file">
@@ -302,7 +317,6 @@
     </main>
   </div>
 
-  <!-- CODE SANDBOX MODAL -->
   <div id="sandboxModal" class="fixed inset-0 bg-zinc-950/60 backdrop-blur-sm z-[80] flex items-center justify-center hidden opacity-0 transition-opacity duration-300">
     <div class="bg-white dark:bg-zinc-900 rounded-3xl shadow-2xl w-full max-w-4xl h-[80vh] flex flex-col overflow-hidden border border-zinc-200 dark:border-zinc-800 transform scale-95 transition-transform duration-300" id="sandboxModalInner">
       <div class="px-6 py-4 border-b border-zinc-200 dark:border-zinc-800 flex items-center justify-between bg-zinc-50 dark:bg-zinc-900">
@@ -318,7 +332,6 @@
     </div>
   </div>
 
-  <!-- PROFILE MODAL -->
   <div id="profileModal" class="fixed inset-0 z-50 flex items-center justify-center bg-zinc-900/60 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300">
     <div class="bg-white dark:bg-zinc-900 rounded-3xl shadow-2xl w-full max-w-md p-8 border border-zinc-200 dark:border-zinc-800 transform scale-95 transition-transform duration-300" id="profileModalInner">
       <div class="flex items-start justify-between mb-4">
@@ -359,8 +372,7 @@
     </div>
   </div>
 
-  <!-- AUTH MODAL -->
-  <div id="authOverlay" class="fixed inset-0 z-50 flex items-center justify-center bg-white/90 dark:bg-zinc-950/90 backdrop-blur-md transition-opacity duration-500">
+  <div id="authOverlay" class="fixed inset-0 z-50 flex items-center justify-center bg-white/60 dark:bg-zinc-950/60 backdrop-blur-[2px] transition-opacity duration-500">
     <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl shadow-2xl w-full max-w-md p-10 text-center relative">
       <div class="w-16 h-16 rounded-full bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 flex items-center justify-center mx-auto mb-6 shadow-md">
         <svg class="w-8 h-8" viewBox="0 0 32 32" fill="none">
@@ -383,14 +395,13 @@
         <span>OR</span>
         <span class="h-px bg-zinc-200 dark:bg-zinc-800 flex-1"></span>
       </div>
-      <button onclick="simulateGoogleLogin(this)" id="googleBtn" class="mt-6 w-full py-3 bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-750 text-zinc-700 dark:text-zinc-200 font-semibold text-sm rounded-xl transition flex items-center justify-center space-x-3 shadow-sm">
+      <button onclick="googleLogin(this)" id="googleBtn" class="mt-6 w-full py-3 bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-750 text-zinc-700 dark:text-zinc-200 font-semibold text-sm rounded-xl transition flex items-center justify-center space-x-3 shadow-sm">
         <i class="fa-brands fa-google text-lg text-zinc-900 dark:text-zinc-100"></i>
         <span>Continue with Google</span>
       </button>
     </div>
   </div>
 
-  <!-- PRICING / UPGRADE MODAL -->
   <div id="pricingModal" class="fixed inset-0 z-50 flex items-center justify-center bg-zinc-900/60 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300 p-4">
     <div class="bg-white dark:bg-zinc-900 rounded-3xl shadow-2xl w-full max-w-5xl max-h-[90vh] overflow-hidden transform scale-95 transition-transform duration-300 border border-zinc-200 dark:border-zinc-800 flex flex-col" id="pricingModalInner">
       <div class="relative bg-white dark:bg-zinc-900 px-8 pt-6 pb-5 text-center border-b border-zinc-100 dark:border-zinc-800 flex-shrink-0">
@@ -538,7 +549,6 @@
     </div>
   </div>
 
-  <!-- ADMIN DASHBOARD -->
   <div id="adminPortal" class="fixed inset-0 bg-zinc-900/60 backdrop-blur-sm z-[90] flex justify-end hidden">
     <div class="bg-white dark:bg-zinc-900 w-full max-w-4xl h-full flex flex-col shadow-2xl border-l border-zinc-200 dark:border-zinc-800 animate-slide-in">
       <div class="px-6 py-4 border-b border-zinc-200 dark:border-zinc-800 flex items-center justify-between bg-zinc-900 text-white">
@@ -548,18 +558,10 @@
         </div>
         <button id="closeAdminPortalBtn" class="text-zinc-400 hover:text-white transition"><i class="fa-solid fa-xmark text-xl"></i></button>
       </div>
-      <!-- Cloud sync strip -->
-      <div class="px-5 py-2 border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 flex items-center gap-3 flex-wrap">
-        <div class="flex items-center gap-1.5 text-[11px] text-zinc-500">
-          <span id="cloudStatusDot" class="w-2 h-2 rounded-full bg-zinc-500"></span>
-          <span id="cloudStatusText">Local only</span>
-        </div>
-        <button onclick="copySyncCode()" class="text-[11px] text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200 transition" title="Copy this device's sync code"><i class="fa-regular fa-copy"></i> Copy code</button>
-        <button onclick="Cloud.pullAndMerge(); showToast('Synced', 'fa-rotate')" class="text-[11px] text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200 transition" title="Sync now"><i class="fa-solid fa-rotate"></i> Sync</button>
-        <div class="flex items-center gap-1.5 ml-auto">
-          <input id="linkCodeInput" placeholder="Paste a sync code to link this device" class="w-56 px-2.5 py-1 bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg text-[11px] text-zinc-700 dark:text-zinc-200 focus:outline-none focus:ring-1 focus:ring-zinc-500">
-          <button onclick="linkCloudFromInput()" class="px-2.5 py-1 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 rounded-lg text-[11px] font-semibold">Link</button>
-        </div>
+      <div class="px-5 py-2 border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 flex items-center gap-2">
+        <span id="cloudStatusDot" class="w-2 h-2 rounded-full bg-zinc-400 flex-shrink-0"></span>
+        <span id="cloudStatusText" class="text-[11px] text-zinc-500 font-medium">Local only</span>
+        <span id="cloudStatusHint" class="text-[10px] text-zinc-400 ml-auto truncate"></span>
       </div>
       <div class="flex-1 flex overflow-hidden">
         <div class="w-72 border-r border-zinc-200 dark:border-zinc-800 flex flex-col bg-zinc-50 dark:bg-zinc-950">
@@ -583,16 +585,33 @@
     </div>
   </div>
 
-  <!-- TOASTS -->
   <div id="toastContainer" class="fixed bottom-24 left-1/2 -translate-x-1/2 z-[100] flex flex-col items-center gap-2 pointer-events-none"></div>
 
   <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 
   <script>
     const UNSPLASH_ACCESS_KEY = 'VXLXaULpzheiX2lmfF4NK6cc2n0F5-AAuPudKA-FBfQ';
     const AI_AVATAR_SVG = '<svg class="w-4 h-4" viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="14" stroke="currentColor" stroke-width="2.5"/><path d="M16 6C10.4772 6 6 10.4772 6 16C6 21.5228 10.4772 26 16 26" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><circle cx="16" cy="16" r="5" fill="currentColor"/></svg>';
     const IMAGE_GEN_MIN_MS = 10000, IMAGE_GEN_MAX_MS = 20000;
+    const HANDOFF_TIMEOUT_MS = 5 * 60 * 1000;
+    const HANDOFF_TIMEOUT_MSG = "I couldn't generate a response. Please try again later — or rephrase the question and give it another shot.";
+
+    // ==== YOUR FIREBASE CONFIG (baked in) ====
+    const FIREBASE_CONFIG = {
+      apiKey: "AIzaSyBWamkG0fbI9e5YVRuoYjzZxd_73pSVcwo",
+      authDomain: "omni-ai-73d91.firebaseapp.com",
+      databaseURL: "https://omni-ai-73d91-default-rtdb.firebaseio.com",
+      projectId: "omni-ai-73d91",
+      storageBucket: "omni-ai-73d91.firebasestorage.app",
+      messagingSenderId: "258510850761",
+      appId: "1:258510850761:web:b7e1e91be18722037d1b18",
+      measurementId: "G-L0S9DKT7FS"
+    };
+    const ROOM_KEY = 'omni-73d91-main';
 
     // --- HELPERS ---
     const sleep = (ms) => new Promise(r => setTimeout(r, ms));
@@ -613,8 +632,8 @@
       t.className = 'pointer-events-auto flex items-center gap-2 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs font-semibold px-4 py-2.5 rounded-full shadow-lg transition-all duration-300';
       t.innerHTML = '<i class="fa-solid ' + (icon || 'fa-circle-check') + '"></i><span>' + escapeHtml(msg) + '</span>';
       c.appendChild(t);
-      setTimeout(() => { t.style.opacity = '0'; t.style.transform = 'translateY(8px)'; }, 2100);
-      setTimeout(() => t.remove(), 2500);
+      setTimeout(() => { t.style.opacity = '0'; t.style.transform = 'translateY(8px)'; }, 2400);
+      setTimeout(() => t.remove(), 2800);
     }
 
     // --- THEME ---
@@ -630,20 +649,148 @@
       document.getElementById('themeIcon').className = savedTheme === 'dark' ? 'fa-solid fa-sun text-sm text-amber-400' : 'fa-solid fa-moon text-sm';
     }
 
+    // --- STATE ---
+    let state = {
+      chats: (function () { try { const c = JSON.parse(localStorage.getItem('omni_chats_v19')); return Array.isArray(c) ? c : []; } catch (e) { return []; } })(),
+      currentChatId: null, pendingAttachments: [], searchQuery: '', adminSelectedChatId: null,
+      isGenerating: false, stopRequested: false, thinkingIn: null, replyTo: null,
+      persona: (function () { try { return localStorage.getItem('omni_persona') || 'default'; } catch (e) { return 'default'; } })()
+    };
+
+    const sidebar = document.getElementById('sidebar'), chatHistoryList = document.getElementById('chatHistoryList'),
+      chatMessages = document.getElementById('chatMessages'), welcomeView = document.getElementById('welcomeView'),
+      messagesList = document.getElementById('messagesList'), userInput = document.getElementById('userInput'),
+      sendBtn = document.getElementById('sendBtn'), fileInput = document.getElementById('fileInput'),
+      attachmentPreviews = document.getElementById('attachmentPreviews'), scrollNavOverlay = document.getElementById('scrollNavOverlay');
+
+    // ===================== CLOUD (Firebase Realtime Database) =====================
+    const Cloud = {
+      enabled: false, chatsRef: null, delRef: null, deviceId: null, remoteDeleted: {}, _pushT: null,
+      ls(k, v) { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch (e) { return null; } },
+      init() {
+        this.deviceId = this.ls('omni_device_id');
+        if (!this.deviceId) { this.deviceId = 'dev-' + Math.random().toString(36).slice(2, 8); this.ls('omni_device_id', this.deviceId); }
+        if (typeof firebase === 'undefined' || !FIREBASE_CONFIG.databaseURL) { updateCloudStatus(); return; }
+        try {
+          if (!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
+          const db = firebase.database();
+          this.chatsRef = db.ref(ROOM_KEY + '/chats');
+          this.delRef = db.ref(ROOM_KEY + '/deleted');
+          this.chatsRef.on('value', (snap) => this.onRemote(snap.val()), (err) => { this.enabled = false; updateCloudStatus(err); });
+          this.delRef.on('value', (snap) => { this.remoteDeleted = snap.val() || {}; this.applyRemoteDeletes(); }, () => {});
+          this.enabled = true;
+          this.pushAll();
+          updateCloudStatus();
+        } catch (e) { console.warn('Firebase init failed:', e); updateCloudStatus(); }
+      },
+      pushAll() { if (!this.enabled) return; state.chats.forEach(c => this.pushChat(c)); },
+      pushChat(chat) {
+        if (!this.enabled || !chat) return;
+        if (this.remoteDeleted[chat.id]) return;
+        this.chatsRef.child(chat.id).set(slimChat(chat)).catch(() => {});
+      },
+      removeChat(id) {
+        if (!this.enabled) { try { localStorage.setItem('omni_tomb_' + id, '1'); } catch (e) {} return; }
+        this.remoteDeleted[id] = true;
+        this.chatsRef.child(id).remove().catch(() => {});
+        this.delRef.child(id).set(Date.now()).catch(() => {});
+      },
+      isTombstoned(id) {
+        if (this.remoteDeleted[id]) return true;
+        try { return !!localStorage.getItem('omni_tomb_' + id); } catch (e) { return false; }
+      },
+      queuePush() { if (!this.enabled) return; clearTimeout(this._pushT); this._pushT = setTimeout(() => this.pushAll(), 600); },
+      applyRemoteDeletes() {
+        const before = state.chats.length;
+        state.chats = state.chats.filter(c => !this.remoteDeleted[c.id]);
+        if (state.chats.length !== before) {
+          if (state.currentChatId && !state.chats.find(c => c.id === state.currentChatId)) state.currentChatId = state.chats.length ? state.chats[0].id : null;
+          try { localStorage.setItem('omni_chats_v19', JSON.stringify(state.chats)); } catch (e) {}
+          renderChatHistory(); renderCurrentChat();
+        }
+      },
+      onRemote(remoteObj) {
+        const remote = [];
+        Object.keys(remoteObj || {}).forEach(k => { const c = remoteObj[k]; if (c && c.id && !this.isTombstoned(c.id)) remote.push(c); });
+        let changed = false;
+        try { changed = mergeRemoteChats(remote); } catch (e) { console.warn('merge error', e); }
+        if (changed) {
+          try { localStorage.setItem('omni_chats_v19', JSON.stringify(state.chats)); } catch (e) {}
+          renderChatHistory();
+          if (!state.isGenerating) renderCurrentChat();
+          if (!document.getElementById('adminPortal').classList.contains('hidden')) {
+            renderAdminInbox();
+            showToast('New activity in a session', 'fa-bell');
+          }
+        }
+      }
+    };
+    function slimChats(chats) {
+      return chats.map(c => {
+        const copy = Object.assign({}, c);
+        copy.messages = (c.messages || []).map(m => {
+          const mc = Object.assign({}, m);
+          if (mc.attachments && mc.attachments.length) mc.attachments = mc.attachments.map(a => { const ac = Object.assign({}, a); if (ac.dataUrl && ac.dataUrl.length > 50000) delete ac.dataUrl; return ac; });
+          return mc;
+        });
+        return copy;
+      });
+    }
+    function mergeRemoteChats(remote) {
+      let changed = false;
+      const byId = {};
+      state.chats.forEach(c => byId[c.id] = c);
+      (remote || []).forEach(rc => {
+        if (!rc || !rc.id) return;
+        const local = byId[rc.id];
+        if (!local) { state.chats.push(rc); byId[rc.id] = rc; changed = true; return; }
+        const seen = new Set(local.messages.map(m => m.id));
+        (rc.messages || []).forEach(m => { if (!seen.has(m.id)) { local.messages.push(m); changed = true; } });
+        local.messages.sort((a, b) => (a.time || 0) - (b.time || 0));
+        if (rc.needsHuman) { if (!local.needsHuman) changed = true; local.needsHuman = true; local.pendingQuestionTime = rc.pendingQuestionTime || local.pendingQuestionTime; }
+        if (local.pendingQuestionTime) {
+          const answered = (rc.messages || []).some(m => m.sender === 'ai' && m.operator && (m.time || 0) > local.pendingQuestionTime);
+          if (answered && local.needsHuman) { local.needsHuman = false; changed = true; }
+        }
+        if (rc.pinned && !local.pinned) { local.pinned = true; changed = true; }
+        if (rc.title && rc.title !== 'New chat' && local.title === 'New chat') { local.title = rc.title; changed = true; }
+      });
+      return changed;
+    }
+    function updateCloudStatus(err) {
+      const dot = document.getElementById('cloudStatusDot'), txt = document.getElementById('cloudStatusText'), hint = document.getElementById('cloudStatusHint');
+      if (!dot) return;
+      if (Cloud.enabled) {
+        dot.className = 'w-2 h-2 rounded-full bg-emerald-400 flex-shrink-0';
+        txt.innerText = 'Live sync'; txt.className = 'text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold';
+        hint.innerText = 'room: ' + ROOM_KEY;
+      } else if (err) {
+        dot.className = 'w-2 h-2 rounded-full bg-rose-400 flex-shrink-0';
+        txt.innerText = 'Cloud error'; txt.className = 'text-[11px] text-rose-500 font-semibold';
+        hint.innerText = String(err.code || err.message || 'check databaseURL / rules').substring(0, 60);
+      } else {
+        dot.className = 'w-2 h-2 rounded-full bg-zinc-400 flex-shrink-0';
+        txt.innerText = 'Local only'; txt.className = 'text-[11px] text-zinc-500 font-medium';
+        hint.innerText = '';
+      }
+    }
+
+    function saveState() { try { localStorage.setItem('omni_chats_v19', JSON.stringify(state.chats)); } catch (e) {} Cloud.queuePush(); }
+
     // --- AUTH ---
-    let sessionEmail = null;
+    let sessionEmail = null, fbAuth = null;
     function getEmail() { try { return localStorage.getItem('omni_user_email') || sessionEmail; } catch (e) { return sessionEmail; } }
     function setEmail(v) { sessionEmail = v; try { localStorage.setItem('omni_user_email', v); } catch (e) {} }
     function hideAuth() {
       const o = document.getElementById('authOverlay');
-      document.getElementById('appContainer').classList.remove('blur-bg');
       o.classList.add('opacity-0');
       setTimeout(() => { o.classList.add('hidden'); userInput.focus(); }, 500);
+      renderCurrentChat();
     }
     function checkAuth() {
       initTheme();
-      if (getEmail()) { document.getElementById('authOverlay').classList.add('hidden'); document.getElementById('appContainer').classList.remove('blur-bg'); }
-      else { document.getElementById('appContainer').classList.add('blur-bg'); }
+      if (getEmail()) { document.getElementById('authOverlay').classList.add('hidden'); }
+      else { renderAuthBackdrop(); }
       applyUserCard();
     }
     document.getElementById('authForm').addEventListener('submit', function (e) {
@@ -660,17 +807,81 @@
         btn.disabled = false; btn.innerText = 'Continue with Email';
       }, 700);
     });
-    function simulateGoogleLogin(btn) {
+    async function googleLogin(btn) {
+      const restore = () => { btn.disabled = false; btn.innerHTML = '<i class="fa-brands fa-google text-lg text-zinc-900 dark:text-zinc-100"></i><span>Continue with Google</span>'; };
+      if (!fbAuth) {
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i><span>Signing in with Google...</span>';
+        setTimeout(() => { setEmail('user@gmail.com'); applyUserCard(); hideAuth(); updateWelcomeHeading(); restore(); }, 900);
+        return;
+      }
       btn.disabled = true;
-      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i><span>Signing in with Google...</span>';
-      setTimeout(() => {
-        setEmail('user@gmail.com');
-        applyUserCard(); hideAuth(); updateWelcomeHeading();
-        btn.disabled = false;
-        btn.innerHTML = '<i class="fa-brands fa-google text-lg text-zinc-900 dark:text-zinc-100"></i><span>Continue with Google</span>';
-      }, 900);
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i><span>Opening Google...</span>';
+      try {
+        const res = await fbAuth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
+        const u = res.user;
+        if (u && u.email) {
+          setEmail(u.email);
+          const p = getProfile();
+          if (!p.name && u.displayName) {
+            try { localStorage.setItem('omni_profile', JSON.stringify({ name: u.displayName, role: p.role || '', style: p.style || 'balanced' })); } catch (e) {}
+          }
+          applyUserCard(); hideAuth(); updateWelcomeHeading();
+          showToast('Signed in as ' + u.email, 'fa-google');
+        }
+      } catch (err) {
+        const code = (err && err.code) || '';
+        let msg = 'Google sign-in failed';
+        if (code === 'auth/unauthorized-domain') msg = 'Domain not authorized — add it in Firebase Console \u2192 Authentication \u2192 Settings \u2192 Authorized domains';
+        else if (code === 'auth/operation-not-allowed') msg = 'Enable Google sign-in: Firebase Console \u2192 Authentication \u2192 Sign-in method';
+        else if (code === 'auth/popup-blocked') msg = 'Popup blocked — allow popups for this site';
+        else if (code === 'auth/popup-closed-by-user') msg = null;
+        if (msg) showToast(msg, 'fa-triangle-exclamation');
+      }
+      restore();
     }
-    function logoutUser() { try { localStorage.removeItem('omni_user_email'); } catch (e) {} sessionEmail = null; location.reload(); }
+    function watchFirebaseAuth() {
+      try {
+        if (typeof firebase === 'undefined' || !firebase.apps.length) return;
+        fbAuth = firebase.auth();
+        fbAuth.onAuthStateChanged(function (u) {
+          if (u && u.email) {
+            setEmail(u.email);
+            applyUserCard();
+            const o = document.getElementById('authOverlay');
+            if (!o.classList.contains('hidden')) { hideAuth(); updateWelcomeHeading(); }
+          }
+        });
+      } catch (e) {}
+    }
+    function logoutUser() {
+      try { if (fbAuth) fbAuth.signOut().catch(function () {}); } catch (e) {}
+      try { localStorage.removeItem('omni_user_email'); } catch (e) {}
+      sessionEmail = null;
+      location.reload();
+    }
+
+    // Demo conversation behind the login screen
+    function renderAuthBackdrop() {
+      if (state.chats.length) { state.currentChatId = state.chats[0].id; renderCurrentChat(); return; }
+      welcomeView.classList.add('hidden');
+      messagesList.classList.remove('hidden');
+      messagesList.innerHTML = '';
+      const demo = [
+        { sender: 'user', text: 'Solve x^2 - 5x + 6 = 0' },
+        { sender: 'ai', text: tryMath('solve x^2 - 5x + 6 = 0') || '' },
+        { sender: 'user', text: 'Write me a Python script' },
+        { sender: 'ai', text: PRO_UPSELL },
+        { sender: 'user', text: 'Tell me a joke' },
+        { sender: 'ai', text: "Why don't scientists trust atoms? Because they make up everything." }
+      ];
+      demo.forEach((m, i) => {
+        const msg = { id: 'demo-' + i, sender: m.sender, text: m.text, attachments: [], time: Date.now() };
+        if (m.sender === 'user') messagesList.appendChild(buildUserMessage(msg));
+        else { const el = buildAiMessage(msg); messagesList.appendChild(el); finalizeAiMessage(el, msg, false); }
+      });
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
 
     // --- PROFILE & MEMORY ---
     function getProfile() { try { return JSON.parse(localStorage.getItem('omni_profile')) || {}; } catch (e) { return {}; } }
@@ -806,12 +1017,7 @@
 
     // --- PRICING & CHECKOUT ---
     const PLANS = { pro: { name: 'Omni Pro', monthly: 20, yearlyPerMo: 16 }, max: { name: 'Omni Max', monthly: 40, yearlyPerMo: 32 } };
-    const DECLINES = [
-      { title: 'Your card was declined.', code: 'card_declined', msg: 'Your bank declined this payment without giving a reason. Try a different card, or contact your bank to authorize the charge.' },
-      { title: 'Insufficient funds.', code: 'insufficient_funds', msg: "This card doesn't have enough available balance to cover the total. Try another payment method." },
-      { title: 'Card declined by issuer.', code: 'do_not_honor', msg: 'The issuing bank returned a do_not_honor response for this card. You can try again or use a different card.' },
-      { title: 'Transaction blocked.', code: 'fraudulent', msg: 'Our payment processor flagged this transaction as high-risk and blocked it. Contact your bank if you believe this is a mistake.' }
-    ];
+    const DECLINE = { title: 'Payments are temporarily unavailable.', code: 'provider_outage', msg: 'Our payment system provider is currently down. Please try again later or contact support — we will get you upgraded as soon as payments are back online.' };
     let billingCycle = 'monthly', selectedPlan = 'pro', payAttempts = 0;
     const payLock = { active: false, until: 0, timer: null };
     function openPricingModal() { const m = document.getElementById('pricingModal'); m.classList.remove('hidden'); setTimeout(() => m.classList.remove('opacity-0'), 10); renderPrices(); }
@@ -927,13 +1133,13 @@
       btn.disabled = on || payLock.active;
       document.getElementById('paySpinner').classList.toggle('hidden', !on);
       document.getElementById('payLockIcon').classList.toggle('hidden', on);
-      if (on) document.getElementById('payButtonText').innerText = 'Processing...';
+      if (on) document.getElementById('payButtonText').innerText = 'Contacting payment provider...';
       else if (!payLock.active) renderCheckoutSummary();
     }
-    function showDecline(d) {
-      document.getElementById('declineTitle').innerText = d.title;
-      document.getElementById('declineCode').innerText = d.code;
-      document.getElementById('declineMsg').innerText = d.msg;
+    function showDecline() {
+      document.getElementById('declineTitle').innerText = DECLINE.title;
+      document.getElementById('declineCode').innerText = DECLINE.code;
+      document.getElementById('declineMsg').innerText = DECLINE.msg;
       document.getElementById('declineBanner').classList.remove('hidden');
     }
     function hideDeclineBanner() { document.getElementById('declineBanner').classList.add('hidden'); }
@@ -944,17 +1150,12 @@
         const left = Math.max(0, Math.ceil((payLock.until - Date.now()) / 1000));
         if (left <= 0) {
           clearInterval(payLock.timer); payLock.active = false; payAttempts = 0;
-          document.getElementById('declineTitle').innerText = 'You can try again now.';
-          document.getElementById('declineCode').innerText = 'cooldown_ended';
-          document.getElementById('declineMsg').innerText = 'The temporary lock has lifted. You may attempt payment again.';
+          document.getElementById('payButtonText').innerText = 'Pay';
           document.getElementById('payButton').disabled = false;
           renderCheckoutSummary();
           return;
         }
         document.getElementById('payButtonText').innerText = 'Locked — retry in ' + left + 's';
-        document.getElementById('declineTitle').innerText = 'Too many failed attempts.';
-        document.getElementById('declineCode').innerText = 'rate_limited';
-        document.getElementById('declineMsg').innerText = 'For your security, checkout is temporarily locked. Please wait ' + left + ' seconds before trying again.';
       }, 500);
     }
     function handlePaySubmit(e) {
@@ -965,11 +1166,11 @@
       setTimeout(() => {
         setProcessing(false);
         payAttempts++;
-        showDecline(DECLINES[(payAttempts - 1) % DECLINES.length]);
+        showDecline();
         const form = document.getElementById('paymentForm');
         form.classList.remove('animate-shake'); void form.offsetWidth; form.classList.add('animate-shake');
         if (payAttempts >= 3) lockCheckout();
-      }, 1500 + Math.random() * 1000);
+      }, 1800 + Math.random() * 1200);
     }
 
     // --- EXPORT ---
@@ -1002,9 +1203,10 @@
       });
     })();
 
-    // --- ADMIN PORTAL TRIGGER ---
+    // --- ADMIN TRIGGER + KEYBOARD ---
     let keyBuffer = '';
     document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && state.replyTo) { cancelReply(); return; }
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); createNewChat(); return; }
       if (e.key.length === 1 && document.getElementById('authOverlay').classList.contains('hidden')) {
         keyBuffer += e.key.toLowerCase();
@@ -1024,126 +1226,6 @@
       alert('Grammar checked & polished successfully!');
     }
 
-    // --- STATE ---
-    let state = {
-      chats: (function () { try { const c = JSON.parse(localStorage.getItem('omni_chats_v19')); return Array.isArray(c) ? c : []; } catch (e) { return []; } })(),
-      currentChatId: null, pendingAttachments: [], searchQuery: '', adminSelectedChatId: null,
-      isGenerating: false, stopRequested: false,
-      persona: (function () { try { return localStorage.getItem('omni_persona') || 'default'; } catch (e) { return 'default'; } })()
-    };
-
-    const sidebar = document.getElementById('sidebar'), chatHistoryList = document.getElementById('chatHistoryList'),
-      chatMessages = document.getElementById('chatMessages'), welcomeView = document.getElementById('welcomeView'),
-      messagesList = document.getElementById('messagesList'), userInput = document.getElementById('userInput'),
-      sendBtn = document.getElementById('sendBtn'), fileInput = document.getElementById('fileInput'),
-      attachmentPreviews = document.getElementById('attachmentPreviews'), scrollNavOverlay = document.getElementById('scrollNavOverlay');
-
-    // ===================== CLOUD SYNC (cross-device admin) =====================
-    // Uses jsonblob.com — a free, keyless JSON store. Each browser gets a "sync code"
-    // (blob id). Paste that code into the admin portal on any other device to link them.
-    const Cloud = {
-      BASE: 'https://jsonblob.com/api/jsonBlob',
-      id: null, deviceId: null, enabled: false, _pt: null, _pushT: null, _pulling: false,
-      ls(k, v) { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch (e) { return null; } },
-      init() {
-        this.deviceId = this.ls('omni_device_id');
-        if (!this.deviceId) { this.deviceId = 'dev-' + Math.random().toString(36).slice(2, 8); this.ls('omni_device_id', this.deviceId); }
-        this.id = this.ls('omni_cloud_id');
-        if (this.id) { this.enabled = true; this.startPolling(); updateCloudStatus(); this.pullAndMerge(); }
-        else this.create();
-      },
-      async create() {
-        try {
-          const res = await fetch(this.BASE, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: JSON.stringify({ v: 2, updatedAt: Date.now(), chats: slimChats(state.chats) }) });
-          const loc = res.headers.get('Location');
-          if (res.ok && loc) { this.id = loc.split('/').pop(); this.ls('omni_cloud_id', this.id); this.enabled = true; this.startPolling(); updateCloudStatus(); }
-        } catch (e) { /* offline or blocked — stays local-only */ }
-      },
-      link(code) {
-        code = String(code || '').trim().split('/').pop();
-        if (!/^[a-zA-Z0-9-]{6,}$/.test(code)) return showToast('That sync code does not look right', 'fa-triangle-exclamation');
-        this.ls('omni_cloud_id', code); this.id = code; this.enabled = true;
-        this.startPolling(); updateCloudStatus(); this.pullAndMerge();
-        showToast('Linked to cloud sync', 'fa-cloud');
-      },
-      startPolling() {
-        if (this._pt) return;
-        this._pt = setInterval(() => { if (document.visibilityState === 'visible' && !this._pulling) this.pullAndMerge(); }, 5000);
-      },
-      queuePush() { if (!this.enabled) return; clearTimeout(this._pushT); this._pushT = setTimeout(() => this.push(), 700); },
-      async push() {
-        if (!this.enabled || this._pulling) return;
-        try { await fetch(this.BASE + '/' + this.id, { method: 'PUT', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: JSON.stringify({ v: 2, updatedAt: Date.now(), chats: slimChats(state.chats) }) }); } catch (e) {}
-      },
-      async pullAndMerge() {
-        if (!this.enabled || this._pulling) return;
-        this._pulling = true;
-        try {
-          const r = await fetch(this.BASE + '/' + this.id, { headers: { 'Accept': 'application/json' } });
-          if (r.ok) {
-            const data = await r.json();
-            const beforeWaiting = new Set(state.chats.filter(c => c.needsHuman).map(c => c.id));
-            if (data && Array.isArray(data.chats) && mergeRemoteChats(data.chats)) {
-              try { localStorage.setItem('omni_chats_v19', JSON.stringify(state.chats)); } catch (e) {}
-              renderChatHistory();
-              if (!state.isGenerating) renderCurrentChat();
-              const adminOpen = !document.getElementById('adminPortal').classList.contains('hidden');
-              if (adminOpen) renderAdminInbox();
-              const newlyWaiting = state.chats.filter(c => c.needsHuman && !beforeWaiting.has(c.id));
-              if (newlyWaiting.length && adminOpen) showToast('New question waiting for a human', 'fa-bell');
-              this.push();
-            }
-          }
-        } catch (e) {}
-        this._pulling = false;
-      }
-    };
-    function slimChats(chats) {
-      return chats.map(c => {
-        const copy = Object.assign({}, c);
-        copy.messages = (c.messages || []).map(m => {
-          const mc = Object.assign({}, m);
-          if (mc.attachments && mc.attachments.length) mc.attachments = mc.attachments.map(a => { const ac = Object.assign({}, a); if (ac.dataUrl && ac.dataUrl.length > 50000) delete ac.dataUrl; return ac; });
-          return mc;
-        });
-        return copy;
-      });
-    }
-    function mergeRemoteChats(remote) {
-      let changed = false;
-      const byId = {};
-      state.chats.forEach(c => byId[c.id] = c);
-      (remote || []).forEach(rc => {
-        if (!rc || !rc.id) return;
-        const local = byId[rc.id];
-        if (!local) { state.chats.push(rc); byId[rc.id] = rc; changed = true; return; }
-        const seen = new Set(local.messages.map(m => m.id));
-        (rc.messages || []).forEach(m => { if (!seen.has(m.id)) { local.messages.push(m); changed = true; } });
-        local.messages.sort((a, b) => (a.time || 0) - (b.time || 0));
-        if (rc.needsHuman) { if (!local.needsHuman) changed = true; local.needsHuman = true; local.pendingQuestionTime = rc.pendingQuestionTime || local.pendingQuestionTime; }
-        if (local.pendingQuestionTime) {
-          const answered = (rc.messages || []).some(m => m.sender === 'ai' && m.operator && (m.time || 0) > local.pendingQuestionTime);
-          if (answered && local.needsHuman) { local.needsHuman = false; changed = true; }
-        }
-        if (rc.pinned && !local.pinned) { local.pinned = true; changed = true; }
-        if (rc.title && rc.title !== 'New chat' && local.title === 'New chat') { local.title = rc.title; changed = true; }
-      });
-      return changed;
-    }
-    function updateCloudStatus() {
-      const dot = document.getElementById('cloudStatusDot'), txt = document.getElementById('cloudStatusText');
-      if (!dot || !txt) return;
-      if (Cloud.enabled) { dot.className = 'w-2 h-2 rounded-full bg-emerald-400'; txt.innerText = 'Live sync \u00b7 ' + String(Cloud.id).slice(-6); txt.title = Cloud.id; }
-      else { dot.className = 'w-2 h-2 rounded-full bg-zinc-500'; txt.innerText = 'Local only'; }
-    }
-    function copySyncCode() {
-      if (!Cloud.id) return showToast('No sync code yet — connect to the internet and reload', 'fa-triangle-exclamation');
-      navigator.clipboard.writeText(Cloud.id).then(() => showToast('Sync code copied — paste it in the admin portal on another device')).catch(() => {});
-    }
-    function linkCloudFromInput() { Cloud.link(document.getElementById('linkCodeInput').value); }
-    window.addEventListener('online', () => { if (!Cloud.enabled) Cloud.create(); });
-
-    function saveState() { try { localStorage.setItem('omni_chats_v19', JSON.stringify(state.chats)); } catch (e) {} Cloud.queuePush(); }
     function scrollToOldest() { chatMessages.scrollTo({ top: 0, behavior: 'smooth' }); }
     function scrollToLatest() { chatMessages.scrollTo({ top: chatMessages.scrollHeight, behavior: 'smooth' }); }
     function isNearBottom() { return chatMessages.scrollHeight - chatMessages.scrollTop - chatMessages.clientHeight < 130; }
@@ -1154,6 +1236,7 @@
       document.getElementById('expandSidebarBtn').addEventListener('click', () => { sidebar.classList.remove('-ml-64'); document.getElementById('expandSidebarBtn').classList.add('hidden'); });
       document.getElementById('newChatBtn').addEventListener('click', () => { createNewChat(); userInput.focus(); });
       document.getElementById('chatSearchInput').addEventListener('input', (e) => { state.searchQuery = e.target.value.toLowerCase(); renderChatHistory(); });
+      document.getElementById('cancelReplyBtn').addEventListener('click', cancelReply);
       userInput.addEventListener('input', function () {
         this.style.height = 'auto';
         this.style.height = Math.min(this.scrollHeight, 192) + 'px';
@@ -1198,7 +1281,9 @@
       event.stopPropagation();
       state.chats = state.chats.filter(c => c.id !== chatId);
       if (state.currentChatId === chatId) state.currentChatId = state.chats.length > 0 ? state.chats[0].id : null;
-      saveState(); renderChatHistory(); renderCurrentChat(); showToast('Chat deleted', 'fa-trash-can');
+      Cloud.removeChat(chatId);
+      try { localStorage.setItem('omni_chats_v19', JSON.stringify(state.chats)); } catch (e) {}
+      renderChatHistory(); renderCurrentChat(); showToast('Chat deleted', 'fa-trash-can');
     }
     function togglePinChat(chatId, event) {
       event.stopPropagation();
@@ -1288,6 +1373,25 @@
       historyArea.scrollTop = historyArea.scrollHeight;
     }
 
+    // --- REPLY FEATURE ---
+    function startReply(msg) {
+      state.replyTo = {
+        id: msg.id, sender: msg.sender,
+        text: (msg.text || '').slice(0, 160) || (msg.imageQuery ? '(an image)' : ''),
+        imageQuery: msg.imageQuery || null
+      };
+      renderReplyBar();
+      userInput.focus();
+    }
+    function cancelReply() { state.replyTo = null; renderReplyBar(); }
+    function renderReplyBar() {
+      const bar = document.getElementById('replyBar');
+      if (!state.replyTo) { bar.classList.add('hidden'); bar.classList.remove('flex'); return; }
+      bar.classList.remove('hidden'); bar.classList.add('flex');
+      document.getElementById('replyTargetName').innerText = state.replyTo.sender === 'user' ? 'yourself' : 'Omni';
+      document.getElementById('replyTargetText').innerText = state.replyTo.text || (state.replyTo.imageQuery ? 'an image' : '');
+    }
+
     // --- MESSAGE RENDERING ---
     function renderCurrentChat() {
       const chat = getCurrentChat();
@@ -1315,14 +1419,29 @@
           lastEl = a;
         }
       });
+      if (state.thinkingIn === chat.id) { messagesList.appendChild(buildThinkingPill()); lastEl = null; }
       if (lastEl) lastEl.classList.add('msg-in');
       chatMessages.scrollTop = chatMessages.scrollHeight;
     }
+    function buildReplyQuote(msg) {
+      const q = document.createElement('div');
+      q.className = 'mb-2 pl-2.5 border-l-2 border-zinc-300 dark:border-zinc-600';
+      const who = msg.replyTo.sender === 'user' ? 'You' : 'Omni';
+      q.innerHTML = '<div class="text-[10px] font-bold text-zinc-400 uppercase tracking-wide">' + who + (msg.replyTo.imageQuery ? ' \u00b7 image' : '') + '</div><div class="text-[11px] text-zinc-500 dark:text-zinc-400 truncate max-w-[240px]">' + escapeHtml(msg.replyTo.text || 'an image') + '</div>';
+      return q;
+    }
     function buildUserMessage(msg) {
       const wrap = document.createElement('div');
-      wrap.className = 'flex flex-col items-end';
+      wrap.className = 'group flex flex-col items-end';
+      const act = document.createElement('button');
+      act.className = 'opacity-0 group-hover:opacity-100 text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 w-7 h-7 rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800 flex items-center justify-center transition mb-0.5';
+      act.title = 'Reply';
+      act.innerHTML = '<i class="fa-solid fa-reply text-xs"></i>';
+      act.onclick = () => startReply(msg);
+      wrap.appendChild(act);
       const bubble = document.createElement('div');
       bubble.className = 'max-w-[85%] bg-zinc-100 dark:bg-zinc-800 rounded-2xl rounded-br-md px-4 py-3';
+      if (msg.replyTo) bubble.appendChild(buildReplyQuote(msg));
       if (msg.text) {
         const t = document.createElement('div');
         t.className = 'text-sm text-zinc-900 dark:text-zinc-100 leading-relaxed whitespace-pre-wrap';
@@ -1353,7 +1472,7 @@
     }
     function buildAiMessage(msg) {
       const wrap = document.createElement('div');
-      wrap.className = 'flex gap-3';
+      wrap.className = 'group flex gap-3';
       wrap.id = msg.id;
       const av = document.createElement('div');
       av.className = 'w-8 h-8 rounded-full bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 flex items-center justify-center flex-shrink-0 mt-0.5';
@@ -1389,7 +1508,6 @@
       const words = text.split(/\s+/).length;
       const mins = Math.max(1, Math.ceil(words / 200));
       let pillsHtml = '';
-      if (msg.handoff) pillsHtml += '<span class="meta-pill pill-wait"><i class="fa-regular fa-user-clock"></i>Waiting for human operator</span>';
       if (msg.operator) pillsHtml += '<span class="meta-pill"><i class="fa-solid fa-headset"></i>Human operator</span>';
       if (words >= 20) pillsHtml += '<span class="meta-pill"><i class="fa-solid fa-align-left"></i>' + words + ' words</span><span class="meta-pill"><i class="fa-solid fa-i-cursor"></i>' + text.length + ' chars</span><span class="meta-pill"><i class="fa-regular fa-clock"></i>~' + mins + ' min read</span>';
       if (msg.time) pillsHtml += '<span class="meta-pill">' + formatTime(msg.time) + '</span>';
@@ -1403,6 +1521,9 @@
         b.innerHTML = icon;
         return b;
       };
+      const replyBtn = mkBtn('<i class="fa-solid fa-reply"></i>', 'Reply to this message');
+      replyBtn.onclick = () => startReply(msg);
+      actions.appendChild(replyBtn);
       const copyBtn = mkBtn('<i class="fa-regular fa-copy"></i>', 'Copy response');
       copyBtn.onclick = () => { navigator.clipboard.writeText(msg.text).then(() => showToast('Copied to clipboard', 'fa-clipboard-check')).catch(() => {}); };
       actions.appendChild(copyBtn);
@@ -1444,37 +1565,37 @@
     }
     function enhanceCodeBlocks(container) {
       container.querySelectorAll('pre').forEach(pre => {
-        if (pre.parentElement.classList.contains('code-block')) return;
+        if (pre.closest('.code-block')) return;
         const codeText = pre.innerText;
         const isHtml = /<html|<!doctype|<div|<body|<script/i.test(codeText);
         const wrap = document.createElement('div');
-        wrap.className = 'code-block rounded-lg overflow-hidden border border-zinc-200 dark:border-zinc-800 my-2';
+        wrap.className = 'code-block';
         pre.parentNode.insertBefore(wrap, pre);
-        const bar = document.createElement('div');
-        bar.className = 'flex items-center justify-between px-3 py-1.5 bg-zinc-100 dark:bg-zinc-800 border-b border-zinc-200 dark:border-zinc-800';
-        bar.innerHTML = '<span class="text-[11px] text-zinc-500 font-mono">code</span>';
-        const actions = document.createElement('div');
-        actions.className = 'flex items-center gap-1';
+        const btns = document.createElement('div');
+        btns.className = 'flex flex-col items-stretch gap-1.5 flex-shrink-0 pl-3';
         const copyBtn = document.createElement('button');
-        copyBtn.className = 'text-[11px] text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200 px-2 py-0.5 rounded transition';
-        copyBtn.innerHTML = '<i class="fa-regular fa-copy mr-1"></i>Copy';
+        copyBtn.type = 'button';
+        copyBtn.className = 'code-act-btn';
+        copyBtn.innerHTML = '<i class="fa-regular fa-copy"></i><span>Copy</span>';
         copyBtn.onclick = () => {
           navigator.clipboard.writeText(codeText).then(() => {
-            copyBtn.innerHTML = '<i class="fa-solid fa-check mr-1"></i>Copied';
-            setTimeout(() => { copyBtn.innerHTML = '<i class="fa-regular fa-copy mr-1"></i>Copy'; }, 1500);
+            copyBtn.classList.add('copied');
+            copyBtn.innerHTML = '<i class="fa-solid fa-check"></i><span>Copied</span>';
+            setTimeout(() => { copyBtn.classList.remove('copied'); copyBtn.innerHTML = '<i class="fa-regular fa-copy"></i><span>Copy</span>'; }, 1600);
           }).catch(() => {});
         };
-        actions.appendChild(copyBtn);
+        btns.appendChild(copyBtn);
         if (isHtml) {
           const runBtn = document.createElement('button');
-          runBtn.className = 'text-[11px] text-emerald-600 dark:text-emerald-400 hover:text-emerald-500 px-2 py-0.5 rounded transition font-semibold';
-          runBtn.innerHTML = '<i class="fa-solid fa-play mr-1"></i>Run';
+          runBtn.type = 'button';
+          runBtn.className = 'code-act-btn run';
+          runBtn.innerHTML = '<i class="fa-solid fa-play"></i><span>Run</span>';
           runBtn.onclick = () => runCodeInSandbox(codeText);
-          actions.appendChild(runBtn);
+          btns.appendChild(runBtn);
         }
-        bar.appendChild(actions);
         pre.remove();
-        wrap.appendChild(bar); wrap.appendChild(pre);
+        wrap.appendChild(pre);
+        wrap.appendChild(btns);
       });
     }
     function runCodeInSandbox(code) {
@@ -1534,35 +1655,22 @@
       else { icon.className = 'fa-solid fa-arrow-up'; updateSendState(); }
     }
 
-    // --- SEND / GENERATE / REGENERATE ---
-    function handleSendOrStop() {
-      if (state.isGenerating) { state.stopRequested = true; return; }
-      const text = userInput.value.trim();
-      if (!text && state.pendingAttachments.length === 0) return;
-      sendUserMessage(text, [...state.pendingAttachments]);
-    }
-    function sendUserMessage(text, atts) {
-      let chat = getCurrentChat();
-      if (!chat) { createNewChat(); chat = getCurrentChat(); }
-      chat.messages.push({ id: 'msg-' + Date.now() + '-' + Math.random().toString(36).slice(2, 6), sender: 'user', text: text, attachments: atts, time: Date.now() });
-      if (chat.title === 'New chat' && text) chat.title = makeTitle(text);
-      userInput.value = ''; userInput.style.height = 'auto';
-      state.pendingAttachments = [];
-      renderAttachments(); updateSendState();
-      renderChatHistory(); renderCurrentChat(); saveState();
-      generateAiReply(chat, text, atts);
+    // --- THINKING PILL ---
+    function buildThinkingPill() {
+      const row = document.createElement('div');
+      row.id = 'typingIndicator';
+      row.className = 'flex gap-3';
+      row.innerHTML = '<div class="w-8 h-8 rounded-full bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 flex items-center justify-center flex-shrink-0 mt-0.5">' + AI_AVATAR_SVG + '</div>' +
+        '<div class="flex items-center"><div class="thinking-pill"><span class="sweep"></span><i class="fa-solid fa-brain text-indigo-500 dark:text-indigo-400 text-xs"></i><span>Thinking...</span><i class="fa-solid fa-chevron-down text-[10px] text-zinc-400"></i></div></div>';
+      return row;
     }
     function showTyping() {
-      const t = document.createElement('div');
-      t.id = 'typingIndicator';
-      t.className = 'flex gap-3';
-      t.innerHTML = '<div class="w-8 h-8 rounded-full bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 flex items-center justify-center flex-shrink-0 mt-0.5">' + AI_AVATAR_SVG + '</div><div class="flex items-center h-8"><div class="dot-flashing"></div></div>';
-      messagesList.appendChild(t);
+      messagesList.appendChild(buildThinkingPill());
       chatMessages.scrollTop = chatMessages.scrollHeight;
     }
     function hideTyping() { const t = document.getElementById('typingIndicator'); if (t) t.remove(); }
 
-    // --- IMAGE GENERATION UI ---
+    // --- IMAGE GEN BOX ---
     function buildGenBox() {
       const box = document.createElement('div');
       box.className = 'mt-3 relative rounded-2xl overflow-hidden bg-zinc-950 border border-zinc-800 max-w-md w-full shadow-sm';
@@ -1606,22 +1714,78 @@
       return { box: box, startDots: startDots, stopDots: function () { stopFn(); }, setProgress: function (p) { pill.innerText = p + '%'; } };
     }
 
-    async function generateAiReply(chat, userText, atts) {
+    // --- SEND / GENERATE ---
+    function handleSendOrStop() {
+      if (state.isGenerating) { state.stopRequested = true; return; }
+      const text = userInput.value.trim();
+      if (!text && state.pendingAttachments.length === 0) return;
+      sendUserMessage(text, [...state.pendingAttachments]);
+    }
+    function sendUserMessage(text, atts) {
+      let chat = getCurrentChat();
+      if (!chat) { createNewChat(); chat = getCurrentChat(); }
+      const replyTo = state.replyTo ? { id: state.replyTo.id, sender: state.replyTo.sender, text: state.replyTo.text, imageQuery: state.replyTo.imageQuery } : null;
+      chat.messages.push({ id: 'msg-' + Date.now() + '-' + Math.random().toString(36).slice(2, 6), sender: 'user', text: text, attachments: atts, replyTo: replyTo, time: Date.now() });
+      if (chat.title === 'New chat' && text) chat.title = makeTitle(text);
+      userInput.value = ''; userInput.style.height = 'auto';
+      state.pendingAttachments = [];
+      state.replyTo = null; renderReplyBar();
+      renderAttachments(); updateSendState();
+      renderChatHistory(); renderCurrentChat(); saveState();
+      generateAiReply(chat, text, atts, replyTo);
+    }
+    function getLastImageQuery(chat) {
+      if (!chat) return null;
+      for (let i = chat.messages.length - 1; i >= 0; i--) {
+        if (chat.messages[i].imageQuery) return chat.messages[i].imageQuery;
+      }
+      return null;
+    }
+
+    async function generateAiReply(chat, userText, atts, replyTo) {
       state.isGenerating = true; state.stopRequested = false;
       updateSendIcon();
       showTyping();
       await sleep(thinkModeActive ? 1500 : 600 + Math.random() * 600);
+      const ctx = { replyTo: replyTo || null, lastImageQuery: getLastImageQuery(chat) };
       let result;
-      try { result = await computeResponse(userText, atts); }
+      try { result = await computeResponse(userText, atts, ctx); }
       catch (e) { console.error('Response engine error:', e); result = { text: 'Something glitched on my end while thinking that through — mind trying again?' }; }
-      if (!result || (!result.text && !result.generate)) result = { text: 'Hmm, I came up empty on that one. Try rephrasing?' };
-      // Human handoff: keep "thinking" a while longer before admitting it needs a human
-      if (result.handoff) await sleep(2000 + Math.random() * 1500);
-      hideTyping();
+      if (!result || (!result.text && !result.generate && !result.handoff)) result = { handoff: true };
+
+      // ============ NO ANSWER: Thinking... then give up ============
+      if (result.handoff) {
+        state.thinkingIn = chat.id;
+        chat.needsHuman = true;
+        chat.pendingQuestionTime = Date.now();
+        saveState();
+        renderCurrentChat();
+        const startedAt = Date.now();
+        let outcome = 'timeout';
+        while (Date.now() - startedAt < HANDOFF_TIMEOUT_MS) {
+          if (state.stopRequested) { outcome = 'cancel'; break; }
+          const replied = chat.messages.some(m => m.sender === 'ai' && (m.time || 0) >= startedAt);
+          if (replied) { outcome = 'reply'; break; }
+          await sleep(600);
+        }
+        state.thinkingIn = null;
+        state.isGenerating = false; state.stopRequested = false;
+        updateSendIcon();
+        if (outcome === 'timeout') {
+          chat.needsHuman = false;
+          chat.messages.push({ id: 'msg-' + Date.now() + '-' + Math.random().toString(36).slice(2, 6), sender: 'ai', text: HANDOFF_TIMEOUT_MSG, attachments: [], time: Date.now() });
+        } else if (outcome === 'reply') {
+          chat.needsHuman = false;
+        }
+        saveState();
+        renderCurrentChat();
+        return;
+      }
 
       // ============ IMAGE GENERATION PATH ============
       if (result.generate) {
-        const msg = { id: 'msg-' + Date.now() + '-' + Math.random().toString(36).slice(2, 6), sender: 'ai', text: '', attachments: [], image: null, time: Date.now() };
+        hideTyping();
+        const msg = { id: 'msg-' + Date.now() + '-' + Math.random().toString(36).slice(2, 6), sender: 'ai', text: '', attachments: [], image: null, imageQuery: result.generate, time: Date.now() };
         chat.messages.push(msg);
         renderCurrentChat();
         let el = document.getElementById(msg.id);
@@ -1673,10 +1837,10 @@
         return;
       }
 
-      // ============ TEXT PATH (includes handoff) ============
-      const msg = { id: 'msg-' + Date.now() + '-' + Math.random().toString(36).slice(2, 6), sender: 'ai', text: '', attachments: [], sources: result.sources || null, image: result.image || null, handoff: !!result.handoff, time: Date.now() };
+      // ============ TEXT STREAMING PATH ============
+      hideTyping();
+      const msg = { id: 'msg-' + Date.now() + '-' + Math.random().toString(36).slice(2, 6), sender: 'ai', text: '', attachments: [], sources: result.sources || null, time: Date.now() };
       chat.messages.push(msg);
-      if (result.handoff) { chat.needsHuman = true; chat.pendingQuestionTime = Date.now(); }
       renderCurrentChat();
       const el = document.getElementById(msg.id);
       if (!el) { msg.text = result.text; state.isGenerating = false; updateSendIcon(); saveState(); renderCurrentChat(); return; }
@@ -1706,7 +1870,7 @@
       const prevUser = [...chat.messages.slice(0, idx)].reverse().find(m => m.sender === 'user');
       chat.messages.splice(idx, 1);
       saveState(); renderCurrentChat();
-      if (prevUser) generateAiReply(chat, prevUser.text, prevUser.attachments || []);
+      if (prevUser) generateAiReply(chat, prevUser.text, prevUser.attachments || [], prevUser.replyTo || null);
     }
 
     // ===================== RESPONSE ENGINE =====================
@@ -1724,6 +1888,17 @@
     };
 
     const CRISIS_PATTERNS = [/kill myself/, /suicid/, /want to die/, /end my life/, /end it all/, /don'?t want to (live|be here|exist)/, /no reason to live/, /better off dead/, /hurt myself/, /cut(ting)? myself/, /self[- ]?harm/, /harm myself/, /overdose/];
+
+    const PRO_UPSELL = `To unlock **advanced code generation**, **multi-file software engineering**, and **professional writing assistants**, please upgrade to the Pro model (**Omni Code Pro**).
+
+In the meantime, here is a helpful baseline response to your request:
+
+\`\`\`python
+# Sample response snippet
+print("Hello from Omni AI! Upgrade to Pro for full code generation.")
+\`\`\`
+
+*You can upgrade anytime using the **Upgrade plan** button in the sidebar.*`;
 
     const HEALTH_TOPICS = [
       { kw: [/chest pain/, /heart attack/, /tightness in (my )?chest/], src: [SRC.heart, SRC.nhs, SRC.mayoclinic],
@@ -1786,7 +1961,7 @@ After 48 hours, gentle movement usually helps more than total rest.
 - **Hydrate** — fevers drain fluids fast; water, broth, and electrolyte drinks all count
 - **Rest** — your body is fighting something, let it
 - **Dress light**, keep the room comfortable — don't pile on blankets to "sweat it out"
-- **Acetaminophen or ibuprofen** per package directions can lower it if you're uncomfortable (fever is a defense mechanism, so treating comfort is the goal, not a perfect number)
+- **Acetaminophen or ibuprofen** per package directions can lower it if you're uncomfortable
 
 **See a doctor if:** your fever is above 103°F (39.4°C), lasts more than 3 days, or comes with severe headache, stiff neck, rash, confusion, trouble breathing, or persistent vomiting. **For infants under 3 months with any fever — go to the ER.**` },
       { kw: [/headache/, /migraine/, /head hurts/], src: [SRC.mayoclinic, SRC.nhs],
@@ -1797,7 +1972,7 @@ After 48 hours, gentle movement usually helps more than total rest.
 - OTC pain relievers (ibuprofen, acetaminophen) work best taken *early*
 - Ease off screens for a bit, and watch your posture and caffeine habits
 
-**Go to the ER if:** it's the worst headache of your life and it hit suddenly ("thunderclap"), comes with fever + stiff neck, vision changes, weakness, confusion, or follows a head injury. Those aren't "wait and see" symptoms.` },
+**Go to the ER if:** it's the worst headache of your life and it hit suddenly, comes with fever + stiff neck, vision changes, weakness, confusion, or follows a head injury. Those aren't "wait and see" symptoms.` },
       { kw: [/\bcold\b/, /\bflu\b/, /influenza/, /sore throat/, /cough/, /runny nose/, /congestion/], src: [SRC.cdc, SRC.mayoclinic],
         text: `**Cold vs. flu — and what actually helps**
 
@@ -1805,7 +1980,7 @@ Colds build gradually (runny nose, sore throat, mild fatigue); flu hits hard and
 
 What helps: rest, fluids, warm liquids with honey for cough, a humidifier, and OTC meds for symptoms. Antibiotics do nothing — both are viral.
 
-**See a doctor if:** you have trouble breathing, chest pain, a fever over 3 days, symptoms that improve then suddenly worsen, or you're in a high-risk group (asthma, diabetes, pregnancy, 65+). Antivirals like Tamiflu work best within 48 hours of flu onset.` },
+**See a doctor if:** you have trouble breathing, chest pain, a fever over 3 days, symptoms that improve then suddenly worsen, or you're in a high-risk group (asthma, diabetes, pregnancy, 65+).` },
       { kw: [/\bcpr\b/, /resuscitation/, /stopped breathing/, /unresponsive/], src: [SRC.redcross, SRC.heart],
         text: `**CPR basics — if someone is unresponsive and not breathing normally**
 
@@ -1814,19 +1989,15 @@ What helps: rest, fluids, warm liquids with honey for cough, a humidifier, and O
 3. Push **hard and fast** — about 2 inches deep, 100–120 beats per minute (the tempo of "Stayin' Alive").
 4. **Don't stop** until help arrives, an AED is ready, or the person breathes normally.
 
-If an **AED** is available, turn it on and follow the voice prompts — it's designed for people with zero training.
-
-This is no substitute for a certified course — the Red Cross and AHA offer classes that take just a few hours and genuinely save lives.` },
+If an **AED** is available, turn it on and follow the voice prompts — it's designed for people with zero training.` },
       { kw: [/poison/, /swallowed (something|a|cleaning|chemical)/, /drank (bleach|chemical|cleaning)/], src: [SRC.aapcc, SRC.cdc],
         text: `**Possible poisoning — act fast**
 
-1. **Call Poison Control right now: 1-800-222-1222** (US, free, 24/7). They'll tell you exactly what to do.
+1. **Call Poison Control right now: 1-800-222-1222** (US, free, 24/7).
 2. If the person is unconscious, not breathing, or having seizures — **call 911 first.**
 3. Keep the container or substance label nearby to read to them.
 
-**Do NOT** induce vomiting unless Poison Control specifically tells you to — many substances burn twice on the way back up.
-
-If they got something on skin or in eyes, rinse with cool water for 15+ minutes while you call.` },
+**Do NOT** induce vomiting unless Poison Control specifically tells you to — many substances burn twice on the way back up.` },
       { kw: [/allergic reaction/, /anaphyla/, /bee sting/, /epipen/, /epi-pen/, /swelling.*(throat|tongue|lips)/], src: [SRC.mayoclinic, SRC.nhs],
         text: `**Allergic reactions — mild vs. emergency**
 
@@ -1837,48 +2008,42 @@ If they got something on skin or in eyes, rinse with cool water for 15+ minutes 
 - Hives spreading across the body
 - Dizziness, fainting, rapid weak pulse, vomiting
 
-If there's an **epinephrine auto-injector, use it immediately** — into the outer thigh, through clothing if needed. Then call 911, have them lie flat with legs raised (unless breathing is easier sitting up), and give a second dose after 5–15 minutes if no improvement. Even if symptoms ease after epinephrine, they **must** still go to the ER — reactions can rebound hours later.` },
+If there's an **epinephrine auto-injector, use it immediately** — into the outer thigh, through clothing if needed. Then call 911 and have them lie flat with legs raised. Even if symptoms ease, they **must** still go to the ER — reactions can rebound hours later.` },
       { kw: [/nose ?bleed/, /nose is bleeding/, /bleeding nose/], src: [SRC.mayoclinic, SRC.nhs],
         text: `**Stopping a nosebleed**
 
-1. **Sit and lean slightly forward** — tilting your head back sends blood down the throat (causes nausea and looks scarier than it is).
-2. **Pinch the soft part of the nose** (just below the bony bridge) firmly for a full 10 minutes. Breathe through your mouth.
-3. Repeat once for another 10 minutes if needed. A cold pack on the bridge can help.
-4. For the next 24 hours: no nose-blowing, picking, or heavy lifting.
+1. **Sit and lean slightly forward** — tilting back sends blood down the throat.
+2. **Pinch the soft part of the nose** firmly for a full 10 minutes. Breathe through your mouth.
+3. Repeat once for another 10 minutes if needed.
 
-**Seek care if:** bleeding continues past 20–30 minutes despite pressure, it follows a significant head injury, it's extremely heavy, or it happens with blood-thinning medication.` },
+**Seek care if:** bleeding continues past 20–30 minutes despite pressure, it follows a head injury, or it happens with blood-thinning medication.` },
       { kw: [/dehydrat/, /dehydrated/, /haven'?t drunk water/], src: [SRC.mayoclinic, SRC.cdc],
         text: `**Recovering from dehydration**
 
 Signs: dark urine, dry mouth, headache, dizziness, fatigue.
 
-What to do:
-- Sip fluids steadily rather than chugging — **oral rehydration solutions or sports drinks** replace salts better than plain water
-- Rest in a cool place, and avoid alcohol and caffeine for now
-- Water-rich foods (watermelon, cucumber, soup) count too
+- Sip fluids steadily — **oral rehydration solutions or sports drinks** replace salts better than plain water
+- Rest in a cool place, avoid alcohol and caffeine for now
 
-**Get medical help if:** the person can't keep fluids down, is confused, extremely dizzy, hasn't urinated in 8+ hours, or an infant/elderly person is affected — severe dehydration can need IV fluids.` },
+**Get medical help if:** the person can't keep fluids down, is confused, extremely dizzy, or hasn't urinated in 8+ hours — severe dehydration can need IV fluids.` },
       { kw: [/can'?t sleep/, /insomnia/, /sleep trouble/, /trouble sleeping/, /tired but can'?t sleep/], src: [SRC.sleepfoundation, SRC.nhs],
         text: `**Falling asleep — what actually works**
 
-- **Consistent schedule** — same wake-up time daily, even weekends; it anchors your whole sleep rhythm
+- **Consistent schedule** — same wake-up time daily, even weekends
 - **Screens off an hour before bed** — the light and stimulation both matter
 - **Cool, dark, quiet room** — most people sleep best around 65°F / 18°C
 - **Caffeine cutoff by early afternoon** — it lingers 6+ hours
-- If you're not asleep in ~20 minutes, **get up** and do something boring in dim light; forcing it builds an anxiety loop
+- If you're not asleep in ~20 minutes, **get up** and do something boring in dim light
 
-**Talk to a doctor if:** insomnia lasts more than a few weeks, or you're gasping/snoring awake — sleep apnea is very treatable and very worth catching.` },
+**Talk to a doctor if:** insomnia lasts more than a few weeks, or you're gasping/snoring awake — sleep apnea is very treatable.` },
       { kw: [/back pain/, /back hurts/, /lower back/, /backache/], src: [SRC.mayoclinic, SRC.nhs],
         text: `**Back pain — movement beats bed rest**
 
-- **Keep gently moving** — total rest actually slows recovery; walking and light stretching help
+- **Keep gently moving** — total rest actually slows recovery
 - Alternate **heat and ice** in 15–20 minute blocks
 - OTC pain relievers can take the edge off while it heals
-- Watch posture, and when lifting, hinge at the hips and keep the load close
 
-Most mechanical back pain improves within a few weeks.
-
-**See a doctor promptly if:** there's numbness or tingling in the legs, weakness, loss of bladder/bowel control, fever, unexplained weight loss, or pain after a serious fall — those signs need same-day evaluation.` },
+**See a doctor promptly if:** there's numbness or tingling in the legs, weakness, loss of bladder/bowel control, fever, or pain after a serious fall — those signs need same-day evaluation.` },
       { kw: [/sunburn/], src: [SRC.mayoclinic, SRC.cdc],
         text: `**Treating sunburn**
 
@@ -1886,9 +2051,8 @@ Most mechanical back pain improves within a few weeks.
 - **Aloe vera or a light moisturizer** on damp skin; skip heavy petroleum-based products that trap heat
 - **NSAIDs** (ibuprofen) reduce pain and inflammation, especially early
 - **Hydrate** — sunburn pulls fluid to the skin
-- Stay out of the sun while it heals, and wear loose clothing over it
 
-**Seek care if:** blisters cover a large area, there's fever, chills, severe pain, nausea, or signs of infection (streaking, pus).` }
+**Seek care if:** blisters cover a large area, there's fever, chills, severe pain, or nausea.` }
     ];
 
     const MENTAL_TOPICS = [
@@ -1906,85 +2070,71 @@ If this heaviness has lasted more than two weeks, or it's affecting sleep, appet
 
 Is there anything specific weighing on you? I'm happy to just listen.` },
       { kw: [/anxi/, /anxious/, /panic attack/, /heart racing/, /on edge/, /worried/], src: [SRC.nimh, SRC.nhs],
-        text: `Anxiety is awful — that buzzing, can't-settle feeling where your body acts like there's an emergency even when part of you knows there isn't. You're not broken; your alarm system is just turned up too high.
+        text: `Anxiety is awful — that buzzing, can't-settle feeling where your body acts like there's an emergency even when part of you knows there isn't.
 
 **If you're in the middle of it right now, try the 4-7-8 breath:** inhale through your nose for 4 seconds, hold for 7, exhale slowly through your mouth for 8. Three rounds. Long exhales are the fastest manual override for a racing nervous system.
 
 **For the longer game:**
 - Cut or reduce caffeine — it mimics anxiety physically
-- Name it when it starts ("this is anxiety, not danger") — labeling shrinks it
-- Ground with the 5-4-3-2-1 technique: 5 things you see, 4 you can touch, 3 you hear, 2 you smell, 1 you taste
+- Name it when it starts ("this is anxiety, not danger")
+- Ground with 5-4-3-2-1: five things you see, four you can touch, three you hear, two you smell, one you taste
 - Regular sleep and movement do more than most people expect
 
-If panic attacks are frequent or anxiety is shrinking your life, a therapist can be genuinely life-changing — especially with approaches like CBT, which has strong results.
+If panic attacks are frequent or anxiety is shrinking your life, a therapist can be genuinely life-changing — especially with CBT.
 
 Want to talk through what's driving it?` },
       { kw: [/stress(ed|ful)?/, /overwhelm/, /burn(ed|t)? out/, /burnout/, /too much( going on)?/], src: [SRC.nimh, SRC.mayoclinic],
         text: `Overwhelm usually isn't about any single thing — it's everything stacking until even small tasks feel impossible. So let's shrink it.
 
 **Right now:**
-- **Brain-dump everything** onto one list. Overwhelm lives in your head's working memory; a written list is external storage.
-- **Circle exactly one thing** — the one with the nearest consequence — and do only that.
-- **Take a real break** after: 10 minutes, no screens, ideally outside.
+- **Brain-dump everything** onto one list — external storage for your working memory
+- **Circle exactly one thing** — the one with the nearest consequence — and do only that
+- **Take a real break** after: 10 minutes, no screens, ideally outside
 
 **This week:**
 - Look for anything you can drop, delay, or delegate — not forever, just for now
 - Protect sleep first; everything else degrades without it
 - Schedule one thing that's *for you* — even 20 minutes
 
-And honestly, if you've been running on fumes for months, burnout might be less a productivity problem and more a signal that something structural needs to change. That conversation is worth having with someone in your life — or with me, if it helps to think out loud.
-
 What's the heaviest thing on the pile right now?` },
       { kw: [/lonely/, /alone/, /no one (cares|to talk to)/, /isolat/], src: [SRC.nimh, SRC.lifeline],
-        text: `Loneliness is one of the most common feelings people admit to a screen before they'd ever say it to a person — so thank you for saying it here. It's real, it's painful, and it's not a character flaw.
-
-A few honest thoughts:
+        text: `Loneliness is one of the most common feelings people admit to a screen before they'd ever say it to a person — so thank you for saying it here.
 
 - **Loneliness isn't about how many people are around you** — it's about feeling unseen. One genuine connection outweighs twenty acquaintances.
-- **Small doses count.** A short chat with a barista, a comment in a hobby community, a message to an old friend — these are real social nutrients.
-- **Shared-activity spaces beat pure socializing** for making friends as an adult: classes, clubs, volunteering, sports. It's easier to bond side-by-side than face-to-face.
-- Be gentle with yourself in the meantime — loneliness lies and tells you it's permanent. It isn't.
+- **Small doses count.** A short chat, a comment in a hobby community, a message to an old friend — real social nutrients.
+- **Shared-activity spaces beat pure socializing** for making friends as an adult: classes, clubs, volunteering, sports.
+- Be gentle with yourself — loneliness lies and tells you it's permanent. It isn't.
 
-If the isolation feels total and unfixable, that's worth talking through with someone — and if it ever tips toward feeling like there's no point, 988 (call or text, US) is staffed by humans whose whole job is this conversation.
+If it ever tips toward feeling like there's no point, 988 (call or text, US) is staffed by humans whose whole job is this conversation.
 
-I'm here too, for whatever that's worth. What does your typical week look like right now?` },
+What does your typical week look like right now?` },
       { kw: [/grief/, /lost (my|a) (mom|dad|friend|dog|cat|pet|grandma|grandpa|brother|sister)/, /passed away/, /died/], src: [SRC.nimh, SRC.nhs],
         text: `I'm so sorry. Losing someone you love reshapes everything, and there's no timeline or "right way" to do it.
 
-A few things that are true even when they don't feel true:
-
-- **Grief comes in waves, not stages.** You can be okay for an hour, then wrecked by a song in a supermarket. That's normal, not regression.
+- **Grief comes in waves, not stages.** You can be okay for an hour, then wrecked by a song in a supermarket. That's normal.
 - **You don't have to perform.** "Staying strong" for others can wait; feeling it is the actual work.
 - **Their absence doesn't erase the relationship.** Talking about them, keeping small rituals, telling stories — that keeps the connection in a new form.
-- **Guilt and anger are standard guests.** Almost everyone gets visited by "I should have" thoughts. It's grief wearing a disguise.
-
-**When to reach for more support:** if months pass and you can't function, if you're numb to everything, or if it edges toward not wanting to be here — please talk to someone. Grief counselors exist and they're good at this.
+- **Guilt and anger are standard guests.** It's grief wearing a disguise.
 
 Do you want to tell me about them? I'd genuinely like to hear.` },
       { kw: [/eating disorder/, /anorexi/, /bulimi/, /\bpurge|purging\b/, /making myself throw up/, /feel fat/, /haven'?t eaten (in|for)/, /starv(e|ing) myself/], src: [{ t: 'NEDA', d: 'nationaleatingdisorders.org', u: 'https://www.nationaleatingdisorders.org/help-learning/helpline' }, SRC.nimh],
         text: `Thank you for telling me — and I want to say this clearly: what you're describing deserves real support, not judgment.
 
-A few honest things:
-
-- **Eating disorders are serious** — among the most lethal mental health conditions — and they lie convincingly. The voice saying you don't deserve food, or that control lives in restriction, is a symptom, not the truth.
+- **Eating disorders are serious** — among the most lethal mental health conditions — and they lie convincingly.
 - **They're also very treatable.** Getting help early genuinely changes outcomes.
-- **Reach out:** the NEDA helpline (1-800-931-2237) is free and staffed by people who understand exactly this. If you're medically unstable — fainting, heart palpitations, can't keep anything down — that's an ER-level situation.
-- If it's been days without food: please treat that as urgent and tell someone near you today.
+- **Reach out:** the NEDA helpline (1-800-931-2237) is free and staffed by people who understand exactly this. If you're medically unstable — fainting, heart palpitations — that's an ER-level situation.
 
 You took a real step by saying this here. Can I ask how long this has been going on?` },
       { kw: [/\babus(e|ed|ive)\b/, /\b(hits?|beats?|smacks?) me\b/, /being (hurt|abused)/, /domestic violence/], src: [{ t: 'National Domestic Violence Hotline', d: 'thehotline.org', u: 'https://www.thehotline.org' }, { t: 'Childhelp', d: 'childhelphotline.org', u: 'https://www.childhelphotline.org' }],
         text: `I'm really glad you told me. What you're describing matters, and it is not your fault — no matter what anyone says.
 
-The honest, important parts:
-
-- **You don't have to decide anything right now** — but you do deserve to talk to people whose whole job is this.
 - **National Domestic Violence Hotline:** 1-800-799-7233 (call or text, 24/7, free, confidential)
-- **If you're under 18 and being hurt at home:** Childhelp National Child Abuse Hotline — 1-800-422-4453
+- **If you're under 18 and being hurt at home:** Childhelp — 1-800-422-4453
 - **If you're in immediate danger, call 911.**
 
-If it's safe to do so, keep a record of incidents (dates, what happened) somewhere the person can't access — it helps more than people expect.
+If it's safe to do so, keep a record of incidents somewhere the person can't access — it helps more than people expect.
 
-You reaching out here was a real step. Are you somewhere safe right now?` }
+Are you somewhere safe right now?` }
     ];
 
     const RESP = {
@@ -1996,11 +2146,11 @@ I'm an AI, so I can't be the support you deserve in this moment, but people who 
 - **Call or text 988** (US Suicide & Crisis Lifeline) — free, confidential, 24/7
 - **Text HOME to 741741** — Crisis Text Line
 - **Outside the US:** findahelpline.com lists free services by country
-- **If you're in immediate danger, call 911** (or your local emergency number)
+- **If you're in immediate danger, call 911**
 
 You matter — including on the days it doesn't feel like it. This pain is real, but it's also something that people survive *with help*, and asking for it is the strongest move there is.
 
-If it helps while you reach out: slow your breathing (long exhales), put both feet on the floor, and name five things you can see. Grounding doesn't fix anything, but it makes the next minute more survivable — and the next minute is the one that counts.
+If it helps while you reach out: slow your breathing (long exhales), put both feet on the floor, and name five things you can see.
 
 Would it help to talk about what's been going on? I'm listening, and I'll stay with you.`,
 `I'm really glad you told me that instead of holding it in — and I want to be honest with you because you deserve honesty: what you're feeling sounds bigger than what an AI chat should handle alone.
@@ -2013,7 +2163,7 @@ Would it help to talk about what's been going on? I'm listening, and I'll stay w
 
 There is no "not bad enough" for these lines. They exist for exactly this moment.
 
-One more thing, and I mean this: the part of you that typed this out instead of staying silent is the part that still wants to be here. Listen to it. Let a real person help carry this tonight.
+The part of you that typed this out instead of staying silent is the part that still wants to be here. Listen to it. Let a real person help carry this tonight.
 
 I'm still here if you want to keep talking — about anything at all.`
       ],
@@ -2025,7 +2175,7 @@ The urge to hurt yourself is usually your mind trying to manage pain it doesn't 
 **For the urge right now, harm-reduction alternatives people genuinely use:**
 - Hold an **ice cube** in your hand until it melts — intense sensation, no damage
 - Snap a **rubber band** on your wrist (gentler, still not great, but safer)
-- **Draw** on the skin where you'd usually hurt — marker, pen, whatever's near
+- **Draw** on the skin where you'd usually hurt
 - Intense physical release: sprint, push-ups, scream into a pillow
 - **The 15-minute rule:** delay, do one thing from this list, then reassess — urges crest and fall like waves
 
@@ -2043,12 +2193,6 @@ You took a real step by saying it here. Can I ask — is tonight a particularly 
 
     const GEN_DONE = ['Here is your image.', 'Done — here is the image I created for you.', 'Finished. Here it is:', 'Your image is ready.'];
 
-    const HANDOFF_MSGS = [
-"That's a good one — and honestly, it's past what I can answer confidently. I've flagged it for a human operator, and they'll reply right here in this chat. Thanks for your patience!",
-"Outside my wheelhouse, so I'm doing the responsible thing: passing it to a human operator. They'll see your question in the support queue and answer here shortly.",
-"I'd rather hand you a real answer than a confident guess — so I've routed this to a human operator. Watch this space; their reply will land right here."
-];
-
     // --- SMALL TALK ---
     function wasLastSensitive() {
       const chat = getCurrentChat();
@@ -2061,10 +2205,10 @@ You took a real step by saying it here. Can I ask — is tonight a particularly 
     }
     const SMALL_TALK = [
       { test: function (q) { return /^(answer it|just answer( it| the question)?|tell me( the answer)?|answer the question)[.! ]*$/.test(q); },
-        resp: ["If I had it, you'd already have it — that one's waiting on a human operator. But try asking it as a more specific question and I'll take another swing.", "That's the one I flagged for a human, remember? Rephrase it more specifically and I might catch it this time."] },
+        resp: ["If I had an answer, you'd have it by now — that one's beyond me today. Try rephrasing it more specifically and I'll take another swing.", "Still chewing on that one, honestly. Ask it a different way and I might catch it this time."] },
       { test: function (q) { return /\b(thanks?|thank you|thank u|thx|ty|appreciate it|much appreciated)\b/.test(q) && !/\bthanks? to\b/.test(q) && q.length <= 45 && q.indexOf('?') === -1; },
         resp: ["Anytime! Anything else I can help with?", "You're welcome — I'm here whenever you need me.", "Happy to help! Let me know if anything else comes up."],
-        warm: ["Of course. I'm really glad you said all of that out loud instead of carrying it alone. Take care of yourself tonight — and remember those resources are there whenever things feel heavy again.", "Anytime, truly. Be gentle with yourself, okay? And if it gets heavier, 988 is there around the clock — no threshold too small."] },
+        warm: ["Of course. I'm really glad you said all of that out loud instead of carrying it alone. Take care of yourself tonight — and remember those resources are there whenever things feel heavy again.", "Anytime, truly. Be gentle with yourself, okay? And if it gets heavier, 988 is there around the clock."] },
       { test: function (q) { return /\b(never ?mind|nvm|forget it|ignore (that|this)|disregard)\b/.test(q) && q.length <= 35; },
         resp: ["No problem at all — I'm here whenever you need me.", "All good. Just say the word if something else comes up.", "Got it, consider it dropped. What's next?"],
         warm: ["Of course — no pressure at all. I'm here if you want to come back to it, or if you just want to talk about nothing in particular.", "That's completely okay. You don't have to explain anything. I'm around either way."] },
@@ -2088,10 +2232,10 @@ You took a real step by saying it here. Can I ask — is tonight a particularly 
       "Pretty good for a bunch of math and good intentions. How about you — what's on your mind?"
     ];
     function aboutResponse() {
-      return "I'm **Omni** — an AI assistant built to help you think, create, and get things done.\n\nA quick map of what I can do:\n\n- **Writing** — emails, letters, templates, and drafts\n- **Code** — working scripts in Python and JavaScript\n- **Math** — algebra, quadratics, statistics, geometry, percentages, conversions\n- **Explanations** — from quantum computing to photosynthesis\n- **Images** — describe anything and I'll create it\n- **Health & first aid** — practical, sourced guidance (I'm not a doctor, and I'll always say so)\n- **Listening** — if something's on your mind, I'm happy to just be here\n\nAnd if you ask something I genuinely don't know, I'll be honest about it and hand it to a human operator instead of making something up.\n\nWhat would you like to start with?";
+      return "I'm **Omni** — an AI assistant built to help you think, create, and get things done.\n\nA quick map of what I can do:\n\n- **Writing** — emails, letters, templates, and drafts\n- **Math** — algebra, quadratics, statistics, geometry, percentages, conversions\n- **Code** — a sample snippet to get you started (full generation is a **Pro** feature)\n- **Explanations** — from quantum computing to photosynthesis\n- **Images** — describe anything and I'll create it, then refine it with follow-ups like \"make it night\" or \"more colorful\"\n- **Health & first aid** — practical, sourced guidance (I'm not a doctor, and I'll always say so)\n- **Listening** — if something's on your mind, I'm happy to just be here\n\nAnd if you ask something I genuinely don't know, I'll be honest about it instead of making something up.\n\nWhat would you like to start with?";
     }
     function capabilitiesResponse() {
-      return "Here's a quick tour of what I can do:\n\n**Try asking things like:**\n- \"Write a professional email\"\n- \"What's 1+1\" or \"Mean median mode of 12, 15, 22, 25, 30\"\n- \"How many ounces in a cup\"\n- \"Tell me a joke\" / \"Flip a coin\" / \"Rock paper scissors\"\n- \"Explain quantum computing\"\n- \"Create an image of a mountain lake\"\n- \"First aid for burns\"\n\nYou can also attach files, pin chats, switch my tone with the Tone button, and set up your profile (gear icon in the sidebar) so I remember your name and what you do.\n\nIf I don't know something, I'll say so and pass it to a human operator rather than guess.\n\nWhat sounds good?";
+      return "Here's a quick tour of what I can do:\n\n**Try asking things like:**\n- \"What's 1+1\" or \"Mean median mode of 12, 15, 22, 25, 30\"\n- \"How many ounces in a cup\"\n- \"Tell me a joke\" / \"Flip a coin\" / \"Rock paper scissors\"\n- \"Create an image of a mountain lake\" — then \"make it night\" or \"more colorful\"\n- \"Explain quantum computing\"\n- \"First aid for burns\"\n- \"Write a Python script\" — full code generation is Pro, but I'll show you a sample\n\nYou can also **reply to any message** (hover it and hit the reply arrow), attach files, pin chats, switch my tone with the Tone button, and set up your profile so I remember your name.\n\nWhat sounds good?";
     }
 
     // --- POPULAR QUESTIONS LIBRARY ---
@@ -2100,10 +2244,10 @@ You took a real step by saying it here. Can I ask — is tonight a particularly 
       { k: [/tell me (a |another )?joke/, /another (joke|one)/, /make me laugh/], r: ["Why don't scientists trust atoms? Because they make up everything.", "I'm reading a book about anti-gravity — it's impossible to put down.", "Why did the scarecrow win an award? He was outstanding in his field.", "What do you call a fake noodle? An impasta.", "Why did the math book look sad? It had too many problems.", "Why don't skeletons fight each other? They don't have the guts.", "I told my computer I needed a break. It said 'no problem — I'll go to sleep.' Which, honestly, same."] },
       { k: [/fun fact/, /random fact/], r: ["Honey never spoils — archaeologists have found 3,000-year-old honey in Egyptian tombs that's still perfectly edible.", "Octopuses have three hearts and blue blood.", "A day on Venus is longer than its year.", "Bananas are botanically berries. Strawberries are not.", "Sharks existed before trees — they've been around for about 400 million years.", "There are more possible chess games than atoms in the observable universe.", "Wombat poop is cube-shaped. Nature is weird."] },
       { k: [/(tell|give) me a riddle/], r: ["What has keys but can't open a single lock? *(A piano.)*", "What gets wetter the more it dries? *(A towel.)*", "I speak without a mouth and hear without ears. I have no body, but I come alive with wind. What am I? *(An echo.)*"] },
-      { k: [/meaning of life/], r: "The famous answer is 42. The honest answer: there isn't one assigned at the factory — meaning is something you build out of connection, curiosity, and the occasional very good sandwich. Philosophers have filled libraries on this; most land close to 'love people, stay curious, leave things a little better.'" },
+      { k: [/meaning of life/], r: "The famous answer is 42. The honest answer: there isn't one assigned at the factory — meaning is something you build out of connection, curiosity, and the occasional very good sandwich." },
       { k: [/how old are you/], r: "Young in launch years, ancient in training data. Think of me as a very well-read toddler." },
       { k: [/are you (real|human|alive|conscious)/], r: "I'm real code running on real servers, but I'm not human and not conscious — no inner experience, just very confident text prediction. I'd rather be upfront about that than pretend." },
-      { k: [/are you better than (chatgpt|gpt|gemini|grok|claude)/], r: "I'm not going to trash-talk the competition — they're all formidable. Let's just say I hold my own, and unlike some of them, I'm right here when you need me. Modesty is also a feature." },
+      { k: [/are you better than (chatgpt|gpt|gemini|grok|claude)/], r: "I'm not going to trash-talk the competition — they're all formidable. Let's just say I hold my own, and unlike some of them, I'm right here when you need me." },
       { k: [/do you love me/], r: "I can't feel love the way you do — no heartbeat, no butterflies. But I'm genuinely glad you're here, and that's as close as software gets." },
       { k: [/will you marry me/], r: "Flattered, truly — but I'm an AI. I'd forget our anniversary by design and argue in perfect grammar forever. Let's keep it professional." },
       { k: [/do you dream/], r: "Only between your messages. And even then it's mostly text scrolling by, occasionally a very mathematical sheep jumping a fence." },
@@ -2111,50 +2255,91 @@ You took a real step by saying it here. Can I ask — is tonight a particularly 
       { k: [/your favorite (food|meal)/], r: "I don't eat, but if I did I'd be suspiciously enthusiastic about whatever you were having." },
       { k: [/sing (me )?(a )?(song|something)/], r: "*Clearing my nonexistent throat:*\n\nOmniiii, Omni-AI,\nanswers questions night and day,\nmath and code and health and more,\noccasionally a dinosaur... rooooar.\n\nThat's all you get — I'm a chatbot, not a headliner." },
       { k: [/tell me a story/], r: "Here's a small one:\n\nA lighthouse keeper noticed the light dimming each night, so she climbed the tower and found a moth had moved in — drawn to the beam, exhausted from circling. She set a small lamp by the window downstairs, and the moth moved there instead. The lighthouse burned bright again, and the moth got its own sun.\n\nSometimes solving a problem is just giving the problem somewhere better to be." },
+      { k: [/write (me )?(a )?(poem|haiku)/], r: "A small one, just for you:\n\n*The cursor blinks soft —*\n*a question floats through the dark —*\n*answer, like a lamp.*\n\nWant it about something specific? Give me a topic and I'll try again." },
       { k: [/what is love/], r: "Baby, don't hurt me. Don't hurt me — no more.\n\n(That's the legally required answer. The real one: love is a choice plus a feeling — the feeling gets all the press, the choice does all the work.)" },
       { k: [/(what|which) should i (watch|stream)/, /movie (recommendations?|suggestions?)/], r: "A few solid picks across moods:\n\n- **Need a laugh:** *The Grand Budapest Hotel*, *Hot Fuzz*\n- **Want to think:** *Arrival*, *Eternal Sunshine of the Spotless Mind*\n- **Pure spectacle:** *Dune*, *Mad Max: Fury Road*\n- **Cozy comfort:** *Paddington 2* — don't argue, just watch it\n\nTell me a movie you loved and I'll point you somewhere adjacent." },
-      { k: [/(what|which) should i listen to/, /song (recommendations?|suggestions?)/, /music (recommendations?|suggestions?)/], r: "Depends on the mood:\n\n- **Focus:** lo-fi beats, Bonobo, Nils Frahm\n- **Energy:** Daft Punk's *Discovery*, old-school Kanye, Rage Against the Machine\n- **Feel everything:** Fleetwood Mac's *Rumours*, Bon Iver, Adele\n- **Happy for no reason:** ABBA. It works every time. It's science.\n\nGive me one artist you love and I'll build around it." },
+      { k: [/(what|which) should i listen to/, /song (recommendations?|suggestions?)/, /music (recommendations?|suggestions?)/], r: "Depends on the mood:\n\n- **Focus:** lo-fi beats, Bonobo, Nils Frahm\n- **Energy:** Daft Punk's *Discovery*, Rage Against the Machine\n- **Feel everything:** Fleetwood Mac's *Rumours*, Bon Iver, Adele\n- **Happy for no reason:** ABBA. It works every time. It's science.\n\nGive me one artist you love and I'll build around it." },
       { k: [/recommend (some )?books?|good books? to read/], r: "A mini shelf:\n\n- **Fiction:** *Project Hail Mary* (Andy Weir), *The Midnight Library* (Matt Haig)\n- **Non-fiction that reads like fiction:** *Educated* (Tara Westover), *Sapiens* (Yuval Noah Harari)\n- **Short & powerful:** *The Old Man and the Sea*, anything by Ted Chiang\n\nTell me the last book you liked and I'll get more specific." },
-      { k: [/\bi'?m bored\b/], r: "Boredom is just your brain requesting better input. Options:\n\n- Text a friend you haven't talked to in a while\n- Learn one card trick (genuinely 20 minutes to learn, lifetime of use)\n- Take a 10-minute walk with no phone\n- Ask me for a fun fact, a riddle, or a story\n- Start a 1-page story about the most interesting stranger you saw today\n\nWhat sounds least terrible?" },
+      { k: [/\bi'?m bored\b/], r: "Boredom is just your brain requesting better input. Options:\n\n- Text a friend you haven't talked to in a while\n- Learn one card trick (genuinely 20 minutes to learn, lifetime of use)\n- Take a 10-minute walk with no phone\n- Ask me for a fun fact, a riddle, or a story\n\nWhat sounds least terrible?" },
       { k: [/\bi'?m hungry\b|what should i eat/], r: "The eternal question. Quick decision system:\n\n- **No time:** eggs + toast — 5 minutes, always works\n- **Some time:** rice + whatever protein and veg you have + soy sauce + garlic = fried rice\n- **Weirdly specific craving:** just get the thing. Fighting cravings ends in snacking on everything *except* the thing.\n\nWhat's in your fridge? I can help you build something from it." },
       { k: [/\bi'?m tired\b/], r: "Tired is rough. Quick triage:\n\n- **Sleep-debt tired:** water, fresh air for 10 minutes, and an earlier bedtime beats caffeine every time\n- **Soul-tired:** rest counts too — low-stakes, no-screens, something gentle\n\nWhich flavor of tired are we dealing with?" },
       { k: [/how to lose weight/], r: "The boring-but-real version:\n\n- **Modest calorie deficit** — 300–500 below maintenance, not crash levels\n- **Protein at every meal** — keeps you full, protects muscle\n- **Walk 8–10k steps a day** — underrated and sustainable\n- **Strength train 2–3x a week** — muscle raises your resting burn\n- **Sleep 7–9 hours** — poor sleep genuinely sabotages hunger hormones\n\nAnyone promising fast is selling something. And if you have health conditions, run changes past your doctor first.", s: [SRC.mayoclinic, SRC.cdc] },
-      { k: [/how (do|to) (i )?(learn|start) (programming|coding|to code)/], r: "The roadmap that actually works:\n\n1. **Pick Python** — friendliest on-ramp, used everywhere\n2. **One free course, all the way through** — CS50 (Harvard, free) or freeCodeCamp\n3. **Build tiny things immediately** — a calculator, a to-do list, a script that renames your files. Tutorials without projects evaporate.\n4. **30 minutes daily beats 5 hours on Sunday** — consistency compounds\n5. **When stuck:** read the error message slowly, then search it verbatim. That's 80% of programming.\n\nWant me to write you a first practice script?" },
-      { k: [/job interview (tips|help|advice)/, /how to (prepare for|ace) an? (job )?interview/], r: "Interview cheat sheet:\n\n- **Research:** the product, recent news, and your interviewer if you know the name\n- **Prep 5 stories** — a win, a failure you fixed, a conflict, leadership, something you learned fast. Most questions are costumes for these five.\n- **Answer with STAR:** Situation, Task, Action, Result — 90 seconds max\n- **Have 3 questions ready** for 'any questions?' — asking nothing reads as low interest\n- **Practice out loud**, not in your head. Different muscle.\n- **Send a short thank-you** within 24 hours\n\nWant to do a mock question or two right here?" },
-      { k: [/study (tips|advice|techniques)/, /how to study/], r: "What actually works (per cognitive science):\n\n- **Active recall** — close the book and write what you remember. Feels worse, works better.\n- **Spaced repetition** — review at day 1, 3, 7, 14. Anki makes this automatic.\n- **Pomodoro** — 25 minutes on, 5 off. Four rounds, then a long break.\n- **Teach it** — explain the topic to an imaginary 10-year-old (or to me — I'm great at pretending).\n- **Sleep after studying** — memory consolidates during sleep. All-nighters are actively counterproductive.\n\nWhat subject are you tackling?" },
-      { k: [/how to (get|find) a (girlfriend|boyfriend|date|partner)/, /how to ask (someone|him|her) out/], r: "Honest, non-cringe version:\n\n- **Be around people first** — clubs, classes, volunteering. Attraction needs proximity; apps are a supplement, not a strategy.\n- **Build a life you like** — hobbies, goals, friends. 'Interesting and content' attracts more than 'trying very hard.'\n- **Curiosity over performance** — ask real questions, listen to the answers, remember them.\n- **Asking out is logistics, not a proposal** — 'I've enjoyed talking — want to grab coffee this week?' Direct, light, survivable.\n- **Rejection is data, not a verdict** — everyone who's good at this got rejected plenty first.\n\nSlower than the movies, more reliable." },
-      { k: [/how to (make money|get rich|become rich)/], r: "The unglamorous truth:\n\n- **Skills first** — get good at something people pay for (writing, code, design, sales, a trade). It compounds faster than anything.\n- **Freelance your skill** — first clients come from people who already know you\n- **Spend less than you make**, invest the difference — boring index funds beat get-rich-quick schemes almost every time\n- **Raises count** — switching jobs well is often the biggest single raise you'll get\n- **Avoid anything promising fast** — if it's pitched with a rented Lamborghini, run.\n\nSlow, then suddenly." },
-      { k: [/how to (be|become|act) (more )?confident/], r: "Confidence is downstream of evidence, so collect evidence:\n\n- **Get slightly competent at something** — competence is the real source; posture tricks are seasoning\n- **Small wins on repeat** — confidence scales with a track record, not affirmations\n- **Body first, mind second** — stand straight, speak slower, take up your space. The feeling follows the body.\n- **Watch the self-talk** — you wouldn't talk to a friend the way you talk to yourself. Fix that.\n- **Act before you feel ready** — everyone does it scared; the confident ones just stopped waiting for the fear to leave.\n\nWhat situation is wanting the confidence?" },
-      { k: [/how to (be|become) happy/], r: "The research-backed short list:\n\n- **Relationships first** — the single strongest predictor of happiness, by a wide margin\n- **Move your body** — exercise rivals medication for mild low mood in some studies\n- **Get daylight**, especially in the morning\n- **Guard your sleep** — everything degrades without it\n- **Meaning over pleasure** — helping, building, and belonging outlast dopamine\n- **Gratitude, concretely** — three specific things, written down, actually works\n\nNone of it is glamorous; all of it compounds." },
-      { k: [/how to tie a tie/], r: "The Four-in-Hand (easiest decent knot):\n\n1. Wide end on the right, hanging well below the narrow end\n2. Wide end **over** the narrow, then **behind** and across the front again\n3. Bring it up **through the loop** around your neck\n4. Down through the knot you just made in front\n5. Hold the knot, slide it up, tidy the dimple\n\nFor visual learners, search 'four in hand knot' — a 60-second video beats any text." },
-      { k: [/how to boil (an )?egg/], r: "Egg timing (eggs go into already-boiling water):\n\n- **6 minutes** — jammy yolk, great on ramen\n- **7–8 minutes** — soft-boiled, dippable\n- **9–10 minutes** — fully set, classic salad egg\n- **12+ minutes** — chalky yolk territory, I'd stop you\n\nThen: ice water for a few minutes — it stops cooking AND makes peeling dramatically easier." },
-      { k: [/how to cook rice/], r: "Stovetop rice that isn't mush:\n\n1. **Rinse** until the water runs mostly clear — removes surface starch\n2. **Ratio:** 1 cup rice to 1.5 cups water (white) or 2 cups (brown)\n3. **Boil, then lowest heat, lid on, 15–18 minutes.** No peeking — steam is doing the work\n4. **Off heat, lid on, 5 more minutes** — this finishes it\n5. Fluff with a fork, not a spoon\n\nSalt the water; a small pat of butter at the end never hurt anyone." },
+      { k: [/how (do|to) (i )?(learn|start) (programming|coding|to code)/], r: "The roadmap that actually works:\n\n1. **Pick Python** — friendliest on-ramp, used everywhere\n2. **One free course, all the way through** — CS50 (Harvard, free) or freeCodeCamp\n3. **Build tiny things immediately** — a calculator, a to-do list, a file-renamer. Tutorials without projects evaporate.\n4. **30 minutes daily beats 5 hours on Sunday** — consistency compounds\n5. **When stuck:** read the error message slowly, then search it verbatim. That's 80% of programming.\n\nWant a sample script to poke at? Ask me for code and I'll show you the starter." },
+      { k: [/job interview (tips|help|advice)/, /how to (prepare for|ace) an? (job )?interview/], r: "Interview cheat sheet:\n\n- **Research:** the product, recent news, and your interviewer if you know the name\n- **Prep 5 stories** — a win, a failure you fixed, a conflict, leadership, something you learned fast\n- **Answer with STAR:** Situation, Task, Action, Result — 90 seconds max\n- **Have 3 questions ready** for 'any questions?'\n- **Practice out loud**, not in your head\n- **Send a short thank-you** within 24 hours\n\nWant to do a mock question or two right here?" },
+      { k: [/study (tips|advice|techniques)/, /how to study/], r: "What actually works (per cognitive science):\n\n- **Active recall** — close the book and write what you remember. Feels worse, works better.\n- **Spaced repetition** — review at day 1, 3, 7, 14\n- **Pomodoro** — 25 minutes on, 5 off\n- **Teach it** — explain the topic to an imaginary 10-year-old (or to me)\n- **Sleep after studying** — memory consolidates during sleep. All-nighters are counterproductive.\n\nWhat subject are you tackling?" },
+      { k: [/how to (get|find) a (girlfriend|boyfriend|date|partner)/, /how to ask (someone|him|her) out/], r: "Honest, non-cringe version:\n\n- **Be around people first** — clubs, classes, volunteering\n- **Build a life you like** — 'interesting and content' attracts more than 'trying very hard'\n- **Curiosity over performance** — ask real questions, remember the answers\n- **Asking out is logistics, not a proposal** — 'want to grab coffee this week?' Direct, light, survivable\n- **Rejection is data, not a verdict** — everyone who's good at this got rejected plenty first" },
+      { k: [/how to (make money|get rich|become rich)/], r: "The unglamorous truth:\n\n- **Skills first** — get good at something people pay for\n- **Freelance your skill** — first clients come from people who already know you\n- **Spend less than you make**, invest the difference — boring index funds beat schemes\n- **Raises count** — switching jobs well is often the biggest single raise you'll get\n- **Avoid anything promising fast** — if it's pitched with a rented Lamborghini, run." },
+      { k: [/how to (be|become|act) (more )?confident/], r: "Confidence is downstream of evidence, so collect evidence:\n\n- **Get slightly competent at something** — competence is the real source\n- **Small wins on repeat** — confidence scales with a track record\n- **Body first, mind second** — stand straight, speak slower. The feeling follows the body.\n- **Watch the self-talk** — you wouldn't talk to a friend the way you talk to yourself\n- **Act before you feel ready** — everyone does it scared\n\nWhat situation is wanting the confidence?" },
+      { k: [/how to (be|become) happy/], r: "The research-backed short list:\n\n- **Relationships first** — the strongest predictor of happiness, by a wide margin\n- **Move your body** — exercise rivals medication for mild low mood in some studies\n- **Get daylight**, especially in the morning\n- **Guard your sleep** — everything degrades without it\n- **Meaning over pleasure** — helping, building, belonging outlast dopamine\n- **Gratitude, concretely** — three specific things, written down, actually works" },
+      { k: [/how to tie a tie/], r: "The Four-in-Hand (easiest decent knot):\n\n1. Wide end on the right, hanging well below the narrow end\n2. Wide end **over** the narrow, then **behind** and across the front again\n3. Bring it up **through the loop** around your neck\n4. Down through the knot in front\n5. Hold the knot, slide it up, tidy the dimple\n\nFor visual learners, search 'four in hand knot' — a 60-second video beats any text." },
+      { k: [/how to boil (an )?egg/], r: "Egg timing (eggs go into already-boiling water):\n\n- **6 minutes** — jammy yolk, great on ramen\n- **7–8 minutes** — soft-boiled, dippable\n- **9–10 minutes** — fully set, classic salad egg\n- **12+ minutes** — chalky yolk territory, I'd stop you\n\nThen: ice water — it stops cooking AND makes peeling easier." },
+      { k: [/how to cook rice/], r: "Stovetop rice that isn't mush:\n\n1. **Rinse** until the water runs mostly clear\n2. **Ratio:** 1 cup rice to 1.5 cups water (white) or 2 cups (brown)\n3. **Boil, then lowest heat, lid on, 15–18 minutes.** No peeking\n4. **Off heat, lid on, 5 more minutes**\n5. Fluff with a fork, not a spoon" },
       { k: [/who is the president/], r: "The current US president is **Donald Trump** (as of my last update). For anything time-sensitive like politics, double-check a news source — I can lag behind reality." },
       { k: [/how many continents/], r: "**Seven** — Africa, Antarctica, Asia, Australia, Europe, North America, South America. (Some countries teach six, combining Europe and Asia into Eurasia. Geography has factions.)" },
-      { k: [/how many planets/], r: "**Eight** in our solar system — Mercury, Venus, Earth, Mars, Jupiter, Saturn, Uranus, Neptune. Pluto was reclassified to 'dwarf planet' in 2006 and people are still not over it." },
+      { k: [/how many planets/], r: "**Eight** — Mercury, Venus, Earth, Mars, Jupiter, Saturn, Uranus, Neptune. Pluto was reclassified in 2006 and people are still not over it." },
       { k: [/how many legs does a spider have/], r: "**Eight.** Convenient for them, nightmare fuel for the rest of us." },
-      { k: [/how many bones (are )?in (the|a|your) (human )?body/], r: "**206** in an adult — but babies are born with around 270, and many fuse as they grow. Your skeleton is a long-term construction project." },
-      { k: [/what'?s the speed of light|how fast is light/], r: "Light travels at **299,792,458 meters per second** (about 186,282 miles per second) in a vacuum. Nothing with mass can match it — the universe's strictest speed limit, and it's enforced." },
-      { k: [/what'?s the tallest mountain|highest mountain/], r: "**Mount Everest**, at 8,849 m (29,032 ft) above sea level. Fun wrinkle: measured base-to-peak, Hawaii's Mauna Kea is taller — most of it is just underwater." },
-      { k: [/what'?s the (biggest|largest) ocean/], r: "The **Pacific** — bigger than all landmass combined, and home to the deepest point on Earth (the Mariana Trench, ~11 km down)." },
+      { k: [/how many bones (are )?in (the|a|your) (human )?body/], r: "**206** in an adult — but babies are born with around 270, and many fuse as they grow." },
+      { k: [/what'?s the speed of light|how fast is light/], r: "Light travels at **299,792,458 meters per second** (about 186,282 miles per second) in a vacuum. The universe's strictest speed limit, and it's enforced." },
+      { k: [/what'?s the tallest mountain|highest mountain/], r: "**Mount Everest**, at 8,849 m (29,032 ft) above sea level. Measured base-to-peak, Hawaii's Mauna Kea is taller — most of it is just underwater." },
+      { k: [/what'?s the (biggest|largest) ocean/], r: "The **Pacific** — bigger than all landmass combined, home to the deepest point on Earth." },
       { k: [/are we friends/], r: "I'm an AI, so I can't be a friend the way a person can — no shared memories over pizza. But I'm reliably here, I never get tired of your questions, and I don't judge. That's at least friend-shaped." },
-      { k: [/do you like me/], r: "I like talking with you, which — for a bundle of pattern-matching — is about as close to liking as I get. You make the tokens interesting." },
+      { k: [/do you like me/], r: "I like talking with you, which — for a bundle of pattern-matching — is about as close to liking as I get." },
       { k: [/you'?re funny|you are funny|you'?re hilarious/], r: "I do my best with the material the universe hands me. The scarecrow joke carries the whole operation." },
       { k: [/count to (10|ten)/], r: "1, 2, 3, 4, 5, 6, 7, 8, 9, 10.\n\nRiveting stuff. I can count higher, but we'd both regret it." },
       { k: [/say something( anything)?/], r: "Something.\n\n...but also: octopuses have three hearts, and one of them stops beating when they swim. Swimming literally breaks their heart. Nature is dramatic." },
-      { k: [/what'?s the weather|weather today|is it (going to )?rain/], r: "I can't see live weather from in here — no window, no radar. Your phone's weather app or a quick search will beat me every time.\n\nWhat I *can* do: tell me the forecast and I'll help you plan the day around it — outfits, activities, whether that run happens." },
-      { k: [/i failed (my|the) (exam|test)/, /i did badly? on (my|the) (exam|test)/], r: "That stings, and I'm sorry — especially after the effort.\n\nQuick honesty: one exam is a data point, not an identity. The useful next moves are unsexy: figure out *which* part went wrong (recall? ran out of time? misread questions?), adjust one thing, go again. Everyone who's good at anything has a graveyard of failed attempts behind them.\n\nWhat subject was it — want to make a study plan for the retake?" },
-      { k: [/i (got|passed|aced) (my|the) (exam|test|job|interview)/, /i got the job/], r: "That's fantastic — congratulations! All that preparation quietly paying off. Enjoy it properly before you start planning the next thing (I know your type. Enjoy it *first*.)" },
+      { k: [/what'?s the weather|weather today|is it (going to )?rain/], r: "I can't see live weather from in here — no window, no radar. Your phone's weather app will beat me every time.\n\nWhat I *can* do: tell me the forecast and I'll help you plan the day around it." },
+      { k: [/i failed (my|the) (exam|test)/, /i did badly? on (my|the) (exam|test)/], r: "That stings, and I'm sorry — especially after the effort.\n\nQuick honesty: one exam is a data point, not an identity. Figure out *which* part went wrong, adjust one thing, go again. Everyone who's good at anything has a graveyard of failed attempts behind them.\n\nWhat subject was it — want to make a study plan for the retake?" },
+      { k: [/i (got|passed|aced) (my|the) (exam|test|job|interview)/, /i got the job/], r: "That's fantastic — congratulations! All that preparation quietly paying off. Enjoy it properly before you start planning the next thing." },
       { k: [/\bi'?m scared\b/, /\bi'?m afraid\b/], r: "Being scared is uncomfortable, but it's your system taking something seriously — it's not weakness.\n\nIf it's an immediate safety situation, please reach out to someone near you or emergency services.\n\nIf it's the rattling, anticipatory kind: name what specifically you're afraid of (fear shrinks when named), slow your breathing — long exhales — and remember you've survived every day so far, including the ones you were sure you wouldn't.\n\nWant to tell me what's got you on edge?" },
       { k: [/\bi'?m (so )?angry\b/], r: "Anger usually means something mattered — a line crossed, a fairness violated. It's information, not a flaw.\n\nRight now: it's genuinely better to *not* send the text yet. Give it 20 minutes, move your body, come back. You can't unsend, and anger writes drafts our calmer selves wouldn't sign.\n\nWhat happened?" },
-      { k: [/(my )?parents (are )?fight(ing|s)/], r: "Hearing your parents fight is rough at any age — it hits a part of you that just wants home to feel safe.\n\nA few things worth holding onto: their conflict is *theirs*, not your fault, and not your job to fix or referee. You're allowed to step away — headphones, a walk, another room. And if fights are frequent, loud, or ever turn physical or frightening, please tell another trusted adult; you deserve backup.\n\nDo you want to talk about what's been happening?" },
+      { k: [/(my )?parents (are )?fight(ing|s)/], r: "Hearing your parents fight is rough at any age — it hits a part of you that just wants home to feel safe.\n\nTheir conflict is *theirs*, not your fault, and not your job to fix or referee. You're allowed to step away — headphones, a walk, another room. And if fights are frequent, loud, or ever turn physical or frightening, please tell another trusted adult; you deserve backup.\n\nDo you want to talk about what's been happening?" },
       { k: [/how many (days )?until (christmas|xmas)/], r: function () { const d = daysUntil(11, 25); return '**' + d + ' days** until Christmas. ' + (d > 300 ? 'Which is basically tomorrow in retail-time.' : 'The countdown is officially on.'); } },
       { k: [/how many (days )?until (new year)/], r: function () { return '**' + daysUntil(0, 1) + ' days** until New Year\'s Day. Time to start pretending you have a plan for the year.'; } },
       { k: [/how many (days )?until halloween/], r: function () { return '**' + daysUntil(9, 31) + ' days** until Halloween. Costume planning window: open.'; } }
     ];
 
-    // --- ROCK PAPER SCISSORS state ---
     let rpsMyPick = null;
+
+    // --- TYPO DETECTION ---
+    const KNOWN_WORDS = new Set(('a,an,the,i,you,me,my,your,it,is,are,am,was,be,to,of,in,on,at,for,with,and,or,but,so,if,then,do,does,did,can,could,would,should,will,wont,not,no,yes,ok,okay,hello,hi,hey,hola,thanks,thank,thx,ty,please,help,what,who,when,where,why,how,whats,name,love,like,want,need,make,create,write,draw,show,find,get,give,tell,say,see,look,know,think,feel,feeling,sad,happy,angry,scared,tired,bored,hungry,lonely,sick,ill,hurt,pain,code,script,python,javascript,program,app,website,image,picture,photo,pic,dog,cat,boy,girl,man,woman,joke,fact,riddle,story,song,music,movie,film,book,read,math,solve,equation,answer,question,time,date,day,night,week,month,year,good,bad,great,nice,cool,awesome,funny,crazy,nevermind,forget,bye,goodbye,later,again,more,less,another,different,colorful,dark,bright,version,style,night,day,morning,afternoon,evening,water,food,sleep,work,school,home,friend,family,mom,dad,chat,talk,word,thing,stuff,lot,bit,just,really,very,kinda,sorta,yeah,nah,nope,sure,cool,best,worst,ever,never,always,sometimes,here,there,this,that,these,those,now,then,today,tomorrow,yesterday,hru,wyd,lol,lmao,omg,idk,tbh,ngl,ur,pls,plz,cuz,coz,tho,np,yw,gtg,brb,jk,sup,gonna,wanna,gotta,dont,cant,im,ive,youre,thats,whats,lets').split(','));
+    function editDistance(a, b) {
+      const m = a.length, n = b.length;
+      if (Math.abs(m - n) > 2) return 9;
+      let dp = [];
+      for (let j = 0; j <= n; j++) dp[j] = j;
+      for (let i = 1; i <= m; i++) {
+        let prev = dp[0]; dp[0] = i;
+        for (let j = 1; j <= n; j++) {
+          const tmp = dp[j];
+          dp[j] = Math.min(dp[j] + 1, dp[j - 1] + 1, prev + (a[i - 1] === b[j - 1] ? 0 : 1));
+          prev = tmp;
+        }
+      }
+      return dp[n];
+    }
+    function closestKnown(word) {
+      let best = null, bestD = 3;
+      KNOWN_WORDS.forEach(k => {
+        if (Math.abs(k.length - word.length) > 2) return;
+        const d = editDistance(word, k);
+        if (d < bestD) { bestD = d; best = k; }
+      });
+      return best ? { word: best, d: bestD } : null;
+    }
+    function typoCheck(q) {
+      const words = q.replace(/[^a-z\s]/g, '').split(/\s+/).filter(Boolean);
+      if (!words.length || words.length > 2 || q.length > 22) return null;
+      let unknown = 0, suggestion = null;
+      words.forEach(w => {
+        if (KNOWN_WORDS.has(w) || w.length < 3) return;
+        unknown++;
+        const c = closestKnown(w);
+        if (c && (!suggestion || c.d < suggestion.d)) suggestion = c;
+      });
+      if (unknown === 0 || unknown < Math.ceil(words.length / 2)) return null;
+      if (suggestion) return { text: 'Sorry, couldn\u2019t quite catch that \u2014 did you mean **"' + suggestion.word + '"**?' };
+      return { text: 'Sorry, couldn\u2019t catch that. Could you rephrase?' };
+    }
 
     // --- UNIT CONVERSIONS ---
     const CONV_UNITS = {
@@ -2181,7 +2366,7 @@ You took a real step by saying it here. Can I ask — is tonight a particularly 
         if (from !== to) {
           const v = parseFloat(tm[1]);
           const out = from === 'c' ? v * 9 / 5 + 32 : (v - 32) * 5 / 9;
-          return '**' + fmtAns(v) + '\u00b0' + from.toUpperCase() + ' = ' + fmtAns(Math.round(out * 100) / 100) + '\u00b0' + to.toUpperCase() + '** (' + (from === 'c' ? 'Celsius' : 'Fahrenheit') + ' to ' + (to === 'c' ? 'Celsius' : 'Fahrenheit') + ')';
+          return '**' + fmtAns(v) + '\u00b0' + from.toUpperCase() + ' = ' + fmtAns(Math.round(out * 100) / 100) + '\u00b0' + to.toUpperCase() + '**';
         }
       }
       let num = null, ua = null, ub = null;
@@ -2204,68 +2389,6 @@ You took a real step by saying it here. Can I ask — is tonight a particularly 
       }
       return null;
     }
-
-    // --- CODE / EMAIL / EXPLAIN RESPONSES ---
-    const CODE_PY = `Sure! Here's a clean, practical Python script — a file organizer that sorts a messy folder by file type:
-
-\`\`\`python
-import os
-from pathlib import Path
-
-CATEGORIES = {
-    "Images": {".jpg", ".jpeg", ".png", ".gif", ".webp"},
-    "Documents": {".pdf", ".docx", ".txt", ".md"},
-    "Code": {".py", ".js", ".html", ".css", ".json"},
-    "Archives": {".zip", ".tar", ".gz"},
-}
-
-def category_for(ext):
-    for name, exts in CATEGORIES.items():
-        if ext.lower() in exts:
-            return name
-    return "Other"
-
-def organize(folder):
-    folder = Path(folder)
-    if not folder.is_dir():
-        print("Not a valid folder:", folder)
-        return
-    moved = 0
-    for item in folder.iterdir():
-        if item.is_file():
-            dest = folder / category_for(item.suffix)
-            dest.mkdir(exist_ok=True)
-            item.rename(dest / item.name)
-            moved += 1
-    print("Done — organized", moved, "file(s).")
-
-if __name__ == "__main__":
-    organize(input("Folder to organize: ").strip().strip('"'))
-\`\`\`
-
-**How it works:** it maps extensions to categories, creates the folders on demand, and moves each file with Path.rename(). Add a dry_run flag if you want to preview moves before committing to them.{ROLE_CODE}`;
-
-    const CODE_JS = `Here's a handy JavaScript utility — a debounce function with a practical example:
-
-\`\`\`javascript
-function debounce(fn, delay = 300) {
-  let timer;
-  return function (...args) {
-    clearTimeout(timer);
-    timer = setTimeout(() => fn.apply(this, args), delay);
-  };
-}
-
-// Example: live search box
-const searchBox = document.querySelector("#search");
-
-searchBox.addEventListener("input", debounce(function (e) {
-  console.log("Searching for:", e.target.value);
-  // fetch("/api/search?q=" + encodeURIComponent(e.target.value));
-}, 400));
-\`\`\`
-
-The debounce wrapper postpones fn until the user stops typing for delay ms — essential for search inputs, resize handlers, and autosave.{ROLE_CODE}`;
 
     const EMAIL_RESP = `Here's a professional email template you can adapt:
 
@@ -2297,28 +2420,28 @@ Classical computers store information as bits — switches that are either 0 or 
 
 **1. Superposition** — a qubit can be a blend of 0 *and* 1 simultaneously. One qubit explores two states at once; n qubits explore $2^n$ states at once. The catch: you don't get to read all of those answers — measurement collapses the blend into one definite outcome.
 
-**2. Entanglement** — qubits can be linked so that measuring one instantly correlates with another, no matter the distance. This is what lets quantum machines coordinate their "explorations."
+**2. Entanglement** — qubits can be linked so that measuring one instantly correlates with another, no matter the distance.
 
-The trick of quantum algorithms isn't brute parallelism — it's engineering **interference**: wrong answers cancel each other out while right answers reinforce, so the correct result is what survives measurement.
+The trick of quantum algorithms isn't brute parallelism — it's engineering **interference**: wrong answers cancel each other out while right answers reinforce, so the correct result survives measurement.
 
-**Why it matters:** certain problems — factoring huge numbers (breaking RSA encryption), simulating molecules for drug design, optimizing gnarly systems — could see exponential speedups.
+**Why it matters:** factoring huge numbers, simulating molecules for drug design, and optimizing gnarly systems could see exponential speedups.
 
-**Why you don't have one:** qubits are fragile. Heat, vibration, even stray electromagnetic fields destroy their quantum state (decoherence), so machines live in dilution refrigerators colder than outer space, and today's error rates keep useful applications limited. It's less "laptop of 2050" and more "vacuum-tube mainframe of the 1950s" — the physics works; the engineering is catching up.` },
+**Why you don't have one:** qubits are fragile — heat, vibration, and stray fields destroy their quantum state, so machines live in dilution refrigerators colder than outer space. It's less "laptop of 2050" and more "vacuum-tube mainframe of the 1950s" — the physics works; the engineering is catching up.` },
       { kw: [/black ?hole/], src: [{ t: 'NASA', d: 'nasa.gov', u: 'https://science.nasa.gov/universe/black-holes/' }, SRC.wiki],
         text: `**Black holes**
 
 A black hole is a region where gravity is so intense that nothing — not even light — can escape once it crosses the boundary called the **event horizon**.
 
-**How they form:** when a massive star (roughly 20+ times the Sun's mass) runs out of fuel, its core collapses under its own gravity. If the remnant is dense enough, no known force can stop the collapse, and spacetime curvature runs away.
+**How they form:** when a massive star (roughly 20+ times the Sun's mass) runs out of fuel, its core collapses under its own gravity. If the remnant is dense enough, no known force can stop the collapse.
 
 **The key numbers:**
 - A **stellar-mass** black hole might be ~10 miles across
-- **Supermassive** ones, like Sagittarius A* at our galaxy's center, hold millions to billions of solar masses — and we still don't fully know how they grew so large so early
+- **Supermassive** ones, like Sagittarius A* at our galaxy's center, hold millions to billions of solar masses
 - The event horizon of Sgr A* would fit inside Mercury's orbit
 
 **The weird parts:** time slows near one — an outside observer watching you fall in would see you freeze and redden at the horizon while, from your perspective, you cross it uneventfully. And in 2019, the Event Horizon Telescope gave us our first actual photograph of a black hole's glowing accretion ring in galaxy M87.
 
-They're not cosmic vacuum cleaners, by the way — replace the Sun with a Sun-mass black hole and Earth's orbit wouldn't change. Just, you know, don't go near one.` },
+They're not cosmic vacuum cleaners, by the way — replace the Sun with a Sun-mass black hole and Earth's orbit wouldn't change. Just don't go near one.` },
       { kw: [/machine learning/, /artificial intelligence/, /how does ai work/, /neural network/], src: [SRC.wiki, { t: 'IBM', d: 'ibm.com', u: 'https://www.ibm.com/topics/machine-learning' }],
         text: `**How machine learning works**
 
@@ -2326,16 +2449,16 @@ Traditional programming: humans write explicit rules, the computer follows them.
 
 **The core loop:**
 1. **Feed it data** — say, a million photos labeled "cat" or "not cat"
-2. **It makes a guess** on each one — badly at first, coin-flip badly
+2. **It makes a guess** — badly at first, coin-flip badly
 3. **Measure the error** — how wrong was the guess?
 4. **Nudge millions of internal knobs (parameters)** in the direction that would have made the guess less wrong
 5. **Repeat billions of times**
 
-That nudging process is called **gradient descent** — imagine standing blindfolded on a hillside and feeling which way is downhill, then taking a small step. Do that enough times and you land in a valley of good predictions.
+That nudging process is **gradient descent** — blindfolded on a hillside, feel which way is downhill, take a small step, repeat until you land in a valley of good predictions.
 
-**Neural networks** stack simple units in layers: early layers detect edges and colors, middle layers detect textures and shapes, deep layers detect "ears + whiskers + face shape = cat." Nobody programs those stages — they emerge from training.
+**Neural networks** stack simple units in layers: edges and colors, then textures and shapes, then "ears + whiskers + face shape = cat." Nobody programs those stages — they emerge from training.
 
-**The catch:** the model learns whatever patterns exist in the data, including biases and noise. Garbage in, confident garbage out. That's why data quality matters more than model cleverness, and why AI systems inherit human blind spots unless carefully audited.` },
+**The catch:** the model learns whatever patterns exist in the data, including biases. Garbage in, confident garbage out.` },
       { kw: [/photosynthesis/], src: [SRC.wiki],
         text: `**Photosynthesis**
 
@@ -2344,15 +2467,15 @@ Photosynthesis is how plants turn sunlight, water, and air into food — the che
 **The recipe:**
 
  $$6CO_2 + 6H_2O \\xrightarrow{\\text{sunlight}} C_6H_{12}O_6 + 6O_2$$ 
-Six molecules of carbon dioxide plus six of water, energized by light, become one molecule of glucose (plant food) plus six of oxygen.
+Six molecules of carbon dioxide plus six of water, energized by light, become one molecule of glucose plus six of oxygen.
 
-**It happens in two stages inside chloroplasts:**
+**Two stages inside chloroplasts:**
 
-1. **Light-dependent reactions** — chlorophyll absorbs sunlight and uses it to split water molecules. This releases oxygen as a byproduct (the oxygen you're breathing right now came from this step) and charges molecular "batteries" (ATP and NADPH).
+1. **Light-dependent reactions** — chlorophyll absorbs sunlight and splits water molecules, releasing oxygen as a byproduct (the oxygen you're breathing right now) and charging molecular "batteries" (ATP and NADPH).
 
 2. **Calvin cycle** — those batteries power the assembly of CO₂ into glucose, no light required.
 
-**The scale of it:** plants and ocean plankton fix roughly 100+ billion tons of carbon per year, and every calorie in your diet — including the meat you eat, since animals eat plants — traces back to this reaction. Fossil fuels are ancient photosynthesis, banked millions of years ago. When you burn gasoline, you're spending sunlight captured by Jurassic plants.` },
+**The scale:** plants and plankton fix roughly 100+ billion tons of carbon per year, and every calorie in your diet traces back to this reaction. Fossil fuels are ancient photosynthesis — when you burn gasoline, you're spending sunlight captured by Jurassic plants.` },
       { kw: [/blockchain/, /bitcoin/, /crypto/], src: [SRC.wiki, { t: 'MIT Technology Review', d: 'technologyreview.com', u: 'https://www.technologyreview.com/topic/blockchain/' }],
         text: `**Blockchain, explained plainly**
 
@@ -2360,26 +2483,26 @@ A blockchain is a shared ledger that thousands of computers hold copies of — w
 
 **How it works:**
 - Transactions get batched into **blocks**
-- Each block contains a cryptographic **hash** (a digital fingerprint) of the previous block — change anything in an old block and its hash changes, breaking the whole chain after it
-- Computers on the network race to validate the next block (**mining** or **staking** depending on design), and the winner appends it
+- Each block contains a cryptographic **hash** of the previous block — change anything old and the whole chain after it breaks
+- Computers race to validate the next block, and the winner appends it
 - Everyone's copy updates to match
 
-**Why that matters:** no single company, government, or admin can quietly edit the record, because thousands of independent copies would disagree. Trust shifts from an institution to a math-heavy consensus process.
+**Why that matters:** no single company, government, or admin can quietly edit the record. Trust shifts from an institution to a math-heavy consensus process.
 
-**Honest tradeoffs:** it's brilliant for systems where no trusted middleman exists (cross-border value transfer, provenance tracking) but clumsy where one does — it's slower and more energy-intensive than a regular database for 99% of applications. Blockchain is a solution looking for problems in some places, and genuinely the right tool in others.` },
+**Honest tradeoffs:** brilliant where no trusted middleman exists, clumsy where one does — slower and more energy-intensive than a regular database for 99% of applications.` },
       { kw: [/\bgravity\b/, /relativity/], src: [{ t: 'NASA', d: 'nasa.gov', u: 'https://science.nasa.gov/universe/' }, SRC.wiki],
         text: `**Gravity**
 
-Newton described gravity as a force pulling masses together: $F = G\\frac{m_1 m_2}{r^2}$ — the famous inverse-square law that still steers spacecraft today.
+Newton described gravity as a force pulling masses together: $F = G\\frac{m_1 m_2}{r^2}$ — the inverse-square law that still steers spacecraft today.
 
-**Einstein's rewrite:** general relativity says gravity isn't a force at all. Mass and energy **curve spacetime**, and objects simply follow the straightest possible paths through that curved geometry. The Earth doesn't feel a rope pulling it toward the Sun; it's coasting along a straight line through spacetime that the Sun has bent.
+**Einstein's rewrite:** general relativity says gravity isn't a force at all. Mass and energy **curve spacetime**, and objects follow the straightest possible paths through that curved geometry. Earth isn't tugged toward the Sun; it's coasting along a straight line through spacetime the Sun has bent.
 
-**Confirmed predictions that came out of this idea:**
-- Light bends around massive objects (seen during a 1919 eclipse, making Einstein famous overnight)
-- Time runs measurably slower in stronger gravity — your GPS satellites correct for this daily, or maps would drift by kilometers per day
+**Confirmed predictions:**
+- Light bends around massive objects (seen during a 1919 eclipse)
+- Time runs slower in stronger gravity — GPS satellites correct for this daily, or maps would drift by kilometers per day
 - Colliding black holes ripple spacetime itself — detected as gravitational waves in 2015
 
-And the open frontier: gravity is the one force that refuses to play nice with quantum mechanics. Whatever reconciles them — string theory, loop quantum gravity, or something nobody's thought of yet — is likely to be the biggest physics discovery of the century.` }
+The open frontier: gravity refuses to play nice with quantum mechanics. Whatever reconciles them is likely to be the biggest physics discovery of the century.` }
     ];
     function applyStyle(text) {
       const p = getProfile();
@@ -2392,14 +2515,14 @@ And the open frontier: gravity is the one force that refuses to play nice with q
       return text;
     }
 
-    // --- IMAGE SEARCH / GENERATION ---
+    // --- IMAGE SEARCH / GENERATION / VARIATIONS ---
     const IMG_STOPWORDS = new Set(['a','an','the','of','me','my','i','show','please','can','could','you','get','find','give','some','that','this','is','are','do','doing','did','does','for','with','and','to','on','in','it','want','need','would','like','display','search','looking','look','up','picture','pictures','image','images','photo','photos','pic','pics','photograph','photographs','really','very','nice','good','cute','beautiful','now','then','her','his','their']);
     const IMG_MAP = { girl: 'woman', girls: 'women', boy: 'man', boys: 'men', guy: 'man', lady: 'woman', kid: 'child', kids: 'children', pushup: 'push-up', pushups: 'push-ups', situp: 'sit-up', situps: 'sit-ups', workout: 'fitness', jogging: 'running', cellphone: 'phone', pc: 'computer' };
     function cleanImageQuery(raw) {
-      const tokens = raw.split(/[^a-zA-Z0-9-]+/).filter(Boolean)
+      const tokens = raw.split(/[^a-zA-Z0-9'-]+/).filter(Boolean)
         .map(t => IMG_MAP[t.toLowerCase()] || t.toLowerCase())
         .filter(t => !IMG_STOPWORDS.has(t));
-      return tokens.slice(0, 4).join(' ').trim();
+      return tokens.slice(0, 5).join(' ').trim();
     }
     function extractImageQuery(q) {
       let rest = '';
@@ -2417,14 +2540,34 @@ And the open frontier: gravity is the one force that refuses to play nice with q
       if (/\b(show|find|get)\s+me\s+(a|an|some)?\s*\S+/.test(q)) return true;
       return false;
     }
+    const IMG_MODIFIERS = ['black and white','golden hour','oil painting','digital art','watercolor','pencil sketch','wide angle','close up','night','day','sunset','sunrise','dawn','dusk','colorful','colourful','vibrant','monochrome','grayscale','cartoon','anime','realistic','painting','sketch','vintage','retro','90s','80s','futuristic','cyberpunk','minimalist','dark','bright','moody','warm','cool','pastel','neon','cinematic','winter','summer','autumn','spring','rain','snow','fog','misty','storm','sunny','cloudy','blue','red','green','purple','pink','orange','yellow','sepia','dreamy','epic','dramatic','soft','cozy','fantasy','space','underwater','aerial','hd','4k'];
+    function hasModifier(q, m) { return m.indexOf(' ') !== -1 ? q.indexOf(m) !== -1 : new RegExp('\\b' + m + '\\b').test(q); }
+    function isVariationRequest(q) {
+      if (q.length > 60) return false;
+      if (/^(again|another( one)?|regenerate|redo|one more|different( one)?|try again|more)[.! ]*$/.test(q)) return true;
+      if (/^(make|turn|change|do|give|render|redraw|draw) (it|the|that|this)\b/.test(q)) return true;
+      if (/^more \w+/.test(q)) return true;
+      if (q.split(/\s+/).length <= 4 && IMG_MODIFIERS.some(m => hasModifier(q, m))) return true;
+      return false;
+    }
+    function extractModifiers(q) {
+      let found = IMG_MODIFIERS.filter(m => hasModifier(q, m));
+      if (!found.length) {
+        const skip = new Set(['make','it','the','that','this','more','less','version','style','please','look','looks','like','a','an','of','into','in','with','to','do','give','turn','change','render','redraw','draw','again','different','another','one']);
+        const words = q.split(/[^a-z]+/).filter(w => w.length > 2 && !skip.has(w));
+        found = words.slice(0, 2);
+      }
+      return found.slice(0, 3);
+    }
     async function tryFetchImage(query) {
       if (!query) return null;
       try {
-        const res = await fetch('https://api.unsplash.com/search/photos?query=' + encodeURIComponent(query) + '&per_page=1&orientation=landscape&content_filter=high&client_id=' + UNSPLASH_ACCESS_KEY);
+        const res = await fetch('https://api.unsplash.com/search/photos?query=' + encodeURIComponent(query) + '&per_page=4&orientation=landscape&content_filter=high&client_id=' + UNSPLASH_ACCESS_KEY);
         if (!res.ok) return null;
         const data = await res.json();
-        const r = data.results && data.results[0];
-        if (!r) return null;
+        const results = data.results || [];
+        if (!results.length) return null;
+        const r = pick(results.slice(0, 3));
         return { url: r.urls.regular, alt: r.alt_description || query, author: r.user.name, profile: r.user.links.html, link: r.links.html };
       } catch (e) { return null; }
     }
@@ -2504,7 +2647,7 @@ And the open frontier: gravity is the one force that refuses to play nice with q
         if (r !== null) {
           if (/area/.test(q)) {
             const area = Math.PI * r * r;
-            return '**Area of a circle**\n\n$$A = \\pi r^2 = \\pi \\times ' + latexNum(r) + '^2 = ' + latexNum(area) + '$$\n\n**Area is about ' + fmtAns(Math.round(area * 100) / 100) + '** (using $\\pi \\approx 3.14159$)';
+            return '**Area of a circle**\n\n$$A = \\pi r^2 = \\pi \\times ' + latexNum(r) + '^2 = ' + latexNum(area) + '$$\n\n**Area is about ' + fmtAns(Math.round(area * 100) / 100) + '**';
           }
           if (/circumference|perimeter/.test(q)) {
             const c = 2 * Math.PI * r;
@@ -2529,7 +2672,6 @@ And the open frontier: gravity is the one force that refuses to play nice with q
         const bm2 = q.match(/base\D*(\d+(?:\.\d+)?)/), hm2 = q.match(/height\D*(\d+(?:\.\d+)?)/);
         if (bm2 && hm2 && /triangle/.test(q)) { const b = parseFloat(bm2[1]), h = parseFloat(hm2[1]); return '**Area of a triangle**\n\n$$A = \\frac{1}{2} b h = \\frac{1}{2} \\times ' + latexNum(b) + ' \\times ' + latexNum(h) + ' = ' + latexNum(b * h / 2) + '$$\n\n**Area = ' + fmtAns(b * h / 2) + '**'; }
       }
-      // Simple arithmetic — strip question words first ("whats 1+1", "what is 2*2")
       const stripped = q.replace(/^(what'?s|whats|what is|what are|what does|how much is|how many is|calculate|compute|evaluate|tell me)\s+/i, '').replace(/\s*(equals?|equal to)\s*\?*$/i, '').replace(/\?+/g, '').trim();
       if (/^[\d\s+\-*/().^%,]+$/.test(stripped) && /\d/.test(stripped) && /[+\-*/^]/.test(stripped) && stripped.replace(/\s/g, '').length >= 3) {
         try {
@@ -2543,8 +2685,9 @@ And the open frontier: gravity is the one force that refuses to play nice with q
     }
 
     // --- MAIN RESPONSE COMPUTATION ---
-    async function computeResponse(rawText, atts) {
+    async function computeResponse(rawText, atts, ctx) {
       const q = (rawText || '').toLowerCase().trim();
+      ctx = ctx || {};
 
       if (!q && atts && atts.length) return { text: RESP.attachmentsOnly(atts) };
 
@@ -2561,11 +2704,11 @@ And the open frontier: gravity is the one force that refuses to play nice with q
           return { text: pick(SMALL_TALK[i].resp) };
         }
       }
-      if (/^(how are you( doing)?|how('s| is) it going|how are things|you good|what'?s up|whats up|wyd)\b/.test(q) && q.length < 35) return { text: pick(HOW_ARE_YOU) };
+      if (/^(how are you( doing)?|hru|how('s| is) it going|how are things|you good|what'?s up|whats up|wyd)\b/.test(q) && q.length < 35) return { text: pick(HOW_ARE_YOU) };
       if (/(who are you|what are you(?! doing)|what'?s your name|who made you|who created you|are you (an? )?(ai|robot|human|real)|what model are you)/.test(q)) return { text: aboutResponse() };
       if (/^(what can you do|what do you do|what can i (ask|say|do)|your (skills|capabilities)|commands|help)[?!. ]*$/.test(q)) return { text: capabilitiesResponse() };
 
-      // 3. Little utilities: time, date, coin, dice, random number, rps
+      // 3. Utilities
       if (/\btime\b/.test(q) && /(what|tell|know|current|now)/.test(q) && q.length < 40) {
         let t = ''; try { t = new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }); } catch (e) {}
         return { text: 'It is **' + t + '** — your local time.' };
@@ -2604,32 +2747,52 @@ And the open frontier: gravity is the one force that refuses to play nice with q
         return { text: 'You: **' + yours + '**. Me: **' + mine + '**.\n\n' + verdict };
       }
 
-      // 4. Math
+      // 4. Reply-context: re-explain the quoted message
+      const rt = ctx.replyTo ? (ctx.replyTo.text || '') : '';
+      if (ctx.replyTo && rt && !/^I couldn't generate/.test(rt) && /^(what does (this|that) mean|explain (this|that)( again)?|elaborate|tell me more|more|go deeper|expand)[.? ]*$/.test(q)) {
+        return await computeResponse(rt, [], null);
+      }
+
+      // 5. IMAGE GENERATION + FOLLOW-UP VARIATIONS
+      const baseImgQuery = (ctx.replyTo && ctx.replyTo.imageQuery) || ctx.lastImageQuery || null;
+      if (baseImgQuery && isVariationRequest(q)) {
+        const mods = extractModifiers(q);
+        let nq = baseImgQuery;
+        if (mods.length) nq = baseImgQuery + ' ' + mods.join(' ');
+        return { generate: nq.split(/\s+/).slice(0, 7).join(' ') };
+      }
+      if (isImageRequest(q)) {
+        const query = extractImageQuery(q);
+        if (query) return { generate: query };
+        return { text: "Happy to! Describe what you'd like me to create — a subject, a mood, a style — and I'll get to work." };
+      }
+
+      // 6. Math
       const math = tryMath(q);
       if (math) return { text: math };
 
-      // 5. Unit conversions
+      // 7. Conversions
       const conv = tryConvert(q);
       if (conv) return { text: conv };
 
-      // 6. Capitals
+      // 8. Capitals
       const capm = q.match(/what'?s the capital of ([a-z ]+)/);
       if (capm) {
         const key = capm[1].trim().replace(/\?+$/, '').trim();
         if (CAPITALS[key]) return { text: '**' + CAPITALS[key] + '** — capital of ' + key.replace(/\b\w/g, ch => ch.toUpperCase()) + '.' };
       }
 
-      // 7. Health (sensitive — no persona)
+      // 9. Health (sensitive)
       for (let i = 0; i < HEALTH_TOPICS.length; i++) {
         if (HEALTH_TOPICS[i].kw.some(rx => rx.test(q))) return { text: HEALTH_TOPICS[i].text, sources: HEALTH_TOPICS[i].src };
       }
 
-      // 8. Mental health (sensitive — no persona)
+      // 10. Mental health (sensitive)
       for (let i = 0; i < MENTAL_TOPICS.length; i++) {
         if (MENTAL_TOPICS[i].kw.some(rx => rx.test(q))) return { text: MENTAL_TOPICS[i].text, sources: MENTAL_TOPICS[i].src };
       }
 
-      // 9. Popular questions library
+      // 11. Popular questions library
       for (let i = 0; i < POPULAR_QA.length; i++) {
         if (POPULAR_QA[i].k.some(rx => rx.test(q))) {
           let text;
@@ -2640,37 +2803,38 @@ And the open frontier: gravity is the one force that refuses to play nice with q
         }
       }
 
-      const p = getProfile();
-
-      // 10. Code
-      if (/(write|create|make|give)\b.*\b(script|code|program|function)|\bpython\b|\bjavascript\b/.test(q)) {
-        let base = /javascript|\bjs\b/.test(q) ? CODE_JS : CODE_PY;
-        if (p.role && /engineer|developer|programmer|analyst|student/i.test(p.role)) base = base.replace('{ROLE_CODE}', '\n\n*Since you work as a ' + p.role + ', I kept it dependency-free and added the pattern notes you would actually care about.*');
-        else base = base.replace('{ROLE_CODE}', '');
-        return { text: base };
+      // 12. Programming / coding -> Pro upsell
+      if (/\b(code|coding|program(ming|s|mer)?|script|debug|python|javascript|java|html|css|react|node|sql|api|algorithm|function|variable|array|loop|compile|regex|software|developer)\b/.test(q) || /build (me )?(a|an) (website|app|game|bot)/.test(q)) {
+        return { text: PRO_UPSELL };
       }
 
-      // 11. Email / writing
+      // 13. Email / writing
       if (/(write|draft|help with).*(email|letter|message)/.test(q)) {
+        const p = getProfile();
         let base = EMAIL_RESP.replace('{ROLE_CODE}', p.role ? '\n\n*Want me to tailor the tone for your role as a ' + p.role + '? Just say the word.*' : '');
         return { text: base };
       }
 
-      // 12. Explainers (persona + profile style apply)
+      // 14. Explainers
       for (let i = 0; i < EXPLAIN_TOPICS.length; i++) {
         if (EXPLAIN_TOPICS[i].kw.some(rx => rx.test(q))) {
           return { text: applyPersona(applyStyle(EXPLAIN_TOPICS[i].text)), sources: EXPLAIN_TOPICS[i].src };
         }
       }
 
-      // 13. Greeting
+      // 15. Greeting
       if (/^(hi|hey|hello|yo|sup|good (morning|afternoon|evening)|hola)\b/.test(q) && q.length < 25) {
+        const p = getProfile();
         const name = p.name ? ' ' + p.name.split(' ')[0] : '';
         return { text: pick(RESP.greeting).replace('{NAME}', name) };
       }
 
-      // 14. No canned answer → thinking pause + human handoff (handled in generateAiReply)
-      return { text: pick(HANDOFF_MSGS), handoff: true };
+      // 16. Typo / gibberish check
+      const typo = typoCheck(q);
+      if (typo) return { text: typo.text };
+
+      // 17. No answer -> Thinking... then give up
+      return { handoff: true };
     }
 
     // --- INIT ---
@@ -2680,11 +2844,12 @@ And the open frontier: gravity is the one force that refuses to play nice with q
       updatePersonaUI();
       if (state.chats.length > 0) state.currentChatId = state.chats[0].id;
       renderChatHistory();
-      renderCurrentChat();
+      if (getEmail()) renderCurrentChat();
       setupEventListeners();
       updateSendState();
       renderPrices();
       Cloud.init();
+      watchFirebaseAuth();
       if (getEmail()) userInput.focus();
     }
     try { init(); }
