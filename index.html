@@ -1,0 +1,2250 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Omni AI</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: { extend: { colors: { brand: { 50: '#f4f4f5', 100: '#e4e4e7', 600: '#18181b', 900: '#09090b' } }, fontFamily: { sans: ['Inter', 'sans-serif'], mono: ['JetBrains Mono', 'monospace'] } } }
+    }
+  </script>
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .custom-scrollbar::-webkit-scrollbar { width: 5px; height: 5px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #d4d4d8; border-radius: 10px; }
+    .dark .custom-scrollbar::-webkit-scrollbar-thumb { background: #3f3f46; }
+    pre { position: relative; }
+    pre code { font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; background: transparent !important; padding: 0 !important; color: inherit !important; }
+    .prose p { margin-bottom: 0.75em; line-height: 1.6; }
+    .prose p:last-child { margin-bottom: 0; }
+    .prose ul, .prose ol { margin-top: 0.5em; margin-bottom: 0.5em; padding-left: 1.5em; list-style-type: disc; }
+    .prose ol { list-style-type: decimal; }
+    .prose li { margin-bottom: 0.25em; }
+    .prose pre { background-color: #f4f4f5; color: #18181b; border-radius: 0.5rem; padding: 1rem; overflow-x: auto; margin-top: 0.5em; margin-bottom: 0.5em; }
+    .dark .prose pre { background-color: #18181b; color: #f4f4f5; border: 1px solid #27272a; }
+    .prose code { color: #dc2626; background-color: #fee2e2; padding: 0.125rem 0.25rem; border-radius: 0.25rem; font-family: 'JetBrains Mono', monospace; }
+    .dark .prose code { color: #f87171; background-color: #451a03; }
+    .prose h1 { font-size: 1.3rem; font-weight: 700; margin: 1em 0 0.4em; }
+    .prose h2 { font-size: 1.15rem; font-weight: 700; margin: 1em 0 0.35em; }
+    .prose h3 { font-size: 1rem; font-weight: 600; margin: 0.9em 0 0.3em; }
+    .prose strong { font-weight: 600; }
+    .prose table { width: 100%; border-collapse: collapse; margin: 0.75em 0; font-size: 0.875rem; }
+    .prose th, .prose td { border: 1px solid #e4e4e7; padding: 0.4rem 0.65rem; text-align: left; }
+    .dark .prose th, .dark .prose td { border-color: #3f3f46; }
+    .prose th { background: #fafafa; font-weight: 600; }
+    .dark .prose th { background: #18181b; }
+    .prose blockquote { border-left: 3px solid #d4d4d8; padding: 0.1em 0 0.1em 1em; margin: 0.75em 0; color: #52525b; }
+    .dark .prose blockquote { border-color: #3f3f46; color: #a1a1aa; }
+    .prose a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+    .code-block pre { margin: 0 !important; border-radius: 0 !important; border: none !important; }
+    .katex-display { overflow-x: auto; overflow-y: hidden; padding: 0.35rem 0; }
+    .meta-pill { display: inline-flex; align-items: center; gap: 0.375rem; font-size: 11px; color: #a1a1aa; background: #fafafa; border: 1px solid #f4f4f5; border-radius: 9999px; padding: 0.2rem 0.6rem; }
+    .dark .meta-pill { background: #18181b; border-color: #27272a; }
+    .pills:empty { display: none; }
+    .source-card { display: flex; align-items: center; gap: 0.5rem; background: #fafafa; border: 1px solid #f0f0f1; border-radius: 0.75rem; padding: 0.45rem 0.7rem; transition: all .15s ease; }
+    .source-card:hover { border-color: #d4d4d8; background: #fff; transform: translateY(-1px); }
+    .dark .source-card { background: #18181b; border-color: #27272a; }
+    .dark .source-card:hover { border-color: #3f3f46; background: #1c1c1f; }
+    .style-active { border-color: #18181b !important; background: #18181b !important; color: #fff !important; }
+    .dark .style-active { border-color: #f4f4f5 !important; background: #f4f4f5 !important; color: #18181b !important; }
+    .field-err { font-size: 11px; color: #f43f5e; margin-top: 4px; }
+    textarea { resize: none; overflow-y: hidden; }
+    @keyframes pulse-dot { 0%, 100% { opacity: 0.2; transform: scale(0.8); } 50% { opacity: 1; transform: scale(1.2); } }
+    .animate-pulse-dot { animation: pulse-dot 1.5s infinite ease-in-out; }
+    .dot-flashing { position: relative; width: 6px; height: 6px; border-radius: 5px; background-color: #a1a1aa; color: #a1a1aa; animation: dot-flashing 1s infinite linear alternate; animation-delay: 0.5s; }
+    .dot-flashing::before, .dot-flashing::after { content: ''; display: inline-block; position: absolute; top: 0; }
+    .dot-flashing::before { left: -12px; width: 6px; height: 6px; border-radius: 5px; background-color: #a1a1aa; animation: dot-flashing 1s infinite alternate; animation-delay: 0s; }
+    .dot-flashing::after { left: 12px; width: 6px; height: 6px; border-radius: 5px; background-color: #a1a1aa; animation: dot-flashing 1s infinite alternate; animation-delay: 1s; }
+    @keyframes dot-flashing { 0% { background-color: #a1a1aa; } 50%, 100% { background-color: #e4e4e7; } }
+    @keyframes slide-in { from { transform: translateX(100%); } to { transform: translateX(0); } }
+    .animate-slide-in { animation: slide-in 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    .blur-bg { filter: blur(8px) brightness(0.95); transition: filter 0.3s ease; pointer-events: none; }
+    @keyframes shake { 10%, 90% { transform: translateX(-1px); } 20%, 80% { transform: translateX(2px); } 30%, 50%, 70% { transform: translateX(-4px); } 40%, 60% { transform: translateX(4px); } }
+    .animate-shake { animation: shake 0.5s ease; }
+  </style>
+</head>
+<body class="h-screen flex overflow-hidden bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 relative transition-colors duration-300">
+
+  <div id="appContainer" class="flex w-full h-full transition-all duration-300">
+
+    <!-- LEFT SIDEBAR -->
+    <aside id="sidebar" class="w-64 bg-zinc-50 dark:bg-zinc-900 border-r border-zinc-200 dark:border-zinc-800 flex flex-col justify-between transition-all duration-300 z-20 flex-shrink-0">
+      <div class="p-3 flex flex-col h-full">
+        <div class="flex items-center justify-between mb-3">
+          <button id="toggleSidebarBtn" class="text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200 p-2 rounded-lg hover:bg-zinc-200 dark:hover:bg-zinc-800 transition" title="Toggle Sidebar">
+            <i class="fa-solid fa-bars"></i>
+          </button>
+          <button id="newChatBtn" class="flex-1 ml-2 flex items-center justify-center space-x-2 px-3 py-2 bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-750 rounded-lg shadow-sm text-sm font-medium text-zinc-700 dark:text-zinc-200 transition">
+            <i class="fa-regular fa-pen-to-square"></i>
+            <span>New chat</span>
+          </button>
+        </div>
+        <div class="mb-3">
+          <div class="relative">
+            <i class="fa-solid fa-search absolute left-3 top-2.5 text-xs text-zinc-400"></i>
+            <input type="text" id="chatSearchInput" placeholder="Search chats..." class="w-full pl-8 pr-3 py-1.5 bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg text-xs text-zinc-800 dark:text-zinc-200 focus:outline-none focus:ring-1 focus:ring-zinc-500">
+          </div>
+        </div>
+        <div class="flex-1 overflow-y-auto custom-scrollbar space-y-1 pr-1">
+          <div id="chatHistoryList" class="space-y-1"></div>
+        </div>
+        <div class="pt-3 mt-auto space-y-2">
+          <button onclick="openPricingModal()" class="w-full flex items-center justify-between px-3.5 py-2.5 bg-zinc-900 dark:bg-zinc-800 text-white rounded-xl hover:bg-zinc-800 dark:hover:bg-zinc-700 transition shadow-sm group">
+            <div class="flex items-center space-x-2">
+              <i class="fa-solid fa-wand-magic-sparkles text-zinc-300"></i>
+              <span class="text-sm font-semibold">Upgrade plan</span>
+            </div>
+            <span class="text-[10px] bg-zinc-800 dark:bg-zinc-900 text-zinc-300 px-1.5 py-0.5 rounded font-mono uppercase tracking-wider border border-zinc-700">PRO</span>
+          </button>
+          <div class="flex items-center justify-between px-2 py-1 bg-zinc-100 dark:bg-zinc-850 rounded-xl">
+            <div class="flex items-center space-x-2.5 overflow-hidden cursor-pointer" onclick="openProfileModal()" title="Your profile & memory">
+              <div class="w-7 h-7 rounded-full bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 flex items-center justify-center font-bold text-xs uppercase" id="userInitial">U</div>
+              <div class="text-xs font-medium truncate text-zinc-800 dark:text-zinc-200" id="userDisplayEmail">User</div>
+            </div>
+            <div class="flex items-center flex-shrink-0">
+              <button onclick="openProfileModal()" title="Profile settings" class="text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 text-xs px-1.5 py-1 transition"><i class="fa-solid fa-gear"></i></button>
+              <button onclick="logoutUser()" title="Sign out" class="text-zinc-400 hover:text-rose-500 text-xs px-1.5 py-1 transition"><i class="fa-solid fa-right-from-bracket"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN CHAT AREA -->
+    <main class="flex-1 flex flex-col h-full relative overflow-hidden bg-white dark:bg-zinc-950">
+      <header class="h-14 px-4 flex items-center justify-between bg-white dark:bg-zinc-950 z-10 sticky top-0 border-b border-zinc-100 dark:border-zinc-800">
+        <div class="flex items-center space-x-3 relative">
+          <button id="expandSidebarBtn" class="hidden text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200 p-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 transition">
+            <i class="fa-solid fa-bars"></i>
+          </button>
+          <div class="relative">
+            <button id="modelSelectBtn" class="flex items-center space-x-2 text-base font-semibold text-zinc-900 dark:text-zinc-100 hover:text-zinc-700 dark:hover:text-zinc-300 transition px-3 py-1.5 rounded-xl hover:bg-zinc-100 dark:hover:bg-zinc-850">
+              <span id="currentModelText">Omni 4.5</span>
+              <i class="fa-solid fa-chevron-down text-xs text-zinc-400"></i>
+            </button>
+            <div id="modelDropdown" class="absolute top-full left-0 mt-1.5 w-72 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl shadow-xl z-50 hidden flex flex-col py-1 overflow-hidden">
+              <button class="model-option flex items-center justify-between px-4 py-3 hover:bg-zinc-50 dark:hover:bg-zinc-800 text-left transition" data-model="Omni 4.5">
+                <div>
+                  <div class="text-sm font-semibold text-zinc-900 dark:text-zinc-100">Omni 4.5</div>
+                  <div class="text-xs text-zinc-500">Standard everyday intelligence</div>
+                </div>
+                <i class="model-check fa-solid fa-check text-zinc-900 dark:text-zinc-100"></i>
+              </button>
+              <button class="model-option flex items-center justify-between px-4 py-3 hover:bg-zinc-50 dark:hover:bg-zinc-800 text-left transition border-t border-zinc-100 dark:border-zinc-800" data-model="Omni Code Pro" data-pro="true">
+                <div>
+                  <div class="text-sm font-semibold text-zinc-900 dark:text-zinc-100 flex items-center space-x-2">
+                    <span>Omni Code Pro</span>
+                    <span class="text-[10px] bg-zinc-100 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 px-1.5 rounded font-mono font-bold border border-zinc-200 dark:border-zinc-700">PRO</span>
+                  </div>
+                  <div class="text-xs text-zinc-500">Advanced programming, scripts & logic</div>
+                </div>
+                <i class="fa-solid fa-lock text-zinc-400"></i>
+              </button>
+              <button class="model-option flex items-center justify-between px-4 py-3 hover:bg-zinc-50 dark:hover:bg-zinc-800 text-left transition border-t border-zinc-100 dark:border-zinc-800" data-model="Omni Vision Max" data-pro="true">
+                <div>
+                  <div class="text-sm font-semibold text-zinc-900 dark:text-zinc-100 flex items-center space-x-2">
+                    <span>Omni Vision Max</span>
+                    <span class="text-[10px] bg-zinc-100 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 px-1.5 rounded font-mono font-bold border border-zinc-200 dark:border-zinc-700">PRO</span>
+                  </div>
+                  <div class="text-xs text-zinc-500">Deep visual analysis & generation</div>
+                </div>
+                <i class="fa-solid fa-lock text-zinc-400"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="flex items-center space-x-2">
+          <button onclick="toggleTheme()" id="themeToggleBtn" title="Toggle Light/Dark Mode" class="w-9 h-9 rounded-full bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-200 flex items-center justify-center transition border border-zinc-200 dark:border-zinc-700">
+            <i id="themeIcon" class="fa-solid fa-moon text-sm"></i>
+          </button>
+          <button onclick="exportChat()" title="Export chat to Markdown" class="flex items-center space-x-1.5 px-3 py-1.5 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-800 dark:text-zinc-200 rounded-full text-xs font-semibold transition border border-zinc-200 dark:border-zinc-700 shadow-sm">
+            <i class="fa-solid fa-download text-zinc-600 dark:text-zinc-300"></i>
+            <span>Export</span>
+          </button>
+          <button onclick="openPricingModal()" class="flex items-center space-x-1.5 px-3 py-1.5 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-900 dark:text-zinc-100 rounded-full text-xs font-semibold transition border border-zinc-200 dark:border-zinc-700 shadow-sm">
+            <i class="fa-solid fa-wand-magic-sparkles text-zinc-700 dark:text-zinc-300"></i>
+            <span>Upgrade to Pro</span>
+          </button>
+        </div>
+      </header>
+
+      <div id="chatMessages" class="flex-1 overflow-y-auto custom-scrollbar px-4 pb-4 pt-2 w-full relative">
+        <div class="max-w-3xl mx-auto h-full flex flex-col">
+          <div id="welcomeView" class="flex-1 flex flex-col items-center justify-center text-center pb-20 pt-10">
+            <div class="w-16 h-16 rounded-full bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 flex items-center justify-center mb-6 shadow-md">
+              <svg class="w-8 h-8" viewBox="0 0 32 32" fill="none">
+                <circle cx="16" cy="16" r="14" stroke="currentColor" stroke-width="2.5"/>
+                <path d="M16 6C10.4772 6 6 10.4772 6 16C6 21.5228 10.4772 26 16 26" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+                <circle cx="16" cy="16" r="5" fill="currentColor"/>
+              </svg>
+            </div>
+            <h1 id="welcomeHeading" class="text-3xl font-semibold text-zinc-900 dark:text-zinc-100 tracking-tight mb-2">What can I help with?</h1>
+            <p id="welcomeSub" class="text-sm text-zinc-500 dark:text-zinc-400 mb-6 hidden"></p>
+            <div class="flex flex-wrap justify-center gap-2 max-w-2xl">
+              <button class="prompt-pill px-3.5 py-2 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800 rounded-full text-xs text-zinc-700 dark:text-zinc-300 transition shadow-sm">
+                <i class="fa-solid fa-code text-zinc-900 dark:text-zinc-100 mr-1.5"></i> Write a Python script (Pro Model)
+              </button>
+              <button class="prompt-pill px-3.5 py-2 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800 rounded-full text-xs text-zinc-700 dark:text-zinc-300 transition shadow-sm">
+                <i class="fa-solid fa-file-pen text-zinc-700 dark:text-zinc-300 mr-1.5"></i> Write a professional email
+              </button>
+              <button class="prompt-pill px-3.5 py-2 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800 rounded-full text-xs text-zinc-700 dark:text-zinc-300 transition shadow-sm">
+                <i class="fa-solid fa-heart-pulse text-rose-500 mr-1.5"></i> First aid for bleeding & cuts
+              </button>
+              <button class="prompt-pill px-3.5 py-2 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800 rounded-full text-xs text-zinc-700 dark:text-zinc-300 transition shadow-sm">
+                <i class="fa-solid fa-face-sad-tear text-blue-500 mr-1.5"></i> I'm feeling really sad today
+              </button>
+              <button class="prompt-pill px-3.5 py-2 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800 rounded-full text-xs text-zinc-700 dark:text-zinc-300 transition shadow-sm">
+                <i class="fa-solid fa-calculator text-emerald-600 mr-1.5"></i> Solve math: 145 * 32
+              </button>
+              <button class="prompt-pill px-3.5 py-2 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800 rounded-full text-xs text-zinc-700 dark:text-zinc-300 transition shadow-sm">
+                <i class="fa-solid fa-atom text-purple-500 mr-1.5"></i> Explain quantum computing
+              </button>
+            </div>
+          </div>
+          <div id="messagesList" class="space-y-6 hidden pb-10"></div>
+        </div>
+      </div>
+
+      <div id="scrollNavOverlay" class="absolute bottom-24 left-1/2 -translate-x-1/2 z-30 flex space-x-2 transition-all duration-300 opacity-0 pointer-events-none">
+        <button onclick="scrollToOldest()" title="Jump to oldest message" class="w-9 h-9 rounded-full bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 shadow-lg text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-750 flex items-center justify-center transition">
+          <i class="fa-solid fa-arrow-up text-xs"></i>
+        </button>
+        <button onclick="scrollToLatest()" title="Jump to recent message" class="w-9 h-9 rounded-full bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 shadow-lg text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-750 flex items-center justify-center transition">
+          <i class="fa-solid fa-arrow-down text-xs"></i>
+        </button>
+      </div>
+
+      <div class="px-4 pb-6 pt-2 bg-white dark:bg-zinc-950 w-full max-w-3xl mx-auto relative">
+        <div id="inputWrapper" class="bg-zinc-50 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 rounded-3xl shadow-sm focus-within:border-zinc-500 transition-all flex flex-col overflow-hidden">
+          <div id="attachmentPreviews" class="flex flex-wrap gap-2 px-4 pt-3 hidden"></div>
+          <div class="flex items-center p-2 px-3 relative">
+            <label class="cursor-pointer text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200 w-9 h-9 rounded-full flex items-center justify-center hover:bg-zinc-200 dark:hover:bg-zinc-800 transition mr-1 flex-shrink-0" title="Attach file">
+              <i class="fa-solid fa-plus text-base"></i>
+              <input type="file" id="fileInput" multiple class="hidden" accept="image/*,.txt,.pdf,.js,.py,.html,.css,.json">
+            </label>
+            <button id="micBtn" type="button" class="text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200 w-9 h-9 rounded-full flex items-center justify-center hover:bg-zinc-200 dark:hover:bg-zinc-800 transition mr-2 flex-shrink-0" title="Voice dictation">
+              <i class="fa-solid fa-microphone text-sm"></i>
+            </button>
+            <textarea id="userInput" rows="1" placeholder="Ask anything (try 'code', 'write', math, or health)" class="flex-1 bg-transparent resize-none focus:outline-none text-base text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 custom-scrollbar py-2.5 max-h-48 min-h-[40px]"></textarea>
+            <div class="flex items-center space-x-2 ml-2 flex-shrink-0">
+              <div class="relative">
+                <button id="personaBtn" type="button" class="flex items-center space-x-1.5 px-3 py-1.5 rounded-full border border-zinc-200 dark:border-zinc-700 text-xs font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition" title="Change response tone">
+                  <i class="fa-solid fa-masks-theater text-zinc-900 dark:text-zinc-100"></i>
+                  <span id="personaLabel">Tone</span>
+                </button>
+                <div id="personaDropdown" class="absolute bottom-full mb-2 right-0 w-64 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl shadow-xl z-50 hidden py-1 overflow-hidden">
+                  <div class="px-4 pt-2.5 pb-1.5 text-[10px] font-semibold text-zinc-400 uppercase tracking-wider">Response tone</div>
+                  <button class="persona-option w-full flex items-center justify-between px-4 py-2.5 hover:bg-zinc-50 dark:hover:bg-zinc-800 text-left transition" data-persona="default">
+                    <div class="flex items-center space-x-3">
+                      <div class="w-8 h-8 rounded-lg bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center"><i class="fa-solid fa-comment-dots text-zinc-600 dark:text-zinc-300 text-sm"></i></div>
+                      <div><div class="text-sm font-semibold text-zinc-900 dark:text-zinc-100">Standard</div><div class="text-[11px] text-zinc-500">Clear, helpful, everyday answers</div></div>
+                    </div>
+                    <i class="persona-check fa-solid fa-check text-zinc-900 dark:text-zinc-100 text-xs"></i>
+                  </button>
+                  <button class="persona-option w-full flex items-center justify-between px-4 py-2.5 hover:bg-zinc-50 dark:hover:bg-zinc-800 text-left transition" data-persona="pirate">
+                    <div class="flex items-center space-x-3">
+                      <div class="w-8 h-8 rounded-lg bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center"><i class="fa-solid fa-skull-crossbones text-zinc-600 dark:text-zinc-300 text-sm"></i></div>
+                      <div><div class="text-sm font-semibold text-zinc-900 dark:text-zinc-100">Pirate</div><div class="text-[11px] text-zinc-500">Ahoy! Answers fit for the high seas</div></div>
+                    </div>
+                  </button>
+                  <button class="persona-option w-full flex items-center justify-between px-4 py-2.5 hover:bg-zinc-50 dark:hover:bg-zinc-800 text-left transition" data-persona="shakespeare">
+                    <div class="flex items-center space-x-3">
+                      <div class="w-8 h-8 rounded-lg bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center"><i class="fa-solid fa-feather-pointed text-zinc-600 dark:text-zinc-300 text-sm"></i></div>
+                      <div><div class="text-sm font-semibold text-zinc-900 dark:text-zinc-100">Shakespearean</div><div class="text-[11px] text-zinc-500">Verily, wisdom most eloquent</div></div>
+                    </div>
+                  </button>
+                  <button class="persona-option w-full flex items-center justify-between px-4 py-2.5 hover:bg-zinc-50 dark:hover:bg-zinc-800 text-left transition" data-persona="eli5">
+                    <div class="flex items-center space-x-3">
+                      <div class="w-8 h-8 rounded-lg bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center"><i class="fa-solid fa-child-reaching text-zinc-600 dark:text-zinc-300 text-sm"></i></div>
+                      <div><div class="text-sm font-semibold text-zinc-900 dark:text-zinc-100">ELI5</div><div class="text-[11px] text-zinc-500">Simple explanations with analogies</div></div>
+                    </div>
+                  </button>
+                  <button class="persona-option w-full flex items-center justify-between px-4 py-2.5 hover:bg-zinc-50 dark:hover:bg-zinc-800 text-left transition" data-persona="roast">
+                    <div class="flex items-center space-x-3">
+                      <div class="w-8 h-8 rounded-lg bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center"><i class="fa-solid fa-fire text-zinc-600 dark:text-zinc-300 text-sm"></i></div>
+                      <div><div class="text-sm font-semibold text-zinc-900 dark:text-zinc-100">Roast</div><div class="text-[11px] text-zinc-500">Witty banter with your answers</div></div>
+                    </div>
+                  </button>
+                  <div class="px-4 py-2 text-[10px] text-zinc-400 border-t border-zinc-100 dark:border-zinc-800 mt-1">Tone is skipped on health &amp; sensitive topics.</div>
+                </div>
+              </div>
+              <button id="thinkBtn" onclick="toggleThinkMode()" class="hidden sm:flex items-center space-x-1 px-3 py-1.5 rounded-full border border-zinc-200 dark:border-zinc-700 text-xs font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition">
+                <i id="thinkIcon" class="fa-solid fa-brain text-zinc-900 dark:text-zinc-100"></i>
+                <span>Think</span>
+              </button>
+              <button id="sendBtn" class="w-9 h-9 rounded-full bg-zinc-900 dark:bg-zinc-100 hover:bg-zinc-700 dark:hover:bg-zinc-200 text-white dark:text-zinc-900 flex items-center justify-center transition disabled:opacity-30 disabled:cursor-not-allowed shadow-sm" disabled>
+                <i id="sendActionIcon" class="fa-solid fa-arrow-up"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="text-center text-xs text-zinc-400 mt-3">
+          Omni can make mistakes. Consider verifying important information.
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- CODE SANDBOX MODAL -->
+  <div id="sandboxModal" class="fixed inset-0 bg-zinc-950/60 backdrop-blur-sm z-[80] flex items-center justify-center hidden opacity-0 transition-opacity duration-300">
+    <div class="bg-white dark:bg-zinc-900 rounded-3xl shadow-2xl w-full max-w-4xl h-[80vh] flex flex-col overflow-hidden border border-zinc-200 dark:border-zinc-800 transform scale-95 transition-transform duration-300" id="sandboxModalInner">
+      <div class="px-6 py-4 border-b border-zinc-200 dark:border-zinc-800 flex items-center justify-between bg-zinc-50 dark:bg-zinc-900">
+        <div class="flex items-center space-x-2">
+          <i class="fa-solid fa-code text-blue-500"></i>
+          <h3 class="text-sm font-bold text-zinc-900 dark:text-zinc-100">Live Code Preview</h3>
+        </div>
+        <button onclick="closeSandboxModal()" class="text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 transition text-lg"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="flex-1 bg-zinc-100 dark:bg-zinc-950 p-4 flex">
+        <iframe id="sandboxIframe" class="w-full h-full bg-white rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-inner" sandbox="allow-scripts allow-modals"></iframe>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROFILE MODAL -->
+  <div id="profileModal" class="fixed inset-0 z-50 flex items-center justify-center bg-zinc-900/60 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300">
+    <div class="bg-white dark:bg-zinc-900 rounded-3xl shadow-2xl w-full max-w-md p-8 border border-zinc-200 dark:border-zinc-800 transform scale-95 transition-transform duration-300" id="profileModalInner">
+      <div class="flex items-start justify-between mb-4">
+        <div class="w-11 h-11 rounded-2xl bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 flex items-center justify-center shadow-md">
+          <i class="fa-solid fa-user"></i>
+        </div>
+        <button onclick="closeProfileModal()" class="text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 transition text-lg w-8 h-8 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <h2 class="text-xl font-bold text-zinc-900 dark:text-zinc-100 mb-1">Your profile</h2>
+      <p class="text-xs text-zinc-500 mb-6">Omni uses this to greet you by name and tailor answers to what you do. It stays on this device.</p>
+      <form id="profileForm" class="space-y-5" novalidate>
+        <div>
+          <label class="block text-xs font-semibold text-zinc-600 dark:text-zinc-400 mb-1.5">Your name</label>
+          <input type="text" id="profileName" placeholder="e.g. Alex Morgan" class="w-full px-3.5 py-2.5 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-zinc-100 text-zinc-900 dark:text-zinc-100">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-zinc-600 dark:text-zinc-400 mb-1.5">What do you do?</label>
+          <input type="text" id="profileRole" list="roleList" placeholder="e.g. Software Engineer" class="w-full px-3.5 py-2.5 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-zinc-100 text-zinc-900 dark:text-zinc-100">
+          <datalist id="roleList">
+            <option value="Student"></option><option value="Software Engineer"></option><option value="Designer"></option>
+            <option value="Teacher"></option><option value="Doctor"></option><option value="Nurse"></option>
+            <option value="Marketer"></option><option value="Entrepreneur"></option><option value="Data Analyst"></option><option value="Writer"></option>
+          </datalist>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-zinc-600 dark:text-zinc-400 mb-1.5">Preferred answer style</label>
+          <div class="grid grid-cols-3 gap-2" id="styleOptions">
+            <button type="button" data-style="concise" class="style-btn flex flex-col items-center gap-1.5 py-3 rounded-xl border border-zinc-200 dark:border-zinc-700 text-xs font-semibold text-zinc-600 dark:text-zinc-300 transition"><i class="fa-solid fa-bolt"></i> Concise</button>
+            <button type="button" data-style="balanced" class="style-btn flex flex-col items-center gap-1.5 py-3 rounded-xl border border-zinc-200 dark:border-zinc-700 text-xs font-semibold text-zinc-600 dark:text-zinc-300 transition"><i class="fa-solid fa-scale-balanced"></i> Balanced</button>
+            <button type="button" data-style="detailed" class="style-btn flex flex-col items-center gap-1.5 py-3 rounded-xl border border-zinc-200 dark:border-zinc-700 text-xs font-semibold text-zinc-600 dark:text-zinc-300 transition"><i class="fa-solid fa-book-open"></i> Detailed</button>
+          </div>
+        </div>
+        <div class="flex gap-2 pt-1">
+          <button type="button" id="profileResetBtn" class="flex-1 py-2.5 border border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 font-semibold text-sm rounded-xl hover:bg-zinc-50 dark:hover:bg-zinc-800 transition">Reset</button>
+          <button type="submit" class="flex-[2] py-2.5 bg-zinc-900 dark:bg-zinc-100 hover:bg-zinc-800 dark:hover:bg-zinc-200 text-white dark:text-zinc-900 font-semibold text-sm rounded-xl transition shadow-md">Save profile</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- AUTH MODAL -->
+  <div id="authOverlay" class="fixed inset-0 z-50 flex items-center justify-center bg-white/90 dark:bg-zinc-950/90 backdrop-blur-md transition-opacity duration-500">
+    <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl shadow-2xl w-full max-w-md p-10 text-center relative">
+      <div class="w-16 h-16 rounded-full bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 flex items-center justify-center mx-auto mb-6 shadow-md">
+        <svg class="w-8 h-8" viewBox="0 0 32 32" fill="none">
+          <circle cx="16" cy="16" r="14" stroke="currentColor" stroke-width="2.5"/>
+          <path d="M16 6C10.4772 6 6 10.4772 6 16C6 21.5228 10.4772 26 16 26" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+          <circle cx="16" cy="16" r="5" fill="currentColor"/>
+        </svg>
+      </div>
+      <h2 class="text-2xl font-bold text-zinc-900 dark:text-zinc-100 mb-2">Welcome to Omni AI</h2>
+      <p class="text-sm text-zinc-500 mb-8">Enter your email to sign in or create your account</p>
+      <form id="authForm" class="space-y-4" novalidate>
+        <div>
+          <input type="email" id="authEmail" placeholder="name@gmail.com" class="w-full px-4 py-3 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl text-base focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-zinc-100 text-zinc-900 dark:text-zinc-100">
+          <p id="authError" class="text-xs text-rose-500 mt-2 hidden text-left">Please enter a valid email address, like name@gmail.com</p>
+        </div>
+        <button type="submit" id="authSubmitBtn" class="w-full py-3 bg-zinc-900 dark:bg-zinc-100 hover:bg-zinc-800 dark:hover:bg-zinc-200 text-white dark:text-zinc-900 font-semibold text-base rounded-xl transition shadow-md">Continue with Email</button>
+      </form>
+      <div class="mt-6 flex items-center justify-center space-x-2 text-xs text-zinc-400">
+        <span class="h-px bg-zinc-200 dark:bg-zinc-800 flex-1"></span>
+        <span>OR</span>
+        <span class="h-px bg-zinc-200 dark:bg-zinc-800 flex-1"></span>
+      </div>
+      <button onclick="simulateGoogleLogin(this)" id="googleBtn" class="mt-6 w-full py-3 bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-750 text-zinc-700 dark:text-zinc-200 font-semibold text-sm rounded-xl transition flex items-center justify-center space-x-3 shadow-sm">
+        <i class="fa-brands fa-google text-lg text-zinc-900 dark:text-zinc-100"></i>
+        <span>Continue with Google</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- PRICING / UPGRADE MODAL (REDESIGNED) -->
+  <div id="pricingModal" class="fixed inset-0 z-50 flex items-center justify-center bg-zinc-900/60 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300 p-4">
+    <div class="bg-white dark:bg-zinc-900 rounded-3xl shadow-2xl w-full max-w-5xl max-h-[90vh] overflow-hidden transform scale-95 transition-transform duration-300 border border-zinc-200 dark:border-zinc-800 flex flex-col" id="pricingModalInner">
+
+      <div class="relative bg-white dark:bg-zinc-900 px-8 pt-6 pb-5 text-center border-b border-zinc-100 dark:border-zinc-800 flex-shrink-0">
+        <button onclick="closePricingModal()" class="absolute right-6 top-6 text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 transition text-lg w-8 h-8 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+        <h2 class="text-2xl font-bold text-zinc-900 dark:text-zinc-100">Upgrade your Omni experience</h2>
+        <p class="text-xs text-zinc-500 mt-1.5">Power up your assistant. Cancel anytime.</p>
+        <div class="mt-4 inline-flex bg-zinc-100 dark:bg-zinc-800 rounded-full p-1">
+          <button type="button" data-cycle="monthly" class="cycle-btn px-4 py-1.5 rounded-full text-xs font-semibold transition bg-white dark:bg-zinc-900 shadow-sm text-zinc-900 dark:text-zinc-100">Monthly</button>
+          <button type="button" data-cycle="yearly" class="cycle-btn px-4 py-1.5 rounded-full text-xs font-semibold transition text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200 flex items-center gap-1.5">Yearly <span class="text-[10px] font-bold bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-400 px-1.5 py-0.5 rounded-full">SAVE 20%</span></button>
+        </div>
+      </div>
+
+      <div class="p-8 bg-zinc-50 dark:bg-zinc-950 flex-1 overflow-y-auto custom-scrollbar">
+
+        <!-- PLAN CARDS -->
+        <div id="pricingCardsView" class="grid grid-cols-1 md:grid-cols-3 gap-5 items-stretch">
+          <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-6 shadow-sm flex flex-col">
+            <div class="text-sm font-bold text-zinc-900 dark:text-zinc-100">Free</div>
+            <div class="text-xs text-zinc-500 mt-0.5">For everyday questions</div>
+            <div class="mt-4 flex items-baseline gap-1"><span class="text-3xl font-bold text-zinc-900 dark:text-zinc-100">$0</span><span class="text-xs text-zinc-500">/ month</span></div>
+            <ul class="mt-5 space-y-2 text-xs text-zinc-600 dark:text-zinc-300 flex-1">
+              <li class="flex items-start"><i class="fa-solid fa-check text-zinc-400 mt-0.5 mr-2.5"></i>Omni 4.5 model</li>
+              <li class="flex items-start"><i class="fa-solid fa-check text-zinc-400 mt-0.5 mr-2.5"></i>Local math solver &amp; KaTeX</li>
+              <li class="flex items-start"><i class="fa-solid fa-check text-zinc-400 mt-0.5 mr-2.5"></i>Web image search</li>
+              <li class="flex items-start"><i class="fa-solid fa-check text-zinc-400 mt-0.5 mr-2.5"></i>Voice input &amp; read-aloud</li>
+              <li class="flex items-start"><i class="fa-solid fa-check text-zinc-400 mt-0.5 mr-2.5"></i>Chat export &amp; history</li>
+            </ul>
+            <button class="mt-6 w-full py-2.5 bg-zinc-100 dark:bg-zinc-800 text-zinc-500 font-semibold text-sm rounded-xl cursor-default border border-zinc-200 dark:border-zinc-700">Your current plan</button>
+          </div>
+
+          <div class="bg-white dark:bg-zinc-900 border-2 border-zinc-900 dark:border-zinc-100 rounded-2xl p-6 shadow-md relative flex flex-col">
+            <span class="absolute -top-2.5 left-1/2 -translate-x-1/2 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-[10px] font-bold px-2.5 py-0.5 rounded-full tracking-wide whitespace-nowrap">MOST POPULAR</span>
+            <div class="text-sm font-bold text-zinc-900 dark:text-zinc-100">Omni Pro</div>
+            <div class="text-xs text-zinc-500 mt-0.5">For power users</div>
+            <div class="mt-4 flex items-baseline gap-1"><span id="proPrice" class="text-3xl font-bold text-zinc-900 dark:text-zinc-100">$20</span><span id="proPeriod" class="text-xs text-zinc-500">/ month</span></div>
+            <div id="proYearNote" class="hidden text-[11px] text-zinc-400 mt-0.5">$192 billed once a year</div>
+            <ul class="mt-5 space-y-2 text-xs text-zinc-600 dark:text-zinc-300 flex-1">
+              <li class="flex items-start"><i class="fa-solid fa-check text-emerald-500 mt-0.5 mr-2.5"></i>Everything in Free</li>
+              <li class="flex items-start"><i class="fa-solid fa-check text-emerald-500 mt-0.5 mr-2.5"></i>Omni Code Pro model</li>
+              <li class="flex items-start"><i class="fa-solid fa-check text-emerald-500 mt-0.5 mr-2.5"></i>Advanced code generation</li>
+              <li class="flex items-start"><i class="fa-solid fa-check text-emerald-500 mt-0.5 mr-2.5"></i>Live web search with citations</li>
+              <li class="flex items-start"><i class="fa-solid fa-check text-emerald-500 mt-0.5 mr-2.5"></i>Priority response speed</li>
+              <li class="flex items-start"><i class="fa-solid fa-check text-emerald-500 mt-0.5 mr-2.5"></i>Early access to new features</li>
+            </ul>
+            <button onclick="startCheckout('pro')" class="mt-6 w-full py-3 bg-zinc-900 dark:bg-zinc-100 hover:bg-zinc-800 dark:hover:bg-zinc-200 text-white dark:text-zinc-900 font-semibold text-sm rounded-xl transition shadow-md flex items-center justify-center space-x-2">
+              <i class="fa-solid fa-wand-magic-sparkles text-zinc-300 dark:text-zinc-700"></i>
+              <span>Upgrade to Pro</span>
+            </button>
+          </div>
+
+          <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-6 shadow-sm flex flex-col">
+            <div class="text-sm font-bold text-zinc-900 dark:text-zinc-100">Omni Max</div>
+            <div class="text-xs text-zinc-500 mt-0.5">Maximum capability</div>
+            <div class="mt-4 flex items-baseline gap-1"><span id="maxPrice" class="text-3xl font-bold text-zinc-900 dark:text-zinc-100">$40</span><span id="maxPeriod" class="text-xs text-zinc-500">/ month</span></div>
+            <div id="maxYearNote" class="hidden text-[11px] text-zinc-400 mt-0.5">$384 billed once a year</div>
+            <ul class="mt-5 space-y-2 text-xs text-zinc-600 dark:text-zinc-300 flex-1">
+              <li class="flex items-start"><i class="fa-solid fa-check text-zinc-400 mt-0.5 mr-2.5"></i>Everything in Pro</li>
+              <li class="flex items-start"><i class="fa-solid fa-check text-zinc-400 mt-0.5 mr-2.5"></i>Omni Vision Max model</li>
+              <li class="flex items-start"><i class="fa-solid fa-check text-zinc-400 mt-0.5 mr-2.5"></i>Deep visual analysis</li>
+              <li class="flex items-start"><i class="fa-solid fa-check text-zinc-400 mt-0.5 mr-2.5"></i>Extended context memory</li>
+              <li class="flex items-start"><i class="fa-solid fa-check text-zinc-400 mt-0.5 mr-2.5"></i>Dedicated support channel</li>
+            </ul>
+            <button onclick="startCheckout('max')" class="mt-6 w-full py-2.5 border-2 border-zinc-900 dark:border-zinc-100 text-zinc-900 dark:text-zinc-100 font-semibold text-sm rounded-xl transition hover:bg-zinc-900 hover:text-white dark:hover:bg-zinc-100 dark:hover:text-zinc-900">Upgrade to Max</button>
+          </div>
+        </div>
+
+        <!-- CHECKOUT -->
+        <div id="checkoutFormView" class="hidden max-w-3xl mx-auto">
+          <button onclick="backToPlans()" class="text-xs text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 mb-4 flex items-center space-x-1 font-medium transition">
+            <i class="fa-solid fa-arrow-left"></i><span>Back to plan options</span>
+          </button>
+          <div class="grid grid-cols-1 md:grid-cols-5 gap-6 items-start">
+            <form id="paymentForm" onsubmit="handlePaySubmit(event)" novalidate class="md:col-span-3 bg-white dark:bg-zinc-900 p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-sm space-y-4">
+              <div>
+                <h3 class="text-base font-bold text-zinc-900 dark:text-zinc-100">Secure checkout</h3>
+                <p class="text-xs text-zinc-500 mt-0.5">Complete your upgrade to <span id="checkoutPlanName" class="font-semibold text-zinc-700 dark:text-zinc-300">Omni Pro</span>.</p>
+              </div>
+
+              <div id="declineBanner" class="hidden rounded-xl border border-rose-200 dark:border-rose-900/50 bg-rose-50 dark:bg-rose-950/30 p-3.5">
+                <div class="flex items-start gap-2.5">
+                  <i class="fa-solid fa-circle-exclamation text-rose-500 mt-0.5"></i>
+                  <div class="flex-1">
+                    <div class="flex items-center gap-2 flex-wrap">
+                      <span id="declineTitle" class="text-sm font-bold text-rose-600 dark:text-rose-400"></span>
+                      <span id="declineCode" class="font-mono text-[10px] bg-rose-100 dark:bg-rose-900/40 text-rose-600 dark:text-rose-400 px-1.5 py-0.5 rounded"></span>
+                    </div>
+                    <p id="declineMsg" class="text-xs text-rose-600/80 dark:text-rose-400/70 mt-1"></p>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <div class="flex items-center justify-between mb-1.5">
+                  <label class="text-xs font-semibold text-zinc-600 dark:text-zinc-400">Cardholder name</label>
+                  <button type="button" onclick="fillDemoCard()" class="text-[11px] text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 font-medium transition"><i class="fa-solid fa-wand-magic mr-1"></i>Autofill demo card</button>
+                </div>
+                <input type="text" id="cardName" placeholder="Alex Morgan" autocomplete="cc-name" class="w-full px-3.5 py-2.5 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-zinc-100 text-zinc-900 dark:text-zinc-100">
+                <p class="field-err hidden" id="err-cardName"></p>
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-zinc-600 dark:text-zinc-400 mb-1.5">Card number</label>
+                <div class="relative">
+                  <input type="text" id="cardNumber" inputmode="numeric" placeholder="4242 4242 4242 4242" autocomplete="cc-number" class="w-full px-3.5 pr-12 py-2.5 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-zinc-100 font-mono text-zinc-900 dark:text-zinc-100">
+                  <span id="cardBrandIcon" class="absolute right-3.5 top-1/2 -translate-y-1/2 text-zinc-300 dark:text-zinc-600 pointer-events-none"><i class="fa-regular fa-credit-card"></i></span>
+                </div>
+                <p class="field-err hidden" id="err-cardNumber"></p>
+              </div>
+              <div class="grid grid-cols-3 gap-3">
+                <div>
+                  <label class="block text-xs font-semibold text-zinc-600 dark:text-zinc-400 mb-1.5">Expiry</label>
+                  <input type="text" id="cardExpiry" inputmode="numeric" placeholder="MM/YY" autocomplete="cc-exp" class="w-full px-3.5 py-2.5 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-zinc-100 font-mono text-zinc-900 dark:text-zinc-100">
+                  <p class="field-err hidden" id="err-cardExpiry"></p>
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold text-zinc-600 dark:text-zinc-400 mb-1.5">CVC</label>
+                  <input type="text" id="cardCvc" inputmode="numeric" placeholder="123" autocomplete="cc-csc" class="w-full px-3.5 py-2.5 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-zinc-100 font-mono text-zinc-900 dark:text-zinc-100">
+                  <p class="field-err hidden" id="err-cardCvc"></p>
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold text-zinc-600 dark:text-zinc-400 mb-1.5">ZIP</label>
+                  <input type="text" id="cardZip" placeholder="94107" autocomplete="postal-code" class="w-full px-3.5 py-2.5 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-zinc-100 text-zinc-900 dark:text-zinc-100">
+                  <p class="field-err hidden" id="err-cardZip"></p>
+                </div>
+              </div>
+              <button type="submit" id="payButton" class="w-full py-3.5 bg-zinc-900 dark:bg-zinc-100 hover:bg-zinc-800 dark:hover:bg-zinc-200 text-white dark:text-zinc-900 font-semibold text-sm rounded-xl transition shadow-md flex items-center justify-center space-x-2.5">
+                <i id="payLockIcon" class="fa-solid fa-lock text-xs opacity-70"></i>
+                <span id="payButtonText">Pay $21.70</span>
+                <i id="paySpinner" class="fa-solid fa-spinner fa-spin hidden"></i>
+              </button>
+              <p class="text-[10px] text-zinc-400 text-center flex items-center justify-center gap-1.5"><i class="fa-solid fa-shield-halved"></i>Payments are encrypted and processed securely</p>
+            </form>
+
+            <div class="md:col-span-2 bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 p-6 shadow-sm">
+              <div class="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">Order summary</div>
+              <div class="mt-3 space-y-2.5 text-sm">
+                <div class="flex items-center justify-between">
+                  <span id="sumPlanName" class="font-semibold text-zinc-900 dark:text-zinc-100">Omni Pro</span>
+                  <span id="sumPlanBadge" class="text-[10px] font-bold bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 px-2 py-0.5 rounded-full uppercase tracking-wide">Monthly</span>
+                </div>
+                <div class="flex justify-between text-xs text-zinc-500"><span id="sumCycleDesc">Billed monthly</span><span id="sumBase">$20.00</span></div>
+                <div class="flex justify-between text-xs text-zinc-500"><span>Estimated tax (8.5%)</span><span id="sumTax">$1.70</span></div>
+                <div class="border-t border-zinc-100 dark:border-zinc-800 pt-2.5 flex justify-between font-bold text-zinc-900 dark:text-zinc-100"><span>Total due today</span><span id="sumTotal">$21.70</span></div>
+              </div>
+              <ul class="mt-5 space-y-2 text-xs text-zinc-500">
+                <li><i class="fa-solid fa-check text-emerald-500 mr-2"></i>Cancel anytime, no questions asked</li>
+                <li><i class="fa-solid fa-check text-emerald-500 mr-2"></i>Instant access to plan features</li>
+                <li><i class="fa-solid fa-check text-emerald-500 mr-2"></i>Secure 256-bit encrypted checkout</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADMIN DASHBOARD -->
+  <div id="adminPortal" class="fixed inset-0 bg-zinc-900/60 backdrop-blur-sm z-[90] flex justify-end hidden">
+    <div class="bg-white dark:bg-zinc-900 w-full max-w-4xl h-full flex flex-col shadow-2xl border-l border-zinc-200 dark:border-zinc-800 animate-slide-in">
+      <div class="px-6 py-4 border-b border-zinc-200 dark:border-zinc-800 flex items-center justify-between bg-zinc-900 text-white">
+        <div class="flex items-center space-x-2">
+          <i class="fa-solid fa-user-secret"></i>
+          <h2 class="text-base font-bold">Omni Control Center (Operator Dashboard)</h2>
+        </div>
+        <button id="closeAdminPortalBtn" class="text-zinc-400 hover:text-white transition"><i class="fa-solid fa-xmark text-xl"></i></button>
+      </div>
+      <div class="flex-1 flex overflow-hidden">
+        <div class="w-72 border-r border-zinc-200 dark:border-zinc-800 flex flex-col bg-zinc-50 dark:bg-zinc-950">
+          <div class="p-3 text-xs font-bold text-zinc-400 uppercase tracking-wider">All Active Chats</div>
+          <div id="adminInboxList" class="flex-1 overflow-y-auto custom-scrollbar divide-y divide-zinc-100 dark:divide-zinc-800"></div>
+        </div>
+        <div class="flex-1 flex flex-col bg-white dark:bg-zinc-900">
+          <div id="inspectorHeader" class="px-5 py-3 border-b border-zinc-200 dark:border-zinc-800 flex items-center justify-between bg-white dark:bg-zinc-900 shadow-sm z-10">
+            <span id="inspectorUserTitle" class="text-sm font-bold text-zinc-800 dark:text-zinc-200">Select a session</span>
+            <button onclick="checkGrammarInAdmin()" class="px-3 py-1 bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold rounded-lg transition shadow-sm">
+              <i class="fa-solid fa-spell-check mr-1"></i> Grammar Check Reply
+            </button>
+          </div>
+          <div id="inspectorHistory" class="flex-1 overflow-y-auto p-6 space-y-4 custom-scrollbar bg-zinc-50/50 dark:bg-zinc-950/50"></div>
+          <div class="p-4 bg-white dark:bg-zinc-900 border-t border-zinc-200 dark:border-zinc-800 flex space-x-2">
+            <textarea id="operatorMessageInput" rows="2" placeholder="Type operator override response..." class="flex-1 p-3 border border-zinc-300 dark:border-zinc-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-zinc-100 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100"></textarea>
+            <button id="sendOperatorReplyBtn" class="px-5 py-2 bg-zinc-900 dark:bg-zinc-100 hover:bg-zinc-800 dark:hover:bg-zinc-200 text-white dark:text-zinc-900 rounded-xl text-sm font-semibold shadow-md">Push</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOASTS -->
+  <div id="toastContainer" class="fixed bottom-24 left-1/2 -translate-x-1/2 z-[100] flex flex-col items-center gap-2 pointer-events-none"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+
+  <script>
+    const UNSPLASH_ACCESS_KEY = 'VXLXaULpzheiX2lmfF4NK6cc2n0F5-AAuPudKA-FBfQ';
+    const AI_AVATAR_SVG = '<svg class="w-4 h-4" viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="14" stroke="currentColor" stroke-width="2.5"/><path d="M16 6C10.4772 6 6 10.4772 6 16C6 21.5228 10.4772 26 16 26" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><circle cx="16" cy="16" r="5" fill="currentColor"/></svg>';
+
+    // --- HELPERS ---
+    const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+    const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
+    function escapeHtml(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+    function fmtAns(n) { const r = parseFloat(n.toFixed(6)); return r.toLocaleString('en-US', { maximumFractionDigits: 6 }); }
+    function latexNum(n) { return Math.abs(n - Math.round(n)) < 1e-9 ? String(Math.round(n)) : String(parseFloat(n.toFixed(4))); }
+    function gcd(a, b) { a = Math.abs(a); b = Math.abs(b); while (b) { const t = a % b; a = b; b = t; } return a || 1; }
+    function formatSize(b) { if (b > 1048576) return (b / 1048576).toFixed(1) + ' MB'; if (b > 1024) return (b / 1024).toFixed(1) + ' KB'; return b + ' B'; }
+    function formatTime(ts) { if (!ts) return ''; try { return new Date(ts).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }); } catch (e) { return ''; } }
+    function renderMarkdown(t) { try { if (window.marked && window.marked.parse) return marked.parse(t); if (window.marked) return marked(t); } catch (e) {} return escapeHtml(t).replace(/\n/g, '<br>'); }
+
+    // --- TOASTS ---
+    function showToast(msg, icon) {
+      const c = document.getElementById('toastContainer');
+      const t = document.createElement('div');
+      t.className = 'pointer-events-auto flex items-center gap-2 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs font-semibold px-4 py-2.5 rounded-full shadow-lg transition-all duration-300';
+      t.innerHTML = '<i class="fa-solid ' + (icon || 'fa-circle-check') + '"></i><span>' + escapeHtml(msg) + '</span>';
+      c.appendChild(t);
+      setTimeout(() => { t.style.opacity = '0'; t.style.transform = 'translateY(8px)'; }, 2100);
+      setTimeout(() => t.remove(), 2500);
+    }
+
+    // --- THEME ---
+    function toggleTheme() {
+      const html = document.documentElement, icon = document.getElementById('themeIcon');
+      if (html.classList.contains('dark')) { html.classList.remove('dark'); html.classList.add('light'); localStorage.setItem('omni_theme', 'light'); icon.className = 'fa-solid fa-moon text-sm'; }
+      else { html.classList.remove('light'); html.classList.add('dark'); localStorage.setItem('omni_theme', 'dark'); icon.className = 'fa-solid fa-sun text-sm text-amber-400'; }
+    }
+    function initTheme() {
+      let savedTheme = 'light';
+      try { savedTheme = localStorage.getItem('omni_theme') || 'light'; } catch (e) {}
+      document.documentElement.classList.add(savedTheme);
+      document.getElementById('themeIcon').className = savedTheme === 'dark' ? 'fa-solid fa-sun text-sm text-amber-400' : 'fa-solid fa-moon text-sm';
+    }
+
+    // --- AUTH ---
+    let sessionEmail = null;
+    function getEmail() { try { return localStorage.getItem('omni_user_email') || sessionEmail; } catch (e) { return sessionEmail; } }
+    function setEmail(v) { sessionEmail = v; try { localStorage.setItem('omni_user_email', v); } catch (e) {} }
+    function hideAuth() {
+      const o = document.getElementById('authOverlay');
+      document.getElementById('appContainer').classList.remove('blur-bg');
+      o.classList.add('opacity-0');
+      setTimeout(() => { o.classList.add('hidden'); userInput.focus(); }, 500);
+    }
+    function checkAuth() {
+      initTheme();
+      if (getEmail()) { document.getElementById('authOverlay').classList.add('hidden'); document.getElementById('appContainer').classList.remove('blur-bg'); }
+      else { document.getElementById('appContainer').classList.add('blur-bg'); }
+      applyUserCard();
+    }
+    document.getElementById('authForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+      const email = document.getElementById('authEmail').value.trim();
+      const err = document.getElementById('authError');
+      if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { err.classList.remove('hidden'); return; }
+      err.classList.add('hidden');
+      const btn = document.getElementById('authSubmitBtn');
+      btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i>Signing in...';
+      setTimeout(() => {
+        setEmail(email);
+        applyUserCard(); hideAuth(); updateWelcomeHeading();
+        btn.disabled = false; btn.innerText = 'Continue with Email';
+      }, 700);
+    });
+    function simulateGoogleLogin(btn) {
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i><span>Signing in with Google...</span>';
+      setTimeout(() => {
+        setEmail('user@gmail.com');
+        applyUserCard(); hideAuth(); updateWelcomeHeading();
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-brands fa-google text-lg text-zinc-900 dark:text-zinc-100"></i><span>Continue with Google</span>';
+      }, 900);
+    }
+    function logoutUser() { try { localStorage.removeItem('omni_user_email'); } catch (e) {} sessionEmail = null; location.reload(); }
+
+    // --- PROFILE & MEMORY ---
+    function getProfile() { try { return JSON.parse(localStorage.getItem('omni_profile')) || {}; } catch (e) { return {}; } }
+    function applyUserCard() {
+      const p = getProfile();
+      const disp = p.name || getEmail() || 'User';
+      document.getElementById('userDisplayEmail').innerText = disp;
+      document.getElementById('userInitial').innerText = (disp.charAt(0) || 'U').toUpperCase();
+    }
+    function updateWelcomeHeading() {
+      const p = getProfile(), h = document.getElementById('welcomeHeading'), s = document.getElementById('welcomeSub');
+      if (p.name) {
+        h.innerText = 'Welcome back, ' + p.name.split(' ')[0] + '!';
+        s.innerText = p.role ? 'Signed in as ' + p.role + ' — ask me anything.' : '';
+        s.classList.toggle('hidden', !p.role);
+      } else { h.innerText = 'What can I help with?'; s.classList.add('hidden'); }
+    }
+    let selectedStyle = 'balanced';
+    function selectStyle(style) {
+      selectedStyle = style;
+      document.querySelectorAll('.style-btn').forEach(b => b.classList.toggle('style-active', b.dataset.style === style));
+    }
+    function openProfileModal() {
+      const p = getProfile();
+      document.getElementById('profileName').value = p.name || '';
+      document.getElementById('profileRole').value = p.role || '';
+      selectStyle(p.style || 'balanced');
+      const m = document.getElementById('profileModal');
+      m.classList.remove('hidden'); setTimeout(() => m.classList.remove('opacity-0'), 10);
+    }
+    function closeProfileModal() {
+      const m = document.getElementById('profileModal');
+      m.classList.add('opacity-0'); setTimeout(() => m.classList.add('hidden'), 300);
+    }
+    document.getElementById('profileForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+      const profile = { name: document.getElementById('profileName').value.trim(), role: document.getElementById('profileRole').value.trim(), style: selectedStyle };
+      try { localStorage.setItem('omni_profile', JSON.stringify(profile)); } catch (err) {}
+      applyUserCard(); updateWelcomeHeading(); closeProfileModal(); showToast('Profile saved');
+    });
+    document.getElementById('profileResetBtn').addEventListener('click', () => {
+      try { localStorage.removeItem('omni_profile'); } catch (e) {}
+      document.getElementById('profileName').value = ''; document.getElementById('profileRole').value = ''; selectStyle('balanced');
+      applyUserCard(); updateWelcomeHeading(); showToast('Profile reset', 'fa-rotate-left');
+    });
+    document.querySelectorAll('.style-btn').forEach(b => b.addEventListener('click', () => selectStyle(b.dataset.style)));
+
+    // --- MIC (speech recognition) ---
+    (function () {
+      const micBtn = document.getElementById('micBtn');
+      if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) { micBtn.style.display = 'none'; return; }
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      const recognition = new SpeechRecognition();
+      micBtn.addEventListener('click', () => { micBtn.classList.add('text-blue-600', 'animate-pulse'); recognition.start(); });
+      recognition.onresult = (event) => {
+        const ui = document.getElementById('userInput');
+        ui.value += (ui.value ? ' ' : '') + event.results[0][0].transcript;
+        ui.dispatchEvent(new Event('input'));
+      };
+      recognition.onerror = () => micBtn.classList.remove('text-blue-600', 'animate-pulse');
+      recognition.onend = () => micBtn.classList.remove('text-blue-600', 'animate-pulse');
+    })();
+
+    // --- TTS ---
+    let ttsActiveBtn = null;
+    function resetTtsBtn(b) { b.innerHTML = '<i class="fa-solid fa-volume-high"></i>'; b.title = 'Read aloud'; b.classList.remove('text-blue-500'); }
+    function toggleSpeak(btn, rawText) {
+      if (!('speechSynthesis' in window)) { showToast('Speech synthesis not supported here', 'fa-triangle-exclamation'); return; }
+      if (ttsActiveBtn === btn) { speechSynthesis.cancel(); resetTtsBtn(btn); ttsActiveBtn = null; return; }
+      if (ttsActiveBtn) { speechSynthesis.cancel(); resetTtsBtn(ttsActiveBtn); }
+      const clean = rawText.replace(/```[\s\S]*?```/g, ' Code block omitted. ').replace(/[$#*`_>~\[\]()]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 4500);
+      const u = new SpeechSynthesisUtterance(clean || 'This message has no readable text.');
+      u.rate = 1; u.pitch = 1;
+      u.onend = () => { resetTtsBtn(btn); if (ttsActiveBtn === btn) ttsActiveBtn = null; };
+      u.onerror = () => { resetTtsBtn(btn); ttsActiveBtn = null; };
+      speechSynthesis.cancel(); speechSynthesis.speak(u);
+      btn.innerHTML = '<i class="fa-solid fa-stop"></i>'; btn.title = 'Stop reading'; btn.classList.add('text-blue-500');
+      ttsActiveBtn = btn;
+    }
+
+    // --- THINK MODE ---
+    let thinkModeActive = false;
+    function toggleThinkMode() {
+      thinkModeActive = !thinkModeActive;
+      const btn = document.getElementById('thinkBtn'), icon = document.getElementById('thinkIcon');
+      if (thinkModeActive) {
+        btn.className = "hidden sm:flex items-center space-x-1 px-3 py-1.5 rounded-full border border-blue-300 dark:border-blue-700 text-xs font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/40 transition shadow-sm";
+        icon.className = "fa-solid fa-brain text-blue-600 dark:text-blue-400";
+      } else {
+        btn.className = "hidden sm:flex items-center space-x-1 px-3 py-1.5 rounded-full border border-zinc-200 dark:border-zinc-700 text-xs font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition";
+        icon.className = "fa-solid fa-brain text-zinc-900 dark:text-zinc-100";
+      }
+    }
+
+    // --- PERSONAS ---
+    const PERSONAS = {
+      pirate: {
+        intros: ['Ahoy matey! Here be the answer ye sought:', 'Arr! Ye asked, and the seas delivered:', 'Shiver me timbers — here is what ye need to know:'],
+        outros: ['Fair winds to ye, and may yer troubles sink to the depths.', 'Now go forth and conquer, ye scallywag.']
+      },
+      shakespeare: {
+        intros: ['Hark! Verily, let me impart this wisdom unto thee:', 'Prithee, attend — here follows the knowledge thou seekest:', 'Good morrow! Let it be known unto thee:'],
+        outros: ['Thus concludes my humble counsel. Go forth, brave soul.', 'Fare thee well, gentle traveler.']
+      },
+      eli5: {
+        intros: ['Sure! Think of it like this:', 'Okay, imagine this:', 'Easy version coming up:'],
+        outros: ["That's the gist of it — want me to go deeper?", 'Simple enough? I can explain more if you like.']
+      },
+      roast: {
+        intros: ["Oh, you want an answer? Fine, but you could have figured this out yourself. Anyway:", "Buckle up — here comes the answer you absolutely could not survive without:", 'Alright, let me hold your hand through this one:'],
+        outros: ["You're welcome. Try to act impressed.", 'Next time, maybe try thinking first. Kidding. Mostly.']
+      }
+    };
+    function applyPersona(text) {
+      if (!state || state.persona === 'default' || !PERSONAS[state.persona]) return text;
+      const p = PERSONAS[state.persona];
+      return pick(p.intros) + '\n\n' + text + '\n\n*' + pick(p.outros) + '*';
+    }
+    (function () {
+      const btn = document.getElementById('personaBtn'), dd = document.getElementById('personaDropdown');
+      btn.addEventListener('click', (e) => { e.stopPropagation(); dd.classList.toggle('hidden'); });
+      document.addEventListener('click', () => dd.classList.add('hidden'));
+      document.querySelectorAll('.persona-option').forEach(o => {
+        o.addEventListener('click', () => {
+          state.persona = o.dataset.persona;
+          try { localStorage.setItem('omni_persona', state.persona); } catch (e) {}
+          updatePersonaUI(); dd.classList.add('hidden');
+        });
+      });
+    })();
+    function updatePersonaUI() {
+      const names = { default: 'Tone', pirate: 'Pirate', shakespeare: 'Shakespeare', eli5: 'ELI5', roast: 'Roast' };
+      document.getElementById('personaLabel').innerText = names[state.persona] || 'Tone';
+      document.querySelectorAll('.persona-option').forEach(o => {
+        let c = o.querySelector('.persona-check');
+        if (o.dataset.persona === state.persona) { if (!c) { c = document.createElement('i'); c.className = 'persona-check fa-solid fa-check text-zinc-900 dark:text-zinc-100 text-xs'; o.appendChild(c); } }
+        else if (c) c.remove();
+      });
+    }
+
+    // --- PRICING & CHECKOUT ---
+    const PLANS = { pro: { name: 'Omni Pro', monthly: 20, yearlyPerMo: 16 }, max: { name: 'Omni Max', monthly: 40, yearlyPerMo: 32 } };
+    const DECLINES = [
+      { title: 'Your card was declined.', code: 'card_declined', msg: 'Your bank declined this payment without giving a reason. Try a different card, or contact your bank to authorize the charge.' },
+      { title: 'Insufficient funds.', code: 'insufficient_funds', msg: "This card doesn't have enough available balance to cover the total. Try another payment method." },
+      { title: 'Card declined by issuer.', code: 'do_not_honor', msg: 'The issuing bank returned a do_not_honor response for this card. You can try again or use a different card.' },
+      { title: 'Transaction blocked.', code: 'fraudulent', msg: 'Our payment processor flagged this transaction as high-risk and blocked it. Contact your bank if you believe this is a mistake.' }
+    ];
+    let billingCycle = 'monthly', selectedPlan = 'pro', payAttempts = 0;
+    const payLock = { active: false, until: 0, timer: null };
+
+    function openPricingModal() { const m = document.getElementById('pricingModal'); m.classList.remove('hidden'); setTimeout(() => m.classList.remove('opacity-0'), 10); renderPrices(); }
+    function closePricingModal() { document.getElementById('pricingModal').classList.add('opacity-0'); setTimeout(() => { document.getElementById('pricingModal').classList.add('hidden'); backToPlans(); }, 300); }
+    function backToPlans() { document.getElementById('checkoutFormView').classList.add('hidden'); document.getElementById('pricingCardsView').classList.remove('hidden'); hideDeclineBanner(); }
+    function renderPrices() {
+      document.querySelectorAll('.cycle-btn').forEach(b => {
+        const on = b.dataset.cycle === billingCycle;
+        b.classList.toggle('bg-white', on); b.classList.toggle('dark:bg-zinc-900', on);
+        b.classList.toggle('shadow-sm', on); b.classList.toggle('text-zinc-900', on);
+        b.classList.toggle('dark:text-zinc-100', on); b.classList.toggle('text-zinc-500', !on);
+      });
+      const yearly = billingCycle === 'yearly';
+      document.getElementById('proPrice').innerText = yearly ? '$16' : '$20';
+      document.getElementById('proYearNote').classList.toggle('hidden', !yearly);
+      document.getElementById('maxPrice').innerText = yearly ? '$32' : '$40';
+      document.getElementById('maxYearNote').classList.toggle('hidden', !yearly);
+    }
+    document.querySelectorAll('.cycle-btn').forEach(b => b.addEventListener('click', () => {
+      billingCycle = b.dataset.cycle; renderPrices();
+      if (!document.getElementById('checkoutFormView').classList.contains('hidden')) renderCheckoutSummary();
+    }));
+    function startCheckout(plan) {
+      selectedPlan = plan;
+      document.getElementById('pricingCardsView').classList.add('hidden');
+      document.getElementById('checkoutFormView').classList.remove('hidden');
+      hideDeclineBanner(); clearCardErrors(); renderCheckoutSummary();
+    }
+    function renderCheckoutSummary() {
+      const p = PLANS[selectedPlan];
+      const yearly = billingCycle === 'yearly';
+      const base = yearly ? p.yearlyPerMo : p.monthly;
+      const months = yearly ? 12 : 1;
+      const subtotal = base * months;
+      const tax = subtotal * 0.085;
+      const total = subtotal + tax;
+      document.getElementById('checkoutPlanName').innerText = p.name;
+      document.getElementById('sumPlanName').innerText = p.name;
+      document.getElementById('sumPlanBadge').innerText = yearly ? 'Yearly' : 'Monthly';
+      document.getElementById('sumCycleDesc').innerText = yearly ? p.name + ' — 12 months (2 months free)' : p.name + ' — billed monthly';
+      document.getElementById('sumBase').innerText = '$' + subtotal.toFixed(2);
+      document.getElementById('sumTax').innerText = '$' + tax.toFixed(2);
+      document.getElementById('sumTotal').innerText = '$' + total.toFixed(2);
+      document.getElementById('payButtonText').innerText = 'Pay $' + total.toFixed(2);
+    }
+    function detectBrand(digits) {
+      if (/^4/.test(digits)) return 'fa-brands fa-cc-visa';
+      if (/^(5[1-5]|2[2-7])/.test(digits)) return 'fa-brands fa-cc-mastercard';
+      if (/^3[47]/.test(digits)) return 'fa-brands fa-cc-amex';
+      if (/^(6011|65|64[4-9])/.test(digits)) return 'fa-brands fa-cc-discover';
+      return '';
+    }
+    document.getElementById('cardNumber').addEventListener('input', function () {
+      const digits = this.value.replace(/\D/g, '');
+      const isAmex = /^3[47]/.test(digits);
+      let formatted;
+      if (isAmex) {
+        const parts = [digits.slice(0, 4), digits.slice(4, 10), digits.slice(10, 15)].filter(Boolean);
+        formatted = parts.join(' ');
+      } else {
+        formatted = digits.slice(0, 16).replace(/(\d{4})(?=\d)/g, '$1 ');
+      }
+      this.value = formatted;
+      const brand = detectBrand(digits);
+      document.getElementById('cardBrandIcon').innerHTML = brand ? '<i class="' + brand + ' text-lg"></i>' : '<i class="fa-regular fa-credit-card"></i>';
+    });
+    document.getElementById('cardExpiry').addEventListener('input', function () {
+      const v = this.value.replace(/\D/g, '').slice(0, 4);
+      this.value = v.length >= 3 ? v.slice(0, 2) + '/' + v.slice(2) : v;
+    });
+    document.getElementById('cardCvc').addEventListener('input', function () { this.value = this.value.replace(/\D/g, '').slice(0, 4); });
+    function fillDemoCard() {
+      document.getElementById('cardName').value = 'Alex Morgan';
+      document.getElementById('cardNumber').value = '4242 4242 4242 4242';
+      const now = new Date();
+      const mm = String(now.getMonth() + 1).padStart(2, '0');
+      const yy = String((now.getFullYear() + 3) % 100).padStart(2, '0');
+      document.getElementById('cardExpiry').value = mm + '/' + yy;
+      document.getElementById('cardCvc').value = '123';
+      document.getElementById('cardZip').value = '94107';
+      document.getElementById('cardBrandIcon').innerHTML = '<i class="fa-brands fa-cc-visa text-lg"></i>';
+      clearCardErrors();
+    }
+    function showFieldError(id, msg) {
+      const el = document.getElementById('err-' + id), input = document.getElementById(id);
+      if (msg) { el.innerText = msg; el.classList.remove('hidden'); input.classList.add('border-rose-400', 'dark:border-rose-600'); }
+      else { el.classList.add('hidden'); input.classList.remove('border-rose-400', 'dark:border-rose-600'); }
+    }
+    function clearCardErrors() { ['cardName', 'cardNumber', 'cardExpiry', 'cardCvc', 'cardZip'].forEach(f => showFieldError(f, null)); }
+    function luhnOk(numStr) {
+      let sum = 0, alt = false;
+      for (let i = numStr.length - 1; i >= 0; i--) {
+        let d = parseInt(numStr[i], 10);
+        if (alt) { d *= 2; if (d > 9) d -= 9; }
+        sum += d; alt = !alt;
+      }
+      return sum % 10 === 0;
+    }
+    function validateCardForm() {
+      let ok = true;
+      const name = document.getElementById('cardName').value.trim();
+      if (name.length < 2) { showFieldError('cardName', 'Enter the name printed on your card.'); ok = false; } else showFieldError('cardName', null);
+      const digits = document.getElementById('cardNumber').value.replace(/\D/g, '');
+      const isAmex = /^3[47]/.test(digits);
+      if (digits.length !== (isAmex ? 15 : 16)) { showFieldError('cardNumber', 'Card number must be ' + (isAmex ? 15 : 16) + ' digits.'); ok = false; }
+      else if (!luhnOk(digits)) { showFieldError('cardNumber', 'This card number is invalid. Double-check the digits.'); ok = false; }
+      else showFieldError('cardNumber', null);
+      const exp = document.getElementById('cardExpiry').value;
+      const em = exp.match(/^(\d{2})\/(\d{2})$/);
+      if (!em) { showFieldError('cardExpiry', 'Use MM/YY format.'); ok = false; }
+      else {
+        const mm = parseInt(em[1], 10), yy = 2000 + parseInt(em[2], 10);
+        const now = new Date();
+        if (mm < 1 || mm > 12) { showFieldError('cardExpiry', 'Invalid month.'); ok = false; }
+        else if (yy < now.getFullYear() || (yy === now.getFullYear() && mm < now.getMonth() + 1)) { showFieldError('cardExpiry', 'This card has expired.'); ok = false; }
+        else showFieldError('cardExpiry', null);
+      }
+      if (!/^\d{3,4}$/.test(document.getElementById('cardCvc').value)) { showFieldError('cardCvc', '3-4 digits.'); ok = false; } else showFieldError('cardCvc', null);
+      if (document.getElementById('cardZip').value.trim().length < 3) { showFieldError('cardZip', 'Enter a valid ZIP / postal code.'); ok = false; } else showFieldError('cardZip', null);
+      return ok;
+    }
+    function setProcessing(on) {
+      const btn = document.getElementById('payButton');
+      btn.disabled = on || payLock.active;
+      document.getElementById('paySpinner').classList.toggle('hidden', !on);
+      document.getElementById('payLockIcon').classList.toggle('hidden', on);
+      if (on) document.getElementById('payButtonText').innerText = 'Processing...';
+      else if (!payLock.active) renderCheckoutSummary();
+    }
+    function showDecline(d) {
+      document.getElementById('declineTitle').innerText = d.title;
+      document.getElementById('declineCode').innerText = d.code;
+      document.getElementById('declineMsg').innerText = d.msg;
+      document.getElementById('declineBanner').classList.remove('hidden');
+    }
+    function hideDeclineBanner() { document.getElementById('declineBanner').classList.add('hidden'); }
+    function lockCheckout() {
+      payLock.active = true;
+      payLock.until = Date.now() + 60000;
+      document.getElementById('payButton').disabled = true;
+      payLock.timer = setInterval(() => {
+        const left = Math.max(0, Math.ceil((payLock.until - Date.now()) / 1000));
+        if (left <= 0) {
+          clearInterval(payLock.timer);
+          payLock.active = false; payAttempts = 0;
+          document.getElementById('declineTitle').innerText = 'You can try again now.';
+          document.getElementById('declineCode').innerText = 'cooldown_ended';
+          document.getElementById('declineMsg').innerText = 'The temporary lock has lifted. You may attempt payment again.';
+          document.getElementById('payButton').disabled = false;
+          renderCheckoutSummary();
+          return;
+        }
+        document.getElementById('payButtonText').innerText = 'Locked — retry in ' + left + 's';
+        document.getElementById('declineTitle').innerText = 'Too many failed attempts.';
+        document.getElementById('declineCode').innerText = 'rate_limited';
+        document.getElementById('declineMsg').innerText = 'For your security, checkout is temporarily locked. Please wait ' + left + ' seconds before trying again.';
+      }, 500);
+    }
+    function handlePaySubmit(e) {
+      e.preventDefault();
+      if (payLock.active) return;
+      if (!validateCardForm()) return;
+      setProcessing(true);
+      setTimeout(() => {
+        setProcessing(false);
+        payAttempts++;
+        showDecline(DECLINES[(payAttempts - 1) % DECLINES.length]);
+        const form = document.getElementById('paymentForm');
+        form.classList.remove('animate-shake');
+        void form.offsetWidth;
+        form.classList.add('animate-shake');
+        if (payAttempts >= 3) lockCheckout();
+      }, 1500 + Math.random() * 1000);
+    }
+
+    // --- EXPORT ---
+    function exportChat() {
+      const chat = getCurrentChat();
+      if (!chat || !chat.messages.length) { showToast('No messages to export', 'fa-triangle-exclamation'); return; }
+      let md = '# ' + chat.title + '\n\n';
+      chat.messages.forEach(m => { md += '### ' + (m.sender === 'user' ? 'User' : 'Omni') + '\n' + m.text + '\n\n'; });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(new Blob([md], { type: 'text/markdown' }));
+      a.download = chat.title.replace(/[^a-z0-9]/gi, '_').toLowerCase() + '.md';
+      a.click();
+      showToast('Chat exported as Markdown', 'fa-download');
+    }
+
+    // --- MODEL SELECTOR ---
+    (function () {
+      const btn = document.getElementById('modelSelectBtn'), dd = document.getElementById('modelDropdown');
+      btn.addEventListener('click', (e) => { e.stopPropagation(); dd.classList.toggle('hidden'); });
+      document.addEventListener('click', () => dd.classList.add('hidden'));
+      document.querySelectorAll('.model-option').forEach(opt => {
+        opt.addEventListener('click', () => {
+          if (opt.dataset.pro === 'true') { openPricingModal(); return; }
+          document.getElementById('currentModelText').innerText = opt.dataset.model;
+          document.querySelectorAll('.model-option').forEach(o => { const c = o.querySelector('.model-check'); if (c) c.remove(); });
+          const checkIcon = document.createElement('i');
+          checkIcon.className = 'model-check fa-solid fa-check text-zinc-900 dark:text-zinc-100';
+          opt.appendChild(checkIcon);
+        });
+      });
+    })();
+
+    // --- ADMIN PORTAL ---
+    let keyBuffer = '';
+    document.addEventListener('keydown', (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); createNewChat(); return; }
+      if (e.key.length === 1 && document.getElementById('authOverlay').classList.contains('hidden')) {
+        keyBuffer += e.key.toLowerCase();
+        if (keyBuffer.length > 15) keyBuffer = keyBuffer.slice(-15);
+        if (keyBuffer.includes('ariana2001')) { toggleAdminPortal(); keyBuffer = ''; }
+      }
+    });
+    function toggleAdminPortal() { document.getElementById('adminPortal').classList.toggle('hidden'); renderAdminInbox(); }
+    document.getElementById('closeAdminPortalBtn').addEventListener('click', () => document.getElementById('adminPortal').classList.add('hidden'));
+    function checkGrammarInAdmin() {
+      const input = document.getElementById('operatorMessageInput');
+      if (!input.value.trim()) return alert('Type a response to grammar check first.');
+      let text = input.value.trim();
+      text = text.charAt(0).toUpperCase() + text.slice(1);
+      if (!/[.!?]$/.test(text)) text += '.';
+      input.value = text;
+      alert('Grammar checked & polished successfully!');
+    }
+    function renderAdminInbox() {
+      const inbox = document.getElementById('adminInboxList');
+      inbox.innerHTML = '';
+      if (!state.chats.length) { inbox.innerHTML = '<div class="p-4 text-xs text-zinc-400">No chats found.</div>'; return; }
+      if (!state.adminSelectedChatId) state.adminSelectedChatId = state.chats[0].id;
+      state.chats.forEach(chat => {
+        const isActive = chat.id === state.adminSelectedChatId;
+        const div = document.createElement('div');
+        div.className = 'p-3.5 hover:bg-zinc-100 dark:hover:bg-zinc-850 cursor-pointer transition flex items-center justify-between ' + (isActive ? 'bg-zinc-100 dark:bg-zinc-800 border-l-4 border-zinc-900 dark:border-zinc-100' : '');
+        div.innerHTML = '<div><div class="text-sm font-bold text-zinc-900 dark:text-zinc-100 truncate w-48">' + escapeHtml(chat.title) + '</div><div class="text-[11px] text-zinc-400">' + chat.messages.length + ' messages' + (chat.pinned ? ' · pinned' : '') + '</div></div>';
+        div.onclick = () => { state.adminSelectedChatId = chat.id; renderAdminInbox(); renderAdminInspector(chat.id); };
+        inbox.appendChild(div);
+      });
+      renderAdminInspector(state.adminSelectedChatId);
+    }
+    function renderAdminInspector(chatId) {
+      const chat = state.chats.find(c => c.id === chatId);
+      if (!chat) return;
+      const historyArea = document.getElementById('inspectorHistory');
+      document.getElementById('inspectorUserTitle').innerText = 'Session: ' + chat.title;
+      historyArea.innerHTML = '';
+      chat.messages.forEach(m => {
+        const d = document.createElement('div');
+        d.className = 'p-3 rounded-xl text-xs max-w-[80%] ' + (m.sender === 'user' ? 'bg-zinc-200 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 ml-auto' : 'bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-zinc-800 dark:text-zinc-200 mr-auto');
+        d.innerHTML = '<div class="font-bold mb-1 text-[10px] text-zinc-400 uppercase">' + m.sender + '</div><div>' + escapeHtml(m.text) + '</div>';
+        historyArea.appendChild(d);
+      });
+      historyArea.scrollTop = historyArea.scrollHeight;
+    }
+
+    // --- STATE ---
+    let state = {
+      chats: (function () { try { const c = JSON.parse(localStorage.getItem('omni_chats_v19')); return Array.isArray(c) ? c : []; } catch (e) { return []; } })(),
+      currentChatId: null, pendingAttachments: [], searchQuery: '', adminSelectedChatId: null,
+      isGenerating: false, stopRequested: false,
+      persona: (function () { try { return localStorage.getItem('omni_persona') || 'default'; } catch (e) { return 'default'; } })()
+    };
+
+    const sidebar = document.getElementById('sidebar'), chatHistoryList = document.getElementById('chatHistoryList'),
+      chatMessages = document.getElementById('chatMessages'), welcomeView = document.getElementById('welcomeView'),
+      messagesList = document.getElementById('messagesList'), userInput = document.getElementById('userInput'),
+      sendBtn = document.getElementById('sendBtn'), fileInput = document.getElementById('fileInput'),
+      attachmentPreviews = document.getElementById('attachmentPreviews'), scrollNavOverlay = document.getElementById('scrollNavOverlay');
+
+    function saveState() { try { localStorage.setItem('omni_chats_v19', JSON.stringify(state.chats)); } catch (e) {} }
+    function scrollToOldest() { chatMessages.scrollTo({ top: 0, behavior: 'smooth' }); }
+    function scrollToLatest() { chatMessages.scrollTo({ top: chatMessages.scrollHeight, behavior: 'smooth' }); }
+    function isNearBottom() { return chatMessages.scrollHeight - chatMessages.scrollTop - chatMessages.clientHeight < 130; }
+    function makeTitle(text) { return text.length > 34 ? text.slice(0, 34) + '...' : text; }
+
+    function setupEventListeners() {
+      document.getElementById('toggleSidebarBtn').addEventListener('click', () => { sidebar.classList.add('-ml-64'); document.getElementById('expandSidebarBtn').classList.remove('hidden'); });
+      document.getElementById('expandSidebarBtn').addEventListener('click', () => { sidebar.classList.remove('-ml-64'); document.getElementById('expandSidebarBtn').classList.add('hidden'); });
+      document.getElementById('newChatBtn').addEventListener('click', () => { createNewChat(); userInput.focus(); });
+      document.getElementById('chatSearchInput').addEventListener('input', (e) => { state.searchQuery = e.target.value.toLowerCase(); renderChatHistory(); });
+
+      userInput.addEventListener('input', function () {
+        this.style.height = 'auto';
+        this.style.height = Math.min(this.scrollHeight, 192) + 'px';
+        updateSendState();
+      });
+      userInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); if (!sendBtn.disabled) handleSendOrStop(); }
+      });
+      sendBtn.addEventListener('click', handleSendOrStop);
+      fileInput.addEventListener('change', handleFileUpload);
+      document.querySelectorAll('.prompt-pill').forEach(pill => {
+        pill.addEventListener('click', () => {
+          userInput.value = pill.innerText.replace(/\s*\(pro model\)/i, '').trim();
+          userInput.dispatchEvent(new Event('input'));
+          userInput.focus();
+        });
+      });
+      document.getElementById('sendOperatorReplyBtn').addEventListener('click', () => {
+        const input = document.getElementById('operatorMessageInput');
+        const chat = state.chats.find(c => c.id === state.adminSelectedChatId);
+        if (!input.value.trim() || !chat) return;
+        chat.messages.push({ id: 'msg-' + Date.now(), sender: 'ai', text: input.value.trim(), attachments: [], time: Date.now() });
+        input.value = ''; saveState(); renderCurrentChat(); renderAdminInspector(chat.id);
+      });
+
+      chatMessages.addEventListener('scroll', () => {
+        const distanceFromBottom = chatMessages.scrollHeight - (chatMessages.scrollTop + chatMessages.clientHeight);
+        if (chatMessages.scrollTop > 200 && distanceFromBottom > 200) scrollNavOverlay.classList.remove('opacity-0', 'pointer-events-none');
+        else scrollNavOverlay.classList.add('opacity-0', 'pointer-events-none');
+      });
+    }
+
+    function getCurrentChat() { return state.chats.find(c => c.id === state.currentChatId); }
+    function createNewChat() {
+      const newChat = { id: 'chat-' + Date.now(), title: 'New chat', pinned: false, messages: [] };
+      state.chats.unshift(newChat);
+      state.currentChatId = newChat.id;
+      saveState(); renderChatHistory(); renderCurrentChat();
+    }
+    function deleteChat(chatId, event) {
+      event.stopPropagation();
+      state.chats = state.chats.filter(c => c.id !== chatId);
+      if (state.currentChatId === chatId) state.currentChatId = state.chats.length > 0 ? state.chats[0].id : null;
+      saveState(); renderChatHistory(); renderCurrentChat(); showToast('Chat deleted', 'fa-trash-can');
+    }
+    function togglePinChat(chatId, event) {
+      event.stopPropagation();
+      const chat = state.chats.find(c => c.id === chatId);
+      if (chat) chat.pinned = !chat.pinned;
+      saveState(); renderChatHistory();
+    }
+
+    function renderChatHistory() {
+      chatHistoryList.innerHTML = '';
+      const filtered = state.chats.filter(c => (c.title || '').toLowerCase().includes(state.searchQuery));
+      const pinned = filtered.filter(c => c.pinned), recent = filtered.filter(c => !c.pinned);
+      if (pinned.length) {
+        const lbl = document.createElement('div');
+        lbl.className = 'px-2 py-1 text-[10px] font-bold text-zinc-400 uppercase tracking-wider flex items-center gap-1.5';
+        lbl.innerHTML = '<i class="fa-solid fa-thumbtack text-[9px]"></i> Pinned';
+        chatHistoryList.appendChild(lbl);
+        pinned.forEach(c => chatHistoryList.appendChild(buildChatItem(c)));
+      }
+      const lbl2 = document.createElement('div');
+      lbl2.className = 'px-2 py-1 text-[10px] font-bold text-zinc-400 uppercase tracking-wider flex items-center gap-1.5';
+      lbl2.innerHTML = '<i class="fa-regular fa-clock text-[9px]"></i> Recent Chats';
+      chatHistoryList.appendChild(lbl2);
+      recent.forEach(c => chatHistoryList.appendChild(buildChatItem(c)));
+      if (!filtered.length) {
+        const e = document.createElement('div');
+        e.className = 'px-3 py-2 text-xs text-zinc-400';
+        e.innerText = 'No chats found.';
+        chatHistoryList.appendChild(e);
+      }
+    }
+    function buildChatItem(chat) {
+      const isActive = chat.id === state.currentChatId;
+      const item = document.createElement('div');
+      item.className = 'group w-full text-left px-3 py-2 rounded-lg text-sm flex items-center justify-between transition cursor-pointer ' + (isActive ? 'bg-zinc-200/60 dark:bg-zinc-800 font-medium text-zinc-900 dark:text-zinc-100' : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800');
+      item.onclick = () => { state.currentChatId = chat.id; renderChatHistory(); renderCurrentChat(); };
+      const titleSpan = document.createElement('span');
+      titleSpan.className = 'truncate flex-1';
+      titleSpan.innerText = chat.title;
+      const btns = document.createElement('div');
+      btns.className = 'flex items-center flex-shrink-0';
+      const pinBtn = document.createElement('button');
+      pinBtn.className = chat.pinned ? 'text-zinc-500 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white p-1' : 'opacity-0 group-hover:opacity-100 text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 p-1 transition';
+      pinBtn.title = chat.pinned ? 'Unpin chat' : 'Pin chat';
+      pinBtn.innerHTML = chat.pinned ? '<i class="fa-solid fa-thumbtack text-xs"></i>' : '<i class="fa-regular fa-thumbtack text-xs"></i>';
+      pinBtn.onclick = (e) => togglePinChat(chat.id, e);
+      const delBtn = document.createElement('button');
+      delBtn.className = 'opacity-0 group-hover:opacity-100 text-zinc-400 hover:text-rose-500 p-1 transition';
+      delBtn.title = 'Delete chat';
+      delBtn.innerHTML = '<i class="fa-solid fa-trash-can text-xs"></i>';
+      delBtn.onclick = (e) => deleteChat(chat.id, e);
+      btns.appendChild(pinBtn); btns.appendChild(delBtn);
+      item.appendChild(titleSpan); item.appendChild(btns);
+      return item;
+    }
+
+    // --- MESSAGE RENDERING ---
+    function renderCurrentChat() {
+      const chat = getCurrentChat();
+      if (!chat || !chat.messages || chat.messages.length === 0) {
+        welcomeView.classList.remove('hidden');
+        messagesList.classList.add('hidden');
+        return;
+      }
+      welcomeView.classList.add('hidden');
+      messagesList.classList.remove('hidden');
+      messagesList.innerHTML = '';
+      let lastAiId = null;
+      for (let k = chat.messages.length - 1; k >= 0; k--) {
+        if (chat.messages[k].sender === 'ai') { lastAiId = chat.messages[k].id; break; }
+      }
+      chat.messages.forEach(msg => {
+        if (msg.sender === 'user') {
+          messagesList.appendChild(buildUserMessage(msg));
+        } else {
+          const el = buildAiMessage(msg);
+          messagesList.appendChild(el);
+          if (msg.text) finalizeAiMessage(el, msg, msg.id === lastAiId);
+        }
+      });
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+    function buildUserMessage(msg) {
+      const wrap = document.createElement('div');
+      wrap.className = 'flex flex-col items-end';
+      const bubble = document.createElement('div');
+      bubble.className = 'max-w-[85%] bg-zinc-100 dark:bg-zinc-800 rounded-2xl rounded-br-md px-4 py-3';
+      if (msg.text) {
+        const t = document.createElement('div');
+        t.className = 'text-sm text-zinc-900 dark:text-zinc-100 leading-relaxed whitespace-pre-wrap';
+        t.innerText = msg.text;
+        bubble.appendChild(t);
+      }
+      (msg.attachments || []).forEach(a => {
+        if (a.type === 'image' && a.dataUrl) {
+          const img = document.createElement('img');
+          img.src = a.dataUrl;
+          img.className = 'mt-2 rounded-xl border border-zinc-200 dark:border-zinc-700 max-h-40 object-cover';
+          bubble.appendChild(img);
+        } else {
+          const chip = document.createElement('div');
+          chip.className = 'mt-2 flex items-center gap-2 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-lg px-2.5 py-1.5';
+          chip.innerHTML = '<i class="fa-regular fa-file text-xs text-zinc-400"></i><span class="text-[11px] font-medium text-zinc-600 dark:text-zinc-300 truncate max-w-[160px]">' + escapeHtml(a.name) + '</span>';
+          bubble.appendChild(chip);
+        }
+      });
+      wrap.appendChild(bubble);
+      if (msg.time) {
+        const tm = document.createElement('div');
+        tm.className = 'text-[10px] text-zinc-400 mt-1 pr-1';
+        tm.innerText = formatTime(msg.time);
+        wrap.appendChild(tm);
+      }
+      return wrap;
+    }
+    function buildAiMessage(msg) {
+      const wrap = document.createElement('div');
+      wrap.className = 'flex gap-3';
+      wrap.id = msg.id;
+      const av = document.createElement('div');
+      av.className = 'w-8 h-8 rounded-full bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 flex items-center justify-center flex-shrink-0 mt-0.5';
+      av.innerHTML = AI_AVATAR_SVG;
+      const body = document.createElement('div');
+      body.className = 'flex-1 min-w-0';
+      const content = document.createElement('div');
+      content.className = 'msg-content prose text-sm text-zinc-800 dark:text-zinc-200 leading-relaxed';
+      const extras = document.createElement('div');
+      extras.className = 'msg-extras';
+      const footer = document.createElement('div');
+      footer.className = 'msg-footer hidden flex-wrap items-center gap-2 mt-2';
+      footer.innerHTML = '<div class="msg-pills pills flex items-center flex-wrap gap-1.5"></div><div class="msg-actions flex items-center gap-1 ml-auto"></div>';
+      body.appendChild(content); body.appendChild(extras); body.appendChild(footer);
+      wrap.appendChild(av); wrap.appendChild(body);
+      return wrap;
+    }
+    function finalizeAiMessage(el, msg, isLast) {
+      const content = el.querySelector('.msg-content');
+      content.innerHTML = renderMarkdown(msg.text || '');
+      try {
+        if (window.renderMathInElement) renderMathInElement(content, { delimiters: [{ left: '$$', right: '$$', display: true }, { left: '$', right: '$', display: false }], throwOnError: false });
+      } catch (e) {}
+      enhanceCodeBlocks(content);
+      const extras = el.querySelector('.msg-extras');
+      extras.innerHTML = '';
+      if (msg.image) renderImageBlock(extras, msg.image);
+      if (msg.sources && msg.sources.length) renderSources(extras, msg.sources);
+      const footer = el.querySelector('.msg-footer');
+      const text = (msg.text || '').trim();
+      if (!text) { footer.classList.add('hidden'); return; }
+      footer.classList.remove('hidden'); footer.classList.add('flex');
+      const words = text.split(/\s+/).length;
+      const mins = Math.max(1, Math.ceil(words / 200));
+      el.querySelector('.msg-pills').innerHTML =
+        '<span class="meta-pill"><i class="fa-solid fa-align-left"></i>' + words + ' words</span>' +
+        '<span class="meta-pill"><i class="fa-solid fa-i-cursor"></i>' + text.length + ' chars</span>' +
+        '<span class="meta-pill"><i class="fa-regular fa-clock"></i>~' + mins + ' min read</span>' +
+        (msg.time ? '<span class="meta-pill">' + formatTime(msg.time) + '</span>' : '');
+      const actions = el.querySelector('.msg-actions');
+      actions.innerHTML = '';
+      const mkBtn = (icon, title) => {
+        const b = document.createElement('button');
+        b.className = 'w-7 h-7 rounded-full text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 flex items-center justify-center transition text-xs';
+        b.title = title;
+        b.innerHTML = icon;
+        return b;
+      };
+      const copyBtn = mkBtn('<i class="fa-regular fa-copy"></i>', 'Copy response');
+      copyBtn.onclick = () => { navigator.clipboard.writeText(msg.text).then(() => showToast('Copied to clipboard', 'fa-clipboard-check')).catch(() => {}); };
+      actions.appendChild(copyBtn);
+      if (isLast) {
+        const regenBtn = mkBtn('<i class="fa-solid fa-rotate-right"></i>', 'Regenerate response');
+        regenBtn.onclick = regenerateLast;
+        actions.appendChild(regenBtn);
+      }
+      const ttsBtn = mkBtn('<i class="fa-solid fa-volume-high"></i>', 'Read aloud');
+      ttsBtn.onclick = function () { toggleSpeak(this, msg.text); };
+      actions.appendChild(ttsBtn);
+    }
+    function renderImageBlock(container, img) {
+      const box = document.createElement('div');
+      box.className = 'mt-3';
+      box.innerHTML = '<a href="' + img.link + '" target="_blank" rel="noopener"><img src="' + img.url + '" alt="' + escapeHtml(img.alt) + '" class="rounded-2xl border border-zinc-200 dark:border-zinc-800 max-w-md w-full shadow-sm"></a>' +
+        '<div class="text-[11px] text-zinc-400 mt-1.5 flex items-center gap-1.5"><i class="fa-solid fa-camera text-[9px]"></i>Photo by <a class="underline hover:text-zinc-600" href="' + img.profile + '" target="_blank" rel="noopener">' + escapeHtml(img.author) + '</a> on Unsplash</div>';
+      container.appendChild(box);
+    }
+    function renderSources(container, sources) {
+      const box = document.createElement('div');
+      box.className = 'mt-3';
+      box.innerHTML = '<div class="text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1.5 flex items-center gap-1.5"><i class="fa-solid fa-book-open text-[9px]"></i>Sources</div>';
+      const row = document.createElement('div');
+      row.className = 'flex flex-wrap gap-2';
+      sources.forEach(s => {
+        const a = document.createElement('a');
+        a.href = s.u; a.target = '_blank'; a.rel = 'noopener';
+        a.className = 'source-card';
+        a.innerHTML = '<img src="https://www.google.com/s2/favicons?domain=' + s.d + '&sz=64" class="w-4 h-4 rounded flex-shrink-0" onerror="this.style.display=\'none\'">' +
+          '<div class="text-left"><div class="text-[11px] font-semibold leading-tight text-zinc-700 dark:text-zinc-200">' + escapeHtml(s.t) + '</div><div class="text-[10px] text-zinc-400 leading-tight">' + escapeHtml(s.d) + '</div></div>' +
+          '<i class="fa-solid fa-arrow-up-right-from-square text-[9px] text-zinc-400"></i>';
+        row.appendChild(a);
+      });
+      box.appendChild(row);
+      container.appendChild(box);
+    }
+    function enhanceCodeBlocks(container) {
+      container.querySelectorAll('pre').forEach(pre => {
+        if (pre.parentElement.classList.contains('code-block')) return;
+        const codeText = pre.innerText;
+        const isHtml = /<html|<!doctype|<div|<body|<script/i.test(codeText);
+        const wrap = document.createElement('div');
+        wrap.className = 'code-block rounded-lg overflow-hidden border border-zinc-200 dark:border-zinc-800 my-2';
+        pre.parentNode.insertBefore(wrap, pre);
+        const bar = document.createElement('div');
+        bar.className = 'flex items-center justify-between px-3 py-1.5 bg-zinc-100 dark:bg-zinc-800 border-b border-zinc-200 dark:border-zinc-800';
+        bar.innerHTML = '<span class="text-[11px] text-zinc-500 font-mono">code</span>';
+        const actions = document.createElement('div');
+        actions.className = 'flex items-center gap-1';
+        const copyBtn = document.createElement('button');
+        copyBtn.className = 'text-[11px] text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200 px-2 py-0.5 rounded transition';
+        copyBtn.innerHTML = '<i class="fa-regular fa-copy mr-1"></i>Copy';
+        copyBtn.onclick = () => {
+          navigator.clipboard.writeText(codeText).then(() => {
+            copyBtn.innerHTML = '<i class="fa-solid fa-check mr-1"></i>Copied';
+            setTimeout(() => { copyBtn.innerHTML = '<i class="fa-regular fa-copy mr-1"></i>Copy'; }, 1500);
+          }).catch(() => {});
+        };
+        actions.appendChild(copyBtn);
+        if (isHtml) {
+          const runBtn = document.createElement('button');
+          runBtn.className = 'text-[11px] text-emerald-600 dark:text-emerald-400 hover:text-emerald-500 px-2 py-0.5 rounded transition font-semibold';
+          runBtn.innerHTML = '<i class="fa-solid fa-play mr-1"></i>Run';
+          runBtn.onclick = () => runCodeInSandbox(codeText);
+          actions.appendChild(runBtn);
+        }
+        bar.appendChild(actions);
+        pre.remove();
+        wrap.appendChild(bar); wrap.appendChild(pre);
+      });
+    }
+    function runCodeInSandbox(code) {
+      document.getElementById('sandboxIframe').srcdoc = code;
+      const m = document.getElementById('sandboxModal');
+      m.classList.remove('hidden');
+      setTimeout(() => m.classList.remove('opacity-0'), 10);
+    }
+    function closeSandboxModal() {
+      const m = document.getElementById('sandboxModal');
+      m.classList.add('opacity-0');
+      setTimeout(() => { m.classList.add('hidden'); document.getElementById('sandboxIframe').srcdoc = ''; }, 300);
+    }
+
+    // --- ATTACHMENTS ---
+    function handleFileUpload(e) {
+      [...e.target.files].forEach(f => {
+        if (f.type.startsWith('image/')) {
+          const r = new FileReader();
+          r.onload = () => {
+            state.pendingAttachments.push({ type: 'image', name: f.name, size: f.size, dataUrl: r.result });
+            renderAttachments(); updateSendState();
+          };
+          r.readAsDataURL(f);
+        } else {
+          state.pendingAttachments.push({ type: 'file', name: f.name, size: f.size });
+          renderAttachments(); updateSendState();
+        }
+      });
+      e.target.value = '';
+    }
+    function renderAttachments() {
+      attachmentPreviews.innerHTML = '';
+      if (!state.pendingAttachments.length) { attachmentPreviews.classList.add('hidden'); return; }
+      attachmentPreviews.classList.remove('hidden');
+      state.pendingAttachments.forEach((a, i) => {
+        const chip = document.createElement('div');
+        chip.className = 'flex items-center gap-2 bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl pl-2 pr-1.5 py-1.5';
+        chip.innerHTML = a.type === 'image' ? '<img src="' + a.dataUrl + '" class="w-8 h-8 rounded-lg object-cover">' : '<div class="w-8 h-8 rounded-lg bg-zinc-100 dark:bg-zinc-700 flex items-center justify-center"><i class="fa-regular fa-file text-xs text-zinc-500"></i></div>';
+        const info = document.createElement('div');
+        info.innerHTML = '<div class="text-[11px] font-semibold truncate max-w-[140px] text-zinc-800 dark:text-zinc-200">' + escapeHtml(a.name) + '</div><div class="text-[10px] text-zinc-400">' + formatSize(a.size) + '</div>';
+        const rm = document.createElement('button');
+        rm.className = 'text-zinc-400 hover:text-rose-500 px-1';
+        rm.innerHTML = '<i class="fa-solid fa-xmark text-xs"></i>';
+        rm.onclick = () => { state.pendingAttachments.splice(i, 1); renderAttachments(); updateSendState(); };
+        chip.appendChild(info); chip.appendChild(rm);
+        attachmentPreviews.appendChild(chip);
+      });
+    }
+    function updateSendState() {
+      if (state.isGenerating) return;
+      sendBtn.disabled = userInput.value.trim().length === 0 && state.pendingAttachments.length === 0;
+    }
+    function updateSendIcon() {
+      const icon = document.getElementById('sendActionIcon');
+      if (state.isGenerating) { icon.className = 'fa-solid fa-stop'; sendBtn.disabled = false; }
+      else { icon.className = 'fa-solid fa-arrow-up'; updateSendState(); }
+    }
+
+    // --- SEND / STREAM / REGENERATE ---
+    function handleSendOrStop() {
+      if (state.isGenerating) { state.stopRequested = true; return; }
+      const text = userInput.value.trim();
+      if (!text && state.pendingAttachments.length === 0) return;
+      sendUserMessage(text, [...state.pendingAttachments]);
+    }
+    function sendUserMessage(text, atts) {
+      let chat = getCurrentChat();
+      if (!chat) { createNewChat(); chat = getCurrentChat(); }
+      chat.messages.push({ id: 'msg-' + Date.now() + '-' + Math.random().toString(36).slice(2, 6), sender: 'user', text: text, attachments: atts, time: Date.now() });
+      if (chat.title === 'New chat' && text) chat.title = makeTitle(text);
+      userInput.value = ''; userInput.style.height = 'auto';
+      state.pendingAttachments = [];
+      renderAttachments(); updateSendState();
+      renderChatHistory(); renderCurrentChat(); saveState();
+      generateAiReply(chat, text, atts);
+    }
+    function showTyping() {
+      const t = document.createElement('div');
+      t.id = 'typingIndicator';
+      t.className = 'flex gap-3';
+      t.innerHTML = '<div class="w-8 h-8 rounded-full bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 flex items-center justify-center flex-shrink-0 mt-0.5">' + AI_AVATAR_SVG + '</div><div class="flex items-center h-8"><div class="dot-flashing"></div></div>';
+      messagesList.appendChild(t);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+    function hideTyping() { const t = document.getElementById('typingIndicator'); if (t) t.remove(); }
+
+    async function generateAiReply(chat, userText, atts) {
+      state.isGenerating = true; state.stopRequested = false;
+      updateSendIcon();
+      showTyping();
+      await sleep(thinkModeActive ? 1500 : 600 + Math.random() * 600);
+      let result;
+      try { result = await computeResponse(userText, atts); }
+      catch (e) { console.error('Response engine error:', e); result = { text: 'Something glitched on my end while thinking that through — mind trying again?' }; }
+      if (!result || !result.text) result = { text: 'Hmm, I came up empty on that one. Try rephrasing?' };
+      hideTyping();
+      const msg = { id: 'msg-' + Date.now() + '-' + Math.random().toString(36).slice(2, 6), sender: 'ai', text: '', attachments: [], sources: result.sources || null, image: result.image || null, time: Date.now() };
+      chat.messages.push(msg);
+      renderCurrentChat();
+      const el = document.getElementById(msg.id);
+      if (!el) { msg.text = result.text; state.isGenerating = false; updateSendIcon(); saveState(); renderCurrentChat(); return; }
+      const contentEl = el.querySelector('.msg-content');
+      let i = 0;
+      while (i < result.text.length && !state.stopRequested) {
+        i = Math.min(result.text.length, i + 2 + Math.floor(Math.random() * 6));
+        contentEl.textContent = result.text.slice(0, i);
+        if (isNearBottom()) chatMessages.scrollTop = chatMessages.scrollHeight;
+        await sleep(12);
+      }
+      msg.text = result.text.slice(0, i) || result.text;
+      state.isGenerating = false; state.stopRequested = false;
+      updateSendIcon();
+      finalizeAiMessage(el, msg, true);
+      saveState();
+    }
+    function regenerateLast() {
+      if (state.isGenerating) return;
+      const chat = getCurrentChat();
+      if (!chat) return;
+      const lastAi = [...chat.messages].reverse().find(m => m.sender === 'ai');
+      if (!lastAi) return;
+      const idx = chat.messages.indexOf(lastAi);
+      const prevUser = [...chat.messages.slice(0, idx)].reverse().find(m => m.sender === 'user');
+      chat.messages.splice(idx, 1);
+      saveState(); renderCurrentChat();
+      if (prevUser) generateAiReply(chat, prevUser.text, prevUser.attachments || []);
+    }
+
+    // ===================== RESPONSE ENGINE =====================
+    const SRC = {
+      redcross: { t: 'American Red Cross', d: 'redcross.org', u: 'https://www.redcross.org/get-help/how-to-prepare-for-emergencies/types-of-emergencies/life-threatening-emergencies.html' },
+      mayoclinic: { t: 'Mayo Clinic', d: 'mayoclinic.org', u: 'https://www.mayoclinic.org' },
+      nhs: { t: 'NHS', d: 'nhs.uk', u: 'https://www.nhs.uk' },
+      cdc: { t: 'CDC', d: 'cdc.gov', u: 'https://www.cdc.gov' },
+      nimh: { t: 'NIMH', d: 'nimh.nih.gov', u: 'https://www.nimh.nih.gov/health/topics' },
+      lifeline: { t: '988 Lifeline', d: '988lifeline.org', u: 'https://988lifeline.org' },
+      heart: { t: 'American Heart Association', d: 'heart.org', u: 'https://www.heart.org' },
+      aapcc: { t: 'Poison Control', d: 'aapcc.org', u: 'https://www.poisonhelp.org' },
+      sleepfoundation: { t: 'Sleep Foundation', d: 'sleepfoundation.org', u: 'https://www.sleepfoundation.org' },
+      unsplash: { t: 'Unsplash', d: 'unsplash.com', u: 'https://unsplash.com' },
+      wiki: { t: 'Wikipedia', d: 'wikipedia.org', u: 'https://www.wikipedia.org' }
+    };
+
+    const CRISIS_PATTERNS = [/kill myself/, /suicid/, /want to die/, /end my life/, /end it all/, /don'?t want to (live|be here|exist)/, /no reason to live/, /better off dead/, /hurt myself/, /cut(ting)? myself/, /self[- ]?harm/, /harm myself/, /overdose/];
+
+    const HEALTH_TOPICS = [
+      { kw: [/chest pain/, /heart attack/, /tightness in (my )?chest/], src: [SRC.heart, SRC.nhs, SRC.mayoclinic],
+        text: `**Chest pain — take this seriously**
+
+If you (or someone near you) has chest pain that feels like pressure, squeezing, or tightness — especially if it spreads to the arm, jaw, or back, or comes with shortness of breath, nausea, or sweating — **call 911 immediately.** Do not drive yourself.
+
+While waiting for help:
+- Sit down, stay calm, and stay still
+- Unlock the door so responders can enter
+- If prescribed nitroglycerin, take it as directed
+- Chew an aspirin (162–325 mg) only if advised or not allergic
+
+Not all chest pain is a heart attack (it can be muscle strain, acid reflux, or anxiety), but it is impossible to safely tell the difference from home — which is exactly why emergency evaluation matters.` },
+      { kw: [/bleed/, /cut myself/, /wound/, /gash/, /deep cut/], src: [SRC.redcross, SRC.mayoclinic, SRC.nhs],
+        text: `**First aid for bleeding & cuts**
+
+1. **Apply firm, direct pressure** with a clean cloth or gauze — and keep it there, no peeking.
+2. **Elevate** the injured area above heart level if possible.
+3. If blood soaks through, **add fresh layers on top** — never remove the soaked ones (they help clotting).
+4. Once bleeding slows, rinse around the wound with clean water and cover it with a sterile dressing.
+
+**Go to the ER or call 911 if:** blood is spurting, the wound is deep, gaping, or caused by a dirty/foreign object, bleeding has not stopped after 10–15 minutes of firm pressure, or the person looks pale, clammy, or confused (signs of shock).` },
+      { kw: [/burn(ed|s)?\b/, /burned myself/, /scald/, /hot (water|pan|stove|oil)/], src: [SRC.redcross, SRC.nhs, SRC.mayoclinic],
+        text: `**First aid for burns**
+
+1. **Cool the burn under gently running cool water for 10–20 minutes.** This is the single most important step — it limits how deep the burn goes.
+2. Remove jewelry or tight items near the area before swelling starts.
+3. Cover loosely with a sterile, non-stick dressing or clean plastic wrap.
+
+**Do NOT:** apply ice, butter, toothpaste, or ointments, or pop blisters.
+
+**Seek medical care if:** the burn is larger than the person's palm, deep or white/charred, on the face, hands, feet, genitals, or over a joint, caused by chemicals or electricity, or the person is a child or elderly.` },
+      { kw: [/chok(e|ing)/, /heimlich/, /swallowed.*wrong/], src: [SRC.redcross, SRC.nhs],
+        text: `**First aid for choking (adult/child)**
+
+If someone can't cough, speak, or breathe:
+1. **Call 911** (or have someone else do it).
+2. Give **5 firm back blows** between the shoulder blades with the heel of your hand.
+3. Give **5 abdominal thrusts** (Heimlich): fist just above the navel, quick inward-and-upward pulls.
+4. **Alternate 5 and 5** until the object comes out or they become unconscious — if unconscious, begin CPR.
+
+For **infants under 1**: 5 back blows with them face-down along your forearm, then 5 chest thrusts with two fingers. Never do abdominal thrusts on an infant.
+
+If they get the object out but had a hard time breathing or a persistent cough — still get checked by a doctor.` },
+      { kw: [/sprain/, /twisted (ankle|wrist|knee)/, /strain(ed)? muscle/, /rolled (ankle|foot)/], src: [SRC.mayoclinic, SRC.nhs],
+        text: `**Treating sprains & strains — the RICE method**
+
+- **R**est — stop the activity, avoid putting weight on it
+- **I**ce — 15–20 minutes every 2–3 hours (wrap ice in a cloth, never directly on skin)
+- **C**ompression — a snug elastic bandage, not so tight it numbs or tingles
+- **E**levation — raise it above heart level when possible
+
+After 48 hours, gentle movement usually helps more than total rest.
+
+**See a doctor if:** you can't bear weight, the joint looks deformed, there's severe swelling or numbness, or it isn't clearly improving within a few days.` },
+      { kw: [/fever/, /high temp/], src: [SRC.mayoclinic, SRC.cdc],
+        text: `**Managing a fever (adults)**
+
+- **Hydrate** — fevers drain fluids fast; water, broth, and electrolyte drinks all count
+- **Rest** — your body is fighting something, let it
+- **Dress light**, keep the room comfortable — don't pile on blankets to "sweat it out"
+- **Acetaminophen or ibuprofen** per package directions can lower it if you're uncomfortable (fever is a defense mechanism, so treating comfort is the goal, not a perfect number)
+
+**See a doctor if:** your fever is above 103°F (39.4°C), lasts more than 3 days, or comes with severe headache, stiff neck, rash, confusion, trouble breathing, or persistent vomiting. **For infants under 3 months with any fever — go to the ER.**` },
+      { kw: [/headache/, /migraine/, /head hurts/], src: [SRC.mayoclinic, SRC.nhs],
+        text: `**Easing a headache**
+
+- Hydrate first — dehydration is one of the most common triggers
+- Rest in a dark, quiet room; a cool compress on the forehead helps many people
+- OTC pain relievers (ibuprofen, acetaminophen) work best taken *early*
+- Ease off screens for a bit, and watch your posture and caffeine habits
+
+**Go to the ER if:** it's the worst headache of your life and it hit suddenly ("thunderclap"), comes with fever + stiff neck, vision changes, weakness, confusion, or follows a head injury. Those aren't "wait and see" symptoms.` },
+      { kw: [/\bcold\b/, /\bflu\b/, /influenza/, /sore throat/, /cough/, /runny nose/, /congestion/], src: [SRC.cdc, SRC.mayoclinic],
+        text: `**Cold vs. flu — and what actually helps**
+
+Colds build gradually (runny nose, sore throat, mild fatigue); flu hits hard and sudden (fever, body aches, exhaustion).
+
+What helps: rest, fluids, warm liquids with honey for cough, a humidifier, and OTC meds for symptoms. Antibiotics do nothing — both are viral.
+
+**See a doctor if:** you have trouble breathing, chest pain, a fever over 3 days, symptoms that improve then suddenly worsen, or you're in a high-risk group (asthma, diabetes, pregnancy, 65+). Antivirals like Tamiflu work best within 48 hours of flu onset.` },
+      { kw: [/\bcpr\b/, /resuscitation/, /stopped breathing/, /unresponsive/], src: [SRC.redcross, SRC.heart],
+        text: `**CPR basics — if someone is unresponsive and not breathing normally**
+
+1. **Call 911** or have someone else do it, and ask for an AED.
+2. Place the heel of your hand on the **center of the chest**, interlock your other hand on top.
+3. Push **hard and fast** — about 2 inches deep, 100–120 beats per minute (the tempo of "Stayin' Alive").
+4. **Don't stop** until help arrives, an AED is ready, or the person breathes normally.
+
+If an **AED** is available, turn it on and follow the voice prompts — it's designed for people with zero training.
+
+This is no substitute for a certified course — the Red Cross and AHA offer classes that take just a few hours and genuinely save lives.` },
+      { kw: [/poison/, /swallowed (something|a|cleaning|chemical)/, /drank (bleach|chemical|cleaning)/], src: [SRC.aapcc, SRC.cdc],
+        text: `**Possible poisoning — act fast**
+
+1. **Call Poison Control right now: 1-800-222-1222** (US, free, 24/7). They'll tell you exactly what to do.
+2. If the person is unconscious, not breathing, or having seizures — **call 911 first.**
+3. Keep the container or substance label nearby to read to them.
+
+**Do NOT** induce vomiting unless Poison Control specifically tells you to — many substances burn twice on the way back up.
+
+If they got something on skin or in eyes, rinse with cool water for 15+ minutes while you call.` },
+      { kw: [/allergic reaction/, /anaphyla/, /bee sting/, /epipen/, /epi-pen/, /swelling.*(throat|tongue|lips)/], src: [SRC.mayoclinic, SRC.nhs],
+        text: `**Allergic reactions — mild vs. emergency**
+
+**Mild** (localized itching, hives, mild swelling): take an antihistamine, wash the area, and watch for escalation.
+
+**Anaphylaxis is a 911 emergency. Signs:**
+- Trouble breathing, wheezing, throat/tongue swelling
+- Hives spreading across the body
+- Dizziness, fainting, rapid weak pulse, vomiting
+
+If there's an **epinephrine auto-injector, use it immediately** — into the outer thigh, through clothing if needed. Then call 911, have them lie flat with legs raised (unless breathing is easier sitting up), and give a second dose after 5–15 minutes if no improvement. Even if symptoms ease after epinephrine, they **must** still go to the ER — reactions can rebound hours later.` },
+      { kw: [/nose ?bleed/, /nose is bleeding/, /bleeding nose/], src: [SRC.mayoclinic, SRC.nhs],
+        text: `**Stopping a nosebleed**
+
+1. **Sit and lean slightly forward** — tilting your head back sends blood down the throat (causes nausea and looks scarier than it is).
+2. **Pinch the soft part of the nose** (just below the bony bridge) firmly for a full 10 minutes. Breathe through your mouth.
+3. Repeat once for another 10 minutes if needed. A cold pack on the bridge can help.
+4. For the next 24 hours: no nose-blowing, picking, or heavy lifting.
+
+**Seek care if:** bleeding continues past 20–30 minutes despite pressure, it follows a significant head injury, it's extremely heavy, or it happens with blood-thinning medication.` },
+      { kw: [/dehydrat/, /dehydrated/, /haven'?t drunk water/], src: [SRC.mayoclinic, SRC.cdc],
+        text: `**Recovering from dehydration**
+
+Signs: dark urine, dry mouth, headache, dizziness, fatigue.
+
+What to do:
+- Sip fluids steadily rather than chugging — **oral rehydration solutions or sports drinks** replace salts better than plain water
+- Rest in a cool place, and avoid alcohol and caffeine for now
+- Water-rich foods (watermelon, cucumber, soup) count too
+
+**Get medical help if:** the person can't keep fluids down, is confused, extremely dizzy, hasn't urinated in 8+ hours, or an infant/elderly person is affected — severe dehydration can need IV fluids.` },
+      { kw: [/can'?t sleep/, /insomnia/, /sleep trouble/, /trouble sleeping/, /tired but can'?t sleep/], src: [SRC.sleepfoundation, SRC.nhs],
+        text: `**Falling asleep — what actually works**
+
+- **Consistent schedule** — same wake-up time daily, even weekends; it anchors your whole sleep rhythm
+- **Screens off an hour before bed** — the light and stimulation both matter
+- **Cool, dark, quiet room** — most people sleep best around 65°F / 18°C
+- **Caffeine cutoff by early afternoon** — it lingers 6+ hours
+- If you're not asleep in ~20 minutes, **get up** and do something boring in dim light; forcing it builds an anxiety loop
+
+**Talk to a doctor if:** insomnia lasts more than a few weeks, or you're gasping/snoring awake — sleep apnea is very treatable and very worth catching.` },
+      { kw: [/back pain/, /back hurts/, /lower back/, /backache/], src: [SRC.mayoclinic, SRC.nhs],
+        text: `**Back pain — movement beats bed rest**
+
+- **Keep gently moving** — total rest actually slows recovery; walking and light stretching help
+- Alternate **heat and ice** in 15–20 minute blocks
+- OTC pain relievers can take the edge off while it heals
+- Watch posture, and when lifting, hinge at the hips and keep the load close
+
+Most mechanical back pain improves within a few weeks.
+
+**See a doctor promptly if:** there's numbness or tingling in the legs, weakness, loss of bladder/bowel control, fever, unexplained weight loss, or pain after a serious fall — those signs need same-day evaluation.` },
+      { kw: [/sunburn/], src: [SRC.mayoclinic, SRC.cdc],
+        text: `**Treating sunburn**
+
+- **Cool showers or compresses** — comfort first
+- **Aloe vera or a light moisturizer** on damp skin; skip heavy petroleum-based products that trap heat
+- **NSAIDs** (ibuprofen) reduce pain and inflammation, especially early
+- **Hydrate** — sunburn pulls fluid to the skin
+- Stay out of the sun while it heals, and wear loose clothing over it
+
+**Seek care if:** blisters cover a large area, there's fever, chills, severe pain, nausea, or signs of infection (streaking, pus).` }
+    ];
+
+    const MENTAL_TOPICS = [
+      { kw: [/feeling (really )?sad/, /\bsad\b/, /feeling down/, /depress/, /empty inside/, /crying/, /worthless/], src: [SRC.nimh, SRC.lifeline],
+        text: `I'm really glad you said that out loud instead of carrying it silently — that takes more strength than people realize.
+
+Feeling deeply sad is heavy, and it doesn't need a "good enough reason" to be valid. A few things that genuinely help when everything feels gray:
+
+- **Lower the bar for today.** Not "be productive" — just "drink water, get some daylight, message one person."
+- **Move your body a little.** Even a 10-minute walk measurably shifts brain chemistry.
+- **Don't isolate completely.** You don't have to explain everything; even sitting near someone helps.
+- **Write it down.** Getting thoughts out of your head onto paper shrinks them.
+
+If this heaviness has lasted more than two weeks, or it's affecting sleep, appetite, or your ability to function — that's worth talking to a doctor or therapist about. That's not weakness; it's maintenance, like any other health issue.
+
+Is there anything specific weighing on you? I'm happy to just listen.` },
+      { kw: [/anxi/, /anxious/, /panic attack/, /heart racing/, /on edge/, /worried/], src: [SRC.nimh, SRC.nhs],
+        text: `Anxiety is awful — that buzzing, can't-settle feeling where your body acts like there's an emergency even when part of you knows there isn't. You're not broken; your alarm system is just turned up too high.
+
+**If you're in the middle of it right now, try the 4-7-8 breath:** inhale through your nose for 4 seconds, hold for 7, exhale slowly through your mouth for 8. Three rounds. Long exhales are the fastest manual override for a racing nervous system.
+
+**For the longer game:**
+- Cut or reduce caffeine — it mimics anxiety physically
+- Name it when it starts ("this is anxiety, not danger") — labeling shrinks it
+- Ground with the 5-4-3-2-1 technique: 5 things you see, 4 you can touch, 3 you hear, 2 you smell, 1 you taste
+- Regular sleep and movement do more than most people expect
+
+If panic attacks are frequent or anxiety is shrinking your life, a therapist can be genuinely life-changing — especially with approaches like CBT, which has strong results.
+
+Want to talk through what's driving it?` },
+      { kw: [/stress(ed|ful)?/, /overwhelm/, /burn(ed|t)? out/, /burnout/, /too much( going on)?/], src: [SRC.nimh, SRC.mayoclinic],
+        text: `Overwhelm usually isn't about any single thing — it's everything stacking until even small tasks feel impossible. So let's shrink it.
+
+**Right now:**
+- **Brain-dump everything** onto one list. Overwhelm lives in your head's working memory; a written list is external storage.
+- **Circle exactly one thing** — the one with the nearest consequence — and do only that.
+- **Take a real break** after: 10 minutes, no screens, ideally outside.
+
+**This week:**
+- Look for anything you can drop, delay, or delegate — not forever, just for now
+- Protect sleep first; everything else degrades without it
+- Schedule one thing that's *for you* — even 20 minutes
+
+And honestly, if you've been running on fumes for months, burnout might be less a productivity problem and more a signal that something structural needs to change. That conversation is worth having with someone in your life — or with me, if it helps to think out loud.
+
+What's the heaviest thing on the pile right now?` },
+      { kw: [/lonely/, /alone/, /no one (cares|to talk to)/, /isolat/], src: [SRC.nimh, SRC.lifeline],
+        text: `Loneliness is one of the most common feelings people admit to a screen before they'd ever say it to a person — so thank you for saying it here. It's real, it's painful, and it's not a character flaw.
+
+A few honest thoughts:
+
+- **Loneliness isn't about how many people are around you** — it's about feeling unseen. One genuine connection outweighs twenty acquaintances.
+- **Small doses count.** A short chat with a barista, a comment in a hobby community, a message to an old friend — these are real social nutrients.
+- **Shared-activity spaces beat pure socializing** for making friends as an adult: classes, clubs, volunteering, sports. It's easier to bond side-by-side than face-to-face.
+- Be gentle with yourself in the meantime — loneliness lies and tells you it's permanent. It isn't.
+
+If the isolation feels total and unfixable, that's worth talking through with someone — and if it ever tips toward feeling like there's no point, 988 (call or text, US) is staffed by humans whose whole job is this conversation.
+
+I'm here too, for whatever that's worth. What does your typical week look like right now?` },
+      { kw: [/grief/, /lost (my|a) (mom|dad|friend|dog|cat|pet|grandma|grandpa|brother|sister)/, /passed away/, /died/], src: [SRC.nimh, SRC.nhs],
+        text: `I'm so sorry. Losing someone you love reshapes everything, and there's no timeline or "right way" to do it.
+
+A few things that are true even when they don't feel true:
+
+- **Grief comes in waves, not stages.** You can be okay for an hour, then wrecked by a song in a supermarket. That's normal, not regression.
+- **You don't have to perform.** "Staying strong" for others can wait; feeling it is the actual work.
+- **Their absence doesn't erase the relationship.** Talking about them, keeping small rituals, telling stories — that keeps the connection in a new form.
+- **Guilt and anger are standard guests.** Almost everyone gets visited by "I should have" thoughts. It's grief wearing a disguise.
+
+**When to reach for more support:** if months pass and you can't function, if you're numb to everything, or if it edges toward not wanting to be here — please talk to someone. Grief counselors exist and they're good at this.
+
+Do you want to tell me about them? I'd genuinely like to hear.` }
+    ];
+
+    const RESP = {
+      crisis: [
+`Thank you for trusting me with that — saying it out loud takes real courage, and I'm glad you're here.
+
+I'm an AI, so I can't be the support you deserve in this moment, but people who truly can are one step away:
+
+- **Call or text 988** (US Suicide & Crisis Lifeline) — free, confidential, 24/7
+- **Text HOME to 741741** — Crisis Text Line
+- **Outside the US:** findahelpline.com lists free services by country
+- **If you're in immediate danger, call 911** (or your local emergency number)
+
+You matter — including on the days it doesn't feel like it. This pain is real, but it's also something that people survive *with help*, and asking for it is the strongest move there is.
+
+If it helps while you reach out: slow your breathing (long exhales), put both feet on the floor, and name five things you can see. Grounding doesn't fix anything, but it makes the next minute more survivable — and the next minute is the one that counts.
+
+Would it help to talk about what's been going on? I'm listening, and I'll stay with you.`,
+`I'm really glad you told me that instead of holding it in — and I want to be honest with you because you deserve honesty: what you're feeling sounds bigger than what an AI chat should handle alone.
+
+**Please reach out right now:**
+- **988** — call or text (US, 24/7, free, confidential)
+- **Text HOME to 741741** — Crisis Text Line
+- **findahelpline.com** — free support worldwide
+- **911 / local emergency** — if you feel in immediate danger
+
+There is no "not bad enough" for these lines. They exist for exactly this moment.
+
+One more thing, and I mean this: the part of you that typed this out instead of staying silent is the part that still wants to be here. Listen to it. Let a real person help carry this tonight.
+
+I'm still here if you want to keep talking — about anything at all.`
+      ],
+      selfharm: [
+`Thank you for telling me. I'm not going to panic or lecture you — but I am going to be straight with you, because you deserve that.
+
+The urge to hurt yourself is usually your mind trying to manage pain it doesn't know how else to hold. It's a coping tool — just one that hurts you in the process. You deserve better tools, and they exist.
+
+**For the urge right now, harm-reduction alternatives people genuinely use:**
+- Hold an **ice cube** in your hand until it melts — intense sensation, no damage
+- Snap a **rubber band** on your wrist (gentler, still not great, but safer)
+- **Draw** on the skin where you'd usually hurt — marker, pen, whatever's near
+- Intense physical release: sprint, push-ups, scream into a pillow
+- **The 15-minute rule:** delay, do one thing from this list, then reassess — urges crest and fall like waves
+
+**For the longer term:** this pattern is very treatable, and DBT therapy in particular was built for exactly this. And **988** (call/text) or **text HOME to 741741** are staffed by people who will never judge you for this.
+
+You took a real step by saying it here. Can I ask — is tonight a particularly hard night, or has this been building for a while?`
+      ],
+      greeting: [
+'Hey{NAME}! Good to see you. What are we digging into today — code, math, a health question, or just something on your mind?',
+'Hi{NAME}! Ready when you are. You can ask me to write, calculate, explain, or find images — or just talk it out.',
+'Welcome back{NAME}. What is on the docket?'
+      ],
+      imageIntro: [
+'Here is what I found for that:',
+'On it — here is a match from the search:',
+'Searched for it — best result below:'
+      ],
+      attachmentsOnly: (atts) => 'I can see you have attached **' + atts.length + (atts.length > 1 ? ' files' : ' file') + '**: ' + atts.map(a => '`' + a.name + '`').join(', ') + '.\n\nTell me what you would like me to do with ' + (atts.length > 1 ? 'them' : 'it') + ' — summarize, explain, answer questions about the content, or something else?'
+    };
+
+    const CODE_PY = `Sure! Here's a clean, practical Python script — a file organizer that sorts a messy folder by file type:
+
+\`\`\`python
+import os
+from pathlib import Path
+
+CATEGORIES = {
+    "Images": {".jpg", ".jpeg", ".png", ".gif", ".webp"},
+    "Documents": {".pdf", ".docx", ".txt", ".md"},
+    "Code": {".py", ".js", ".html", ".css", ".json"},
+    "Archives": {".zip", ".tar", ".gz"},
+}
+
+def category_for(ext):
+    for name, exts in CATEGORIES.items():
+        if ext.lower() in exts:
+            return name
+    return "Other"
+
+def organize(folder):
+    folder = Path(folder)
+    if not folder.is_dir():
+        print("Not a valid folder:", folder)
+        return
+    moved = 0
+    for item in folder.iterdir():
+        if item.is_file():
+            dest = folder / category_for(item.suffix)
+            dest.mkdir(exist_ok=True)
+            item.rename(dest / item.name)
+            moved += 1
+    print("Done — organized", moved, "file(s).")
+
+if __name__ == "__main__":
+    organize(input("Folder to organize: ").strip().strip('"'))
+\`\`\`
+
+**How it works:** it maps extensions to categories, creates the folders on demand, and moves each file with Path.rename(). Add a dry_run flag if you want to preview moves before committing to them.{ROLE_CODE}`;
+
+    const CODE_JS = `Here's a handy JavaScript utility — a debounce function with a practical example:
+
+\`\`\`javascript
+function debounce(fn, delay = 300) {
+  let timer;
+  return function (...args) {
+    clearTimeout(timer);
+    timer = setTimeout(() => fn.apply(this, args), delay);
+  };
+}
+
+// Example: live search box
+const searchBox = document.querySelector("#search");
+
+searchBox.addEventListener("input", debounce(function (e) {
+  console.log("Searching for:", e.target.value);
+  // fetch("/api/search?q=" + encodeURIComponent(e.target.value));
+}, 400));
+\`\`\`
+
+The debounce wrapper postpones fn until the user stops typing for delay ms — essential for search inputs, resize handlers, and autosave.{ROLE_CODE}`;
+
+    const EMAIL_RESP = `Here's a professional email template you can adapt:
+
+**Subject:** [Clear, specific subject — e.g., "Follow-up on Q3 Project Timeline"]
+
+> Hi [Name],
+>
+> I hope you're doing well. I'm reaching out regarding [context in one sentence].
+>
+> [Main message — 2-4 short paragraphs. Lead with the purpose, give the key details, and state clearly what you need and by when.]
+>
+> Please let me know if you have any questions or if it would be easier to discuss by phone.
+>
+> Best regards,
+> [Your name]
+> [Role / Company]
+
+**Quick tips that make emails land better:**
+- **One topic per email** — split unrelated asks into separate threads
+- **Put the ask in the first two lines**, not buried at the bottom
+- **Subject lines are content** — "Quick question about Thursday's deadline" beats "Hi"
+- Short paragraphs, no walls of text{ROLE_CODE}`;
+
+    const EXPLAIN_TOPICS = [
+      { kw: [/quantum comput/], src: [{ t: 'IBM Quantum', d: 'ibm.com', u: 'https://www.ibm.com/quantum' }, SRC.wiki],
+        text: `**Quantum computing, without the hand-waving**
+
+Classical computers store information as bits — switches that are either 0 or 1. Quantum computers use **qubits**, which exploit two strange quantum properties:
+
+**1. Superposition** — a qubit can be a blend of 0 *and* 1 simultaneously. One qubit explores two states at once; n qubits explore $2^n$ states at once. The catch: you don't get to read all of those answers — measurement collapses the blend into one definite outcome.
+
+**2. Entanglement** — qubits can be linked so that measuring one instantly correlates with another, no matter the distance. This is what lets quantum machines coordinate their "explorations."
+
+The trick of quantum algorithms isn't brute parallelism — it's engineering **interference**: wrong answers cancel each other out while right answers reinforce, so the correct result is what survives measurement.
+
+**Why it matters:** certain problems — factoring huge numbers (breaking RSA encryption), simulating molecules for drug design, optimizing gnarly systems — could see exponential speedups.
+
+**Why you don't have one:** qubits are fragile. Heat, vibration, even stray electromagnetic fields destroy their quantum state (decoherence), so machines live in dilution refrigerators colder than outer space, and today's error rates keep useful applications limited. It's less "laptop of 2050" and more "vacuum-tube mainframe of the 1950s" — the physics works; the engineering is catching up.` },
+      { kw: [/black ?hole/], src: [{ t: 'NASA', d: 'nasa.gov', u: 'https://science.nasa.gov/universe/black-holes/' }, SRC.wiki],
+        text: `**Black holes**
+
+A black hole is a region where gravity is so intense that nothing — not even light — can escape once it crosses the boundary called the **event horizon**.
+
+**How they form:** when a massive star (roughly 20+ times the Sun's mass) runs out of fuel, its core collapses under its own gravity. If the remnant is dense enough, no known force can stop the collapse, and spacetime curvature runs away.
+
+**The key numbers:**
+- A **stellar-mass** black hole might be ~10 miles across
+- **Supermassive** ones, like Sagittarius A* at our galaxy's center, hold millions to billions of solar masses — and we still don't fully know how they grew so large so early
+- The event horizon of Sgr A* would fit inside Mercury's orbit
+
+**The weird parts:** time slows near one — an outside observer watching you fall in would see you freeze and redden at the horizon while, from your perspective, you cross it uneventfully. And in 2019, the Event Horizon Telescope gave us our first actual photograph of a black hole's glowing accretion ring in galaxy M87.
+
+They're not cosmic vacuum cleaners, by the way — replace the Sun with a Sun-mass black hole and Earth's orbit wouldn't change. Just, you know, don't go near one.` },
+      { kw: [/machine learning/, /artificial intelligence/, /how does ai work/, /neural network/], src: [SRC.wiki, { t: 'IBM', d: 'ibm.com', u: 'https://www.ibm.com/topics/machine-learning' }],
+        text: `**How machine learning works**
+
+Traditional programming: humans write explicit rules, the computer follows them. Machine learning flips it: you show the computer thousands of *examples*, and it **derives the rules itself**.
+
+**The core loop:**
+1. **Feed it data** — say, a million photos labeled "cat" or "not cat"
+2. **It makes a guess** on each one — badly at first, coin-flip badly
+3. **Measure the error** — how wrong was the guess?
+4. **Nudge millions of internal knobs (parameters)** in the direction that would have made the guess less wrong
+5. **Repeat billions of times**
+
+That nudging process is called **gradient descent** — imagine standing blindfolded on a hillside and feeling which way is downhill, then taking a small step. Do that enough times and you land in a valley of good predictions.
+
+**Neural networks** stack simple units in layers: early layers detect edges and colors, middle layers detect textures and shapes, deep layers detect "ears + whiskers + face shape = cat." Nobody programs those stages — they emerge from training.
+
+**The catch:** the model learns whatever patterns exist in the data, including biases and noise. Garbage in, confident garbage out. That's why data quality matters more than model cleverness, and why AI systems inherit human blind spots unless carefully audited.` },
+      { kw: [/photosynthesis/], src: [SRC.wiki],
+        text: `**Photosynthesis**
+
+Photosynthesis is how plants turn sunlight, water, and air into food — the chemical reaction that powers nearly all life on Earth.
+
+**The recipe:**
+
+ $$6CO_2 + 6H_2O \\xrightarrow{\\text{sunlight}} C_6H_{12}O_6 + 6O_2$$ 
+Six molecules of carbon dioxide plus six of water, energized by light, become one molecule of glucose (plant food) plus six of oxygen.
+
+**It happens in two stages inside chloroplasts:**
+
+1. **Light-dependent reactions** — chlorophyll absorbs sunlight and uses it to split water molecules. This releases oxygen as a byproduct (the oxygen you're breathing right now came from this step) and charges molecular "batteries" (ATP and NADPH).
+
+2. **Calvin cycle** — those batteries power the assembly of CO₂ into glucose, no light required.
+
+**The scale of it:** plants and ocean plankton fix roughly 100+ billion tons of carbon per year, and every calorie in your diet — including the meat you eat, since animals eat plants — traces back to this reaction. Fossil fuels are ancient photosynthesis, banked millions of years ago. When you burn gasoline, you're spending sunlight captured by Jurassic plants.` },
+      { kw: [/blockchain/, /bitcoin/, /crypto/], src: [SRC.wiki, { t: 'MIT Technology Review', d: 'technologyreview.com', u: 'https://www.technologyreview.com/topic/blockchain/' }],
+        text: `**Blockchain, explained plainly**
+
+A blockchain is a shared ledger that thousands of computers hold copies of — with a built-in mechanism making it extremely hard to rewrite history.
+
+**How it works:**
+- Transactions get batched into **blocks**
+- Each block contains a cryptographic **hash** (a digital fingerprint) of the previous block — change anything in an old block and its hash changes, breaking the whole chain after it
+- Computers on the network race to validate the next block (**mining** or **staking** depending on design), and the winner appends it
+- Everyone's copy updates to match
+
+**Why that matters:** no single company, government, or admin can quietly edit the record, because thousands of independent copies would disagree. Trust shifts from an institution to a math-heavy consensus process.
+
+**Honest tradeoffs:** it's brilliant for systems where no trusted middleman exists (cross-border value transfer, provenance tracking) but clumsy where one does — it's slower and more energy-intensive than a regular database for 99% of applications. Blockchain is a solution looking for problems in some places, and genuinely the right tool in others.` },
+      { kw: [/\bgravity\b/, /relativity/], src: [{ t: 'NASA', d: 'nasa.gov', u: 'https://science.nasa.gov/universe/' }, SRC.wiki],
+        text: `**Gravity**
+
+Newton described gravity as a force pulling masses together: $F = G\\frac{m_1 m_2}{r^2}$ — the famous inverse-square law that still steers spacecraft today.
+
+**Einstein's rewrite:** general relativity says gravity isn't a force at all. Mass and energy **curve spacetime**, and objects simply follow the straightest possible paths through that curved geometry. The Earth doesn't feel a rope pulling it toward the Sun; it's coasting along a straight line through spacetime that the Sun has bent.
+
+**Confirmed predictions that came out of this idea:**
+- Light bends around massive objects (seen during a 1919 eclipse, making Einstein famous overnight)
+- Time runs measurably slower in stronger gravity — your GPS satellites correct for this daily, or maps would drift by kilometers per day
+- Colliding black holes ripple spacetime itself — detected as gravitational waves in 2015
+
+And the open frontier: gravity is the one force that refuses to play nice with quantum mechanics. Whatever reconciles them — string theory, loop quantum gravity, or something nobody's thought of yet — is likely to be the biggest physics discovery of the century.` }
+    ];
+
+    function genericExplain(topic) {
+      return '**' + topic + '**\n\n' +
+'Here is a solid overview:\n\n' +
+'**The short version** — ' + topic + ' is best understood by breaking it into what it is, how it works, and why it matters. Most explanations fail by jumping straight into detail without establishing which of those questions they are answering.\n\n' +
+'**How to think about it:**\n' +
+'1. **Start with the purpose** — what problem does ' + topic + ' exist to solve? Every system, concept, or field makes sense once you know what it is pushing against.\n' +
+'2. **Follow one concrete example end-to-end** before generalizing. Abstract understanding that is not anchored to a specific case tends to evaporate under questioning.\n' +
+'3. **Learn the vocabulary last, not first** — jargon is compression for people who already understand the thing, not a doorway for people who do not.\n\n' +
+'**Going deeper:** the fastest progress usually comes from alternating between reading about ' + topic + ' and *doing* something with it — a calculation, a summary in your own words, a small project. Passive input feels productive; retrieval and application are what actually build durable understanding.\n\n' +
+'Want me to go deeper on any particular angle — the history, the mechanics, or how it is used in practice?';
+    }
+
+    function fallbackResponses(query) {
+      const p = getProfile();
+      const roleLine = p.role ? '\n\n*(Also — since you mentioned you are a ' + p.role + ', tell me if you would like this framed for your field specifically.)*' : '';
+      const arr = [
+'That is a good one. Here is how I would break down **"' + query + '"**:\n\n**First, the core of it:** most questions like this have three layers — the surface answer everyone repeats, the mechanism underneath it, and the edge cases where things get interesting. The middle layer is usually what is actually worth understanding.\n\n**A practical approach:**\n- Start with what you already know and what prompted the question — context sharpens everything after it\n- Separate facts from interpretation; they often travel together disguised as one thing\n- Look for the constraint or trade-off — almost every "how does X work" question is really a "what does X trade off" question\n\nTell me a bit more about what angle you are after — the overview, a specific detail, or help making a decision about it — and I will go deeper where it counts.' + roleLine,
+'Interesting question. To give you something genuinely useful about "' + query + '", let me lay out the terrain:\n\n**What is most likely relevant:**\n1. **Definition & scope** — what exactly counts as part of this, and what does not\n2. **The mechanism** — the moving parts and how they interact\n3. **Practical implications** — what changes for you, day to day, because of it\n\n**One honest note:** I can take this in a lot of directions — a quick summary, a structured deep-dive, a pros-and-cons breakdown, or a conversation where we figure out what you are really asking (often the most useful option).\n\nWhich of those would help most?' + roleLine,
+'Happy to dig into that. Quick take on **"' + query + '"**:\n\nThe useful version of this answer depends on what is behind the question. If it is curiosity, the interesting framing is usually *how it came to be this way* — origins make everything else click. If it is practical, the framing is *what to do about it* — steps, tools, and common mistakes. If it is for a project or study, the framing is *structure* — the mental model you can hang details on later.\n\nGive me one sentence about what you are trying to accomplish, and I will tailor this properly.' + roleLine
+      ];
+      return pick(arr);
+    }
+
+    // --- IMAGE SEARCH (fixed) ---
+    const IMG_STOPWORDS = new Set(['a','an','the','of','me','my','i','show','please','can','could','you','get','find','give','some','that','this','is','are','do','doing','did','does','for','with','and','to','on','in','it','want','need','would','like','display','search','looking','look','up','picture','pictures','image','images','photo','photos','pic','pics','photograph','photographs','really','very','nice','good','cute','beautiful','now','then','her','his','their']);
+    const IMG_MAP = { girl: 'woman', girls: 'women', boy: 'man', boys: 'men', guy: 'man', lady: 'woman', kid: 'child', kids: 'children', pushup: 'push-up', pushups: 'push-ups', situp: 'sit-up', situps: 'sit-ups', workout: 'fitness', jogging: 'running', cellphone: 'phone', pc: 'computer' };
+    function cleanImageQuery(raw) {
+      const tokens = raw.split(/[^a-zA-Z0-9-]+/).filter(Boolean)
+        .map(t => IMG_MAP[t.toLowerCase()] || t.toLowerCase())
+        .filter(t => !IMG_STOPWORDS.has(t));
+      return tokens.slice(0, 4).join(' ').trim();
+    }
+    function extractImageQuery(q) {
+      let rest = '';
+      const m = q.match(/(?:picture|pic|image|photo|photograph)s?\s*(?:of|for|showing|about)?\s+(.*)/);
+      if (m) rest = m[1];
+      else {
+        const m2 = q.match(/(?:show|find|get|see|search(?: for)?)\s+(?:me\s+)?(?:a\s+|an\s+|some\s+)?(.+)/);
+        if (m2) rest = m2[1];
+      }
+      return cleanImageQuery(rest || q);
+    }
+    async function tryFetchImage(query) {
+      if (!query) return null;
+      try {
+        const res = await fetch('https://api.unsplash.com/search/photos?query=' + encodeURIComponent(query) + '&per_page=1&orientation=landscape&content_filter=high&client_id=' + UNSPLASH_ACCESS_KEY);
+        if (!res.ok) return null;
+        const data = await res.json();
+        const r = data.results && data.results[0];
+        if (!r) return null;
+        return { url: r.urls.regular, alt: r.alt_description || query, author: r.user.name, profile: r.user.links.html, link: r.links.html };
+      } catch (e) { return null; }
+    }
+
+    // --- MATH ENGINE ---
+    function tryMath(q) {
+      let m;
+      m = q.match(/(-?\d+(?:\.\d+)?)\s*%\s*of\s*(-?\d+(?:\.\d+)?)/);
+      if (m) {
+        const p = parseFloat(m[1]), v = parseFloat(m[2]), r = p / 100 * v;
+        return '**Percentage calculation**\n\n$' + latexNum(p) + '\\% \\times ' + latexNum(v) + ' = ' + latexNum(r) + '$\n\nSo **' + fmtAns(p) + '% of ' + fmtAns(v) + ' is ' + fmtAns(r) + '**.';
+      }
+      m = q.match(/simplify\s+(?:the\s+)?(?:fraction\s+)?(-?\d+)\s*\/\s*(-?\d+)/);
+      if (m) {
+        const n = parseInt(m[1], 10), d = parseInt(m[2], 10);
+        if (d !== 0) {
+          const g = gcd(n, d), sn = n / g, sd = d / g;
+          let extra = '';
+          if (Math.abs(sn) > Math.abs(sd) && sd !== 1 && Math.abs(sd) > 1) {
+            const whole = Math.trunc(sn / sd), rem = Math.abs(sn % sd);
+            extra = '\n\nAs a mixed number: $' + whole + '\\frac{' + rem + '}{' + Math.abs(sd) + '}$';
+          }
+          return '**Simplifying $\\frac{' + n + '}{' + d + '}$**\n\nGCD of ' + Math.abs(n) + ' and ' + Math.abs(d) + ' is **' + g + '**:\n\n$$\\frac{' + n + '}{' + d + '} = \\frac{' + n + ' \\div ' + g + '}{' + d + ' \\div ' + g + '} = \\frac{' + sn + '}{' + sd + '}$$' + extra + '\n\nDecimal form: **' + fmtAns(n / d) + '**';
+        }
+      }
+      m = q.match(/solve\s+([+-]?\d*\.?\d*)\s*x\s*\^?\s*2\s*([+-]\s*\d*\.?\d*)\s*x\s*([+-]\s*\d+\.?\d*)\s*=\s*0/);
+      if (m) {
+        let a = m[1] === '' || m[1] === '+' ? 1 : (m[1] === '-' ? -1 : parseFloat(m[1]));
+        let bStr = m[2].replace(/\s/g, '');
+        let b = bStr === '+' || bStr === '' ? 1 : (bStr === '-' ? -1 : parseFloat(bStr));
+        const c = parseFloat(m[3].replace(/\s/g, ''));
+        const disc = b * b - 4 * a * c;
+        let roots;
+        if (disc > 0) {
+          const r1 = (-b + Math.sqrt(disc)) / (2 * a), r2 = (-b - Math.sqrt(disc)) / (2 * a);
+          roots = 'Since the discriminant $D = b^2 - 4ac = ' + latexNum(disc) + ' > 0$, there are **two real roots**:\n\n$$x = \\frac{-b \\pm \\sqrt{D}}{2a} = \\frac{' + latexNum(-b) + ' \\pm \\sqrt{' + latexNum(disc) + '}}{' + latexNum(2 * a) + '}$$\n\n$$x_1 = ' + latexNum(r1) + ', \\quad x_2 = ' + latexNum(r2) + '$$';
+        } else if (disc === 0) {
+          const r1 = -b / (2 * a);
+          roots = 'The discriminant $D = b^2 - 4ac = 0$, so there is **one repeated root**:\n\n$$x = \\frac{-b}{2a} = ' + latexNum(r1) + '$$';
+        } else {
+          const re = -b / (2 * a), im = Math.sqrt(-disc) / (2 * a);
+          roots = 'The discriminant $D = b^2 - 4ac = ' + latexNum(disc) + ' < 0$, so the roots are **complex**:\n\n$$x = \\frac{-b \\pm i\\sqrt{' + latexNum(-disc) + '}}{2a} = ' + latexNum(re) + ' \\pm ' + latexNum(Math.abs(im)) + 'i$$';
+        }
+        return '**Solving the quadratic equation**\n\n$$' + latexNum(a) + 'x^2 ' + (b >= 0 ? '+' : '-') + ' ' + latexNum(Math.abs(b)) + 'x ' + (c >= 0 ? '+' : '-') + ' ' + latexNum(Math.abs(c)) + ' = 0$$\n\nUsing the quadratic formula $x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}$:\n\n' + roots;
+      }
+      m = q.match(/solve\s+([+-]?\d*\.?\d*)\s*x\s*([+-]\s*\d+\.?\d*)\s*=\s*([+-]?\d+\.?\d*)/);
+      if (m) {
+        let a = m[1] === '' || m[1] === '+' ? 1 : (m[1] === '-' ? -1 : parseFloat(m[1]));
+        const b = parseFloat(m[2].replace(/\s/g, '')), c = parseFloat(m[3]);
+        if (a !== 0) {
+          const x = (c - b) / a;
+          return '**Solving the linear equation**\n\n$$' + latexNum(a) + 'x ' + (b >= 0 ? '+' : '-') + ' ' + latexNum(Math.abs(b)) + ' = ' + latexNum(c) + '$$\n\n**Step 1** — isolate the $x$ term:\n$$' + latexNum(a) + 'x = ' + latexNum(c - b) + '$$\n\n**Step 2** — divide both sides by $' + latexNum(a) + '$:\n$$x = \\frac{' + latexNum(c - b) + '}{' + latexNum(a) + '} = ' + latexNum(x) + '$$\n\n**Solution: $x = ' + latexNum(x) + '$**';
+        }
+      }
+      if (/(mean|median|mode|average|range|standard deviation)/.test(q)) {
+        const nums = q.match(/-?\d+(?:\.\d+)?/g);
+        if (nums && nums.length >= 2) {
+          const vals = nums.map(Number).sort((x, y) => x - y);
+          const n = vals.length;
+          const mean = vals.reduce((s, v) => s + v, 0) / n;
+          const median = n % 2 ? vals[(n - 1) / 2] : (vals[n / 2 - 1] + vals[n / 2]) / 2;
+          const freq = {};
+          vals.forEach(v => { freq[v] = (freq[v] || 0) + 1; });
+          const maxF = Math.max.apply(null, Object.values(freq));
+          const modes = maxF > 1 ? Object.keys(freq).filter(k => freq[k] === maxF).map(Number) : [];
+          const range = vals[n - 1] - vals[0];
+          const std = Math.sqrt(vals.reduce((s, v) => s + (v - mean) * (v - mean), 0) / n);
+          return '**Statistical analysis**\n\nDataset (' + n + ' values): $' + vals.join(',\\ ') + '$\n\n| Statistic | Result |\n|---|---|\n| **Mean** | $' + latexNum(mean) + '$ |\n| **Median** | $' + latexNum(median) + '$ |\n| **Mode** | ' + (modes.length ? '$' + modes.map(latexNum).join(',\\ ') + '$' : 'none (all values unique)') + ' |\n| **Range** | $' + latexNum(range) + '$ |\n| **Std. deviation (pop.)** | $' + latexNum(std) + '$ |\n\n**Mean:** $\\bar{x} = \\frac{' + vals.join(' + ') + '}{' + n + '} = ' + latexNum(mean) + '$';
+        }
+      }
+      if (/circle/.test(q)) {
+        const rm = q.match(/(?:radius|r)\D*(\d+(?:\.\d+)?)/);
+        const dm = q.match(/diameter\D*(\d+(?:\.\d+)?)/);
+        let r = null;
+        if (rm) r = parseFloat(rm[1]);
+        else if (dm) r = parseFloat(dm[1]) / 2;
+        if (r !== null) {
+          if (/area/.test(q)) {
+            const area = Math.PI * r * r;
+            return '**Area of a circle**\n\n$$A = \\pi r^2 = \\pi \\times ' + latexNum(r) + '^2 = ' + latexNum(area) + '$$\n\n**Area is about ' + fmtAns(Math.round(area * 100) / 100) + '** (using $\\pi \\approx 3.14159$)';
+          }
+          if (/circumference|perimeter/.test(q)) {
+            const c = 2 * Math.PI * r;
+            return '**Circumference of a circle**\n\n$$C = 2\\pi r = 2\\pi \\times ' + latexNum(r) + ' = ' + latexNum(c) + '$$\n\n**Circumference is about ' + fmtAns(Math.round(c * 100) / 100) + '**';
+          }
+          const area = Math.PI * r * r, c = 2 * Math.PI * r;
+          return '**Circle with radius $r = ' + latexNum(r) + '$**\n\n$$A = \\pi r^2 = ' + latexNum(area) + ' \\approx ' + fmtAns(Math.round(area * 100) / 100) + '$$\n\n$$C = 2\\pi r = ' + latexNum(c) + ' \\approx ' + fmtAns(Math.round(c * 100) / 100) + '$$';
+        }
+      }
+      if (/pythag|hypotenuse/.test(q)) {
+        const am = q.match(/\ba\s*(?:=|:|is)\s*(\d+(?:\.\d+)?)/), bm = q.match(/\bb\s*(?:=|:|is)\s*(\d+(?:\.\d+)?)/);
+        if (am && bm) {
+          const a = parseFloat(am[1]), b = parseFloat(bm[1]), c = Math.sqrt(a * a + b * b);
+          return '**Pythagorean theorem**\n\nFor a right triangle with legs $a = ' + latexNum(a) + '$ and $b = ' + latexNum(b) + '$:\n\n$$c^2 = a^2 + b^2 = ' + latexNum(a * a) + ' + ' + latexNum(b * b) + ' = ' + latexNum(a * a + b * b) + '$$\n\n$$c = \\sqrt{' + latexNum(a * a + b * b) + '} = ' + latexNum(c) + '$$\n\n**Hypotenuse $c = ' + latexNum(c) + '$**';
+        }
+      }
+      if (/area/.test(q)) {
+        const sm = q.match(/square.*(?:side|s)\D*(\d+(?:\.\d+)?)/);
+        if (sm) { const s = parseFloat(sm[1]); return '**Area of a square**\n\n$$A = s^2 = ' + latexNum(s) + '^2 = ' + latexNum(s * s) + '$$\n\n**Area = ' + fmtAns(s * s) + '**'; }
+        const lm = q.match(/(?:length|l)\D*(\d+(?:\.\d+)?)/), wm = q.match(/(?:width|w)\D*(\d+(?:\.\d+)?)/);
+        if (lm && wm && /rectangle/.test(q)) { const l = parseFloat(lm[1]), w = parseFloat(wm[1]); return '**Area of a rectangle**\n\n$$A = l \\times w = ' + latexNum(l) + ' \\times ' + latexNum(w) + ' = ' + latexNum(l * w) + '$$\n\n**Area = ' + fmtAns(l * w) + '**'; }
+        const bm2 = q.match(/base\D*(\d+(?:\.\d+)?)/), hm2 = q.match(/height\D*(\d+(?:\.\d+)?)/);
+        if (bm2 && hm2 && /triangle/.test(q)) { const b = parseFloat(bm2[1]), h = parseFloat(hm2[1]); return '**Area of a triangle**\n\n$$A = \\frac{1}{2} b h = \\frac{1}{2} \\times ' + latexNum(b) + ' \\times ' + latexNum(h) + ' = ' + latexNum(b * h / 2) + '$$\n\n**Area = ' + fmtAns(b * h / 2) + '**'; }
+      }
+      if (/^[\d\s+\-*/().^%,]+$/.test(q) && /\d/.test(q) && /[+\-*/^]/.test(q) && q.replace(/\s/g, '').length >= 3) {
+        try {
+          const expr = q.replace(/\^/g, '**');
+          const val = Function('"use strict"; return (' + expr + ')')();
+          if (typeof val === 'number' && isFinite(val)) {
+            return '**Calculation**\n\n$' + latexNum(q.replace(/\*/g, ' \\times ').replace(/\//g, ' \\div ')) + ' = ' + latexNum(val) + '$\n\n**Result: ' + fmtAns(val) + '**';
+          }
+        } catch (e) {}
+      }
+      return null;
+    }
+
+    // --- MAIN RESPONSE COMPUTATION ---
+    async function computeResponse(rawText, atts) {
+      const q = (rawText || '').toLowerCase().trim();
+
+      if (!q && atts && atts.length) return { text: RESP.attachmentsOnly(atts) };
+
+      // 1. Crisis / self-harm — always first, never themed
+      if (CRISIS_PATTERNS.some(rx => rx.test(q))) {
+        const suicidal = /kill myself|suicid|want to die|end my life|end it all|don'?t want to (live|be here|exist)|no reason to live|better off dead/.test(q);
+        return { text: suicidal ? pick(RESP.crisis) : pick(RESP.selfharm), sources: [SRC.lifeline, SRC.nimh] };
+      }
+
+      // 2. Image search
+      if (/\b(picture|pic|image|photo|photograph)s?\b/.test(q) || /\b(show|find|get)\s+me\s+(a|an|some)?\s*\S+/.test(q)) {
+        const query = extractImageQuery(q);
+        if (query) {
+          const image = await tryFetchImage(query);
+          if (image) return { text: pick(RESP.imageIntro) + ' *(searched: "' + query + '")*', image: image, sources: [SRC.unsplash] };
+        }
+      }
+
+      // 3. Math
+      const math = tryMath(q);
+      if (math) return { text: math };
+
+      // 4. Health (sensitive — no persona)
+      for (let i = 0; i < HEALTH_TOPICS.length; i++) {
+        if (HEALTH_TOPICS[i].kw.some(rx => rx.test(q))) return { text: HEALTH_TOPICS[i].text, sources: HEALTH_TOPICS[i].src };
+      }
+
+      // 5. Mental health (sensitive — no persona)
+      for (let i = 0; i < MENTAL_TOPICS.length; i++) {
+        if (MENTAL_TOPICS[i].kw.some(rx => rx.test(q))) return { text: MENTAL_TOPICS[i].text, sources: MENTAL_TOPICS[i].src };
+      }
+
+      const p = getProfile();
+
+      // 6. Code
+      if (/(write|create|make|give)\b.*\b(script|code|program|function)|\bpython\b|\bjavascript\b/.test(q)) {
+        let base = /javascript|\bjs\b/.test(q) ? CODE_JS : CODE_PY;
+        if (p.role && /engineer|developer|programmer|analyst|student/i.test(p.role)) base = base.replace('{ROLE_CODE}', '\n\n*Since you work as a ' + p.role + ', I kept it dependency-free and added the pattern notes you would actually care about.*');
+        else base = base.replace('{ROLE_CODE}', '');
+        return { text: base };
+      }
+
+      // 7. Email / writing
+      if (/(write|draft|help with).*(email|letter|message)/.test(q)) {
+        let base = EMAIL_RESP.replace('{ROLE_CODE}', p.role ? '\n\n*Want me to tailor the tone for your role as a ' + p.role + '? Just say the word.*' : '');
+        return { text: base };
+      }
+
+      // 8. Explainers (persona applies)
+      for (let i = 0; i < EXPLAIN_TOPICS.length; i++) {
+        if (EXPLAIN_TOPICS[i].kw.some(rx => rx.test(q))) {
+          return { text: applyPersona(EXPLAIN_TOPICS[i].text), sources: EXPLAIN_TOPICS[i].src };
+        }
+      }
+      if (/^(explain|what is|what are|how does|how do|tell me about|define)/.test(q)) {
+        const topic = rawText.replace(/^(explain|what is|what are|how does|how do(es)?|tell me about|define)\s*/i, '').replace(/\?+$/, '').trim();
+        const title = topic.charAt(0).toUpperCase() + topic.slice(1);
+        return { text: applyPersona(genericExplain(title)), sources: [SRC.wiki] };
+      }
+
+      // 9. Greeting
+      if (/^(hi|hey|hello|yo|sup|good (morning|afternoon|evening)|hola)\b/.test(q) && q.length < 25) {
+        const name = p.name ? ' ' + p.name.split(' ')[0] : '';
+        return { text: pick(RESP.greeting).replace('{NAME}', name) };
+      }
+
+      // 10. Fallback (persona + profile style)
+      let base = fallbackResponses(rawText);
+      if (p.style === 'concise') base = base.split('\n\n').slice(0, 2).join('\n\n');
+      else if (p.style === 'detailed') base += '\n\n**If you want, I can also:**\n- Break this into a step-by-step plan\n- Compare the main options side by side\n- Give you a concrete example\n\nJust name it.';
+      return { text: applyPersona(base) };
+    }
+
+    // --- INIT ---
+    function init() {
+      checkAuth();
+      updateWelcomeHeading();
+      updatePersonaUI();
+      if (state.chats.length > 0) state.currentChatId = state.chats[0].id;
+      renderChatHistory();
+      renderCurrentChat();
+      setupEventListeners();
+      updateSendState();
+      renderPrices();
+      if (getEmail()) userInput.focus();
+    }
+    try { init(); }
+    catch (e) { console.error('Init error:', e); }
+  </script>
+</body>
+</html>
